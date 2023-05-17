@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
@@ -50,6 +51,7 @@ import com.bangkit23.hidupsehat.presentation.screen.home.model.Feel
 import com.bangkit23.hidupsehat.presentation.screen.home.model.emotions
 import com.bangkit23.hidupsehat.presentation.components.CardEmotionFeel
 import com.bangkit23.hidupsehat.presentation.screen.home.model.CardFeature
+import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 
 @Composable
 fun HomeScreen(
@@ -153,7 +155,7 @@ fun CardFeatureMenu(cardData: CardFeature, modifier: Modifier = Modifier) {
         ) {
             Text(
                 text = cardData.title,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.weight(1f)
             )
             Icon(
@@ -273,5 +275,13 @@ fun DotsIndicator(
                 Spacer(modifier = Modifier.padding(horizontal = 2.dp))
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeContentPreview() {
+    HidupSehatTheme {
+        HomeContent()
     }
 }

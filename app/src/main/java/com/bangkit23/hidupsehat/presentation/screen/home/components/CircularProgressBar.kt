@@ -24,7 +24,7 @@ fun CircularProgressBar(
 ) {
     Canvas(
         modifier = modifier
-            .size(150.dp)
+            .size(160.dp)
             .padding(8.dp)
     ) {
         // Background Line

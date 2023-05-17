@@ -107,14 +107,14 @@ fun BottomAppBar(
             screen = Screen.Home
         ),
         NavigationItem(
-            title = "Leaderboard",
-            icon = ImageVector.vectorResource(R.drawable.ic_leaderboard),
-            screen = Screen.Leaderboard
-        ),
-        NavigationItem(
             title = "Konsultasi",
             icon = Icons.Rounded.Call,
             screen = Screen.Consultation
+        ),
+        NavigationItem(
+            title = "Leaderboard",
+            icon = ImageVector.vectorResource(R.drawable.ic_leaderboard),
+            screen = Screen.Leaderboard
         ),
         NavigationItem(
             title = "Feeds",
