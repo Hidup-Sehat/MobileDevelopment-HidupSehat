@@ -208,7 +208,6 @@ fun NewFeaturePager(modifier: Modifier = Modifier) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MonitoringPager(modifier: Modifier = Modifier) {
-    var sliderImage by remember { mutableStateOf("") }
     val pagerState = rememberPagerState()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -219,13 +218,7 @@ fun MonitoringPager(modifier: Modifier = Modifier) {
             pageCount = 4,
             state = pagerState,
             pageSpacing = 16.dp,
-        ) { page ->
-            sliderImage = when (page) {
-                0 -> "https://www.chameleon.io/img/containers/assets/blog/new-feature-announcements.jpg/af6dab444f841848b57180bb941222b2.jpg"
-                1 -> "https://announcekit.app/blog/wp-content/uploads/2021/12/Frame-41.png"
-                2 -> "https://fb.com"
-                else -> "https://i.ytimg.com/vi/QTkpSTHLcIE/maxresdefault.jpg"
-            }
+        ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 ElevatedCard(
                     modifier = Modifier
