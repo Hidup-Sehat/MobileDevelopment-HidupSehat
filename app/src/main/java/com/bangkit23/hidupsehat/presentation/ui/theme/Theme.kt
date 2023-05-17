@@ -1,4 +1,4 @@
-package com.bangkit23.hidupsehat.ui.theme
+package com.bangkit23.hidupsehat.presentation.ui.theme
 
 import android.app.Activity
 import android.os.Build
