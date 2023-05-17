@@ -1,4 +1,4 @@
-package com.bangkit23.hidupsehat
+package com.bangkit23.hidupsehat.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,37 +10,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.bangkit23.hidupsehat.ui.theme.HidupSehatTheme
+import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             HidupSehatTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    HidupSehatApp()
                 }
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    HidupSehatTheme {
-        Greeting("Android")
-    }
-}
