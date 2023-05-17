@@ -16,6 +16,9 @@
         android:theme="@style/Theme.HidupSehat"
         tools:targetApi="31">
         <activity
+            android:name=".presentation.screen.splash.RoutingActivity"
+            android:exported="false" />
+        <activity
             android:name=".presentation.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.HidupSehat">
