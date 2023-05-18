@@ -1,25 +1,33 @@
 package com.bangkit23.hidupsehat.presentation.screen.home.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.bangkit23.hidupsehat.presentation.components.ButtonWithIcon
+import com.bangkit23.hidupsehat.presentation.components.OutlinedButtonWithIcon
 import com.bangkit23.hidupsehat.presentation.components.SheetWithHeader
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 
@@ -66,14 +74,14 @@ fun HeaderSheetFoods(
             Spacer(Modifier.height(8.dp))
             Text(
                 text = "Masukkan makanan anda",
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyLarge
             )
         }
-        TextButton(
-            onClick = onSaveClick
-        ) {
-            Text("Simpan")
-        }
+        ButtonWithIcon(
+            onClick = onSaveClick,
+            text = "Simpan",
+            icon = Icons.Rounded.Check,
+        )
     }
 }
 
@@ -81,7 +89,57 @@ fun HeaderSheetFoods(
 fun BodySheetFoods(
     modifier: Modifier = Modifier,
 ) {
-    
+    LazyColumn(
+        modifier = modifier.fillMaxSize()
+    ) {
+        item {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "Makanan",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.width(112.dp)
+                )
+                Text(
+                    text = "Jumlah",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = "Ukuran",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = "Kalori",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+        }
+        items(17) {
+            ItemFood(
+                name = if (it == 4) "Rendang Sapi" else "Food $it",
+                count = it + 2,
+                size = it + 1,
+                calories = (it * 5).toDouble()
+            )
+        }
+        item {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(top = 16.dp, bottom = 32.dp)
+            ) {
+                OutlinedButtonWithIcon(
+                    onClick = {},
+                    text = "Tambah Makanan",
+                    icon = Icons.Rounded.Add,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -92,17 +150,35 @@ fun ItemFood(
     calories: Double,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier.padding(horizontal = 16.dp)) {
+    Column(
+        modifier = modifier
+            .padding(horizontal = 16.dp)
+            .clickable {  }
+    ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
+                .padding(top = 16.dp)
         ) {
-            Text(text = name)
-            Text(text = "$size")
-            Text(text = "$count")
-            Text(text = "${calories.toInt()} kal")
+            Text(
+                text = name,
+                modifier = Modifier.width(112.dp)
+            )
+            Text(
+                text = "$size",
+                modifier = Modifier
+            )
+            Text(
+                text = "$count",
+                modifier = Modifier
+            )
+            Text(
+                text = "${calories.toInt()} kal",
+                modifier = Modifier
+            )
         }
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(16.dp))
         Divider()
     }
 }
@@ -112,8 +188,8 @@ fun ItemFood(
 fun ItemFoodPreview() {
     HidupSehatTheme {
         ItemFood(
-            name = "Ayam",
-            count = 4,
+            name = "Ayam Goreng",
+            count = 40,
             size = 5,
             calories = 46.0,
         )
@@ -125,9 +201,6 @@ fun ItemFoodPreview() {
 @Composable
 fun PreviewSheetWriteFoodsManual() {
     HidupSehatTheme {
-        SheetWriteFoodsManual(
-            onDismiss = {},
-            onSaveClick = {}
-        )
+        BodySheetFoods()
     }
 }
