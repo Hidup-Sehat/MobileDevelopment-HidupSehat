@@ -25,14 +25,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,12 +48,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.bangkit23.hidupsehat.R
+import com.bangkit23.hidupsehat.presentation.components.CardEmotionFeel
 import com.bangkit23.hidupsehat.presentation.screen.home.components.CardPersonalHealthInfo
 import com.bangkit23.hidupsehat.presentation.screen.home.components.HomeSection
+import com.bangkit23.hidupsehat.presentation.screen.home.components.SheetWriteFoodsManual
+import com.bangkit23.hidupsehat.presentation.screen.home.model.CardFeature
 import com.bangkit23.hidupsehat.presentation.screen.home.model.Feel
 import com.bangkit23.hidupsehat.presentation.screen.home.model.emotions
-import com.bangkit23.hidupsehat.presentation.components.CardEmotionFeel
-import com.bangkit23.hidupsehat.presentation.screen.home.model.CardFeature
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 
 @Composable
@@ -60,14 +64,19 @@ fun HomeScreen(
     HomeContent()
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContent(modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .verticalScroll(rememberScrollState())
         ,
     ) {
         var chosenEmotion by remember { mutableStateOf<Feel?>(null) }
+        var openBottomSheet by rememberSaveable { mutableStateOf(false) }
+        val sheetState = rememberModalBottomSheetState(
+            skipPartiallyExpanded = true
+        )
         CardEmotionFeel(
             emotions = emotions,
             onEmotionChosen = { feel ->
@@ -81,8 +90,12 @@ fun HomeContent(modifier: Modifier = Modifier) {
             sleepTimeActual = 4.0,
             caloriesBurnedActual = 400.0,
             onScanClicked = {},
-            onWriteManualClicked = {},
-            onCardClicked = {}
+            onWriteManualClicked = {
+                openBottomSheet = !openBottomSheet
+            },
+            onCardClicked = {
+                openBottomSheet = !openBottomSheet
+            }
         )
         FeaturesMenu()
         HomeSection(
@@ -93,9 +106,15 @@ fun HomeContent(modifier: Modifier = Modifier) {
             title = "Monitoring",
             content = { MonitoringPager() }
         )
+        if (openBottomSheet) {
+            SheetWriteFoodsManual(
+                sheetState = sheetState,
+                onDismiss = { openBottomSheet = false },
+                onSaveClick = {},
+            )
+        }
     }
 }
-
 
 @Composable
 fun FeaturesMenu(

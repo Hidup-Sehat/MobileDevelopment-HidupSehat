@@ -41,7 +41,6 @@ import com.bangkit23.hidupsehat.presentation.screen.feeds.FeedScreen
 import com.bangkit23.hidupsehat.presentation.screen.home.HomeScreen
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HidupSehatApp(
     modifier: Modifier = Modifier,
@@ -128,7 +127,7 @@ fun BottomAppBar(
                 selected = currentRoute == item.screen.route,
                 icon = {
                     Icon(
-                        item.icon,
+                        imageVector = item.icon,
                         contentDescription = item.title
                     )
                 },
