@@ -98,10 +98,10 @@ fun HomeContent(modifier: Modifier = Modifier) {
             }
         )
         FeaturesMenu()
-        HomeSection(
-            title = "Terbaru",
-            content = { NewFeaturePager() }
-        )
+//        HomeSection(
+//            title = "Terbaru",
+//            content = { NewFeaturePager() }
+//        )
         HomeSection(
             title = "Monitoring",
             content = { MonitoringPager() }
@@ -140,7 +140,7 @@ fun FeaturesMenu(
             title = "Reminder",
             icon = R.drawable.ic_alarm,
             cardColor = CardDefaults.elevatedCardColors(containerColor = colorResource(R.color.reminder))
-        )
+        ),
     )
     Column(
         modifier = modifier
