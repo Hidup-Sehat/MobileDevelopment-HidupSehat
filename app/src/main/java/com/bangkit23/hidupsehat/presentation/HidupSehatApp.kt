@@ -30,15 +30,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.bangkit23.hidupsehat.R
 import com.bangkit23.hidupsehat.presentation.navigation.NavigationItem
 import com.bangkit23.hidupsehat.presentation.navigation.Screen
 import com.bangkit23.hidupsehat.presentation.screen.feeds.FeedScreen
 import com.bangkit23.hidupsehat.presentation.screen.home.HomeScreen
+import com.bangkit23.hidupsehat.presentation.screen.preference.UserInformationScreen
+import com.bangkit23.hidupsehat.presentation.screen.preference.UserTargetScreen
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 
 @Composable
@@ -70,9 +74,35 @@ fun HidupSehatApp(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Home.route,
+            startDestination = Screen.PreferenceTarget.route,
             modifier = Modifier.padding(innerPadding)
         ) {
+            composable(Screen.PreferenceTarget.route) {
+                UserTargetScreen(
+                    onNextClick = { choiceId, targetWeight ->
+                        navController.navigate(
+                            Screen.PreferenceInformation.createRoute(choiceId, targetWeight)
+                        )
+                    }
+                )
+            }
+            composable(
+                Screen.PreferenceInformation.route,
+                arguments = listOf(
+                    navArgument("choiceId") { NavType.IntType },
+                    navArgument("weightTarget") { NavType.StringType }
+                )
+            ) {
+                val choiceId = it.arguments?.getInt("choiceId") ?: -1
+                val weightTarget = it.arguments?.getString("weightTarget") ?: "0"
+                UserInformationScreen(
+                    choiceId = choiceId,
+                    weightTarget = weightTarget,
+                    navigateToHome = {
+                        navController.navigate(Screen.Home.route)
+                    }
+                )
+            }
             composable(Screen.Home.route) {
                 HomeScreen()
             }
