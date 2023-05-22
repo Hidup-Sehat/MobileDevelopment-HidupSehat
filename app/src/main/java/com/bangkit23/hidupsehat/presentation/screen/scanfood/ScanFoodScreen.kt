@@ -172,6 +172,7 @@ fun ScanFoodContent(
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.ic_capture),
+                            tint = Color.White,
                             contentDescription = "Scan"
                         )
                     }
@@ -191,6 +192,7 @@ fun ScanFoodContent(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Image,
+                            tint = Color.White,
                             contentDescription = "Pick Image from galery"
                         )
                     }
@@ -209,6 +211,7 @@ fun ScanFoodContent(
                         Icon(
                             imageVector = if (flashModeOn)
                                 Icons.Rounded.FlashOn else Icons.Rounded.FlashOff,
+                            tint = Color.White,
                             contentDescription = "Turn on the flash"
                         )
                     }
