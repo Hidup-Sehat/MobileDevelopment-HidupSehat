@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
@@ -29,15 +30,21 @@ import androidx.compose.ui.unit.dp
 import com.bangkit23.hidupsehat.presentation.components.ButtonWithIcon
 import com.bangkit23.hidupsehat.presentation.components.OutlinedButtonWithIcon
 import com.bangkit23.hidupsehat.presentation.components.SheetWithHeader
+import com.bangkit23.hidupsehat.presentation.model.Food
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SheetWriteFoodsManual(
+    foods: List<Food>,
     onDismiss: () -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier,
-    sheetState: SheetState = rememberModalBottomSheetState()
+    sheetState: SheetState = rememberModalBottomSheetState(
+        confirmValueChange = {
+            false
+        }
+    ),
 ) {
     SheetWithHeader(
         onDismiss = onDismiss,
@@ -48,7 +55,9 @@ fun SheetWriteFoodsManual(
             )
         },
         contentBody = {
-            BodySheetFoods()
+            BodySheetFoods(
+                foods = foods
+            )
         },
         modifier = modifier
             .fillMaxHeight()
@@ -87,6 +96,7 @@ fun HeaderSheetFoods(
 
 @Composable
 fun BodySheetFoods(
+    foods: List<Food>,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -118,12 +128,12 @@ fun BodySheetFoods(
                 )
             }
         }
-        items(17) {
+        items(items = foods) {
             ItemFood(
-                name = if (it == 4) "Rendang Sapi" else "Food $it",
-                count = it + 2,
-                size = it + 1,
-                calories = (it * 5).toDouble()
+                name = it.name,
+                count = it.count,
+                size = 1,
+                calories = it.calories.toDouble()
             )
         }
         item {
@@ -174,7 +184,7 @@ fun ItemFood(
                 modifier = Modifier
             )
             Text(
-                text = "${calories.toInt()} kal",
+                text = "${calories.toInt()}",
                 modifier = Modifier
             )
         }
@@ -196,11 +206,12 @@ fun ItemFoodPreview() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 fun PreviewSheetWriteFoodsManual() {
     HidupSehatTheme {
-        BodySheetFoods()
+        BodySheetFoods(
+            foods = listOf(Food("Kentang", 3, 500))
+        )
     }
 }
