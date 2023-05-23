@@ -1,48 +1,44 @@
 package com.bangkit23.hidupsehat.presentation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material.icons.rounded.Home
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.get
 import androidx.navigation.navArgument
+import androidx.navigation.navigation
 import com.bangkit23.hidupsehat.R
+import com.bangkit23.hidupsehat.presentation.common.ScanSharedViewModel
 import com.bangkit23.hidupsehat.presentation.navigation.NavigationItem
 import com.bangkit23.hidupsehat.presentation.navigation.Screen
 import com.bangkit23.hidupsehat.presentation.screen.feeds.FeedScreen
 import com.bangkit23.hidupsehat.presentation.screen.home.HomeScreen
 import com.bangkit23.hidupsehat.presentation.screen.preference.UserInformationScreen
 import com.bangkit23.hidupsehat.presentation.screen.preference.UserTargetScreen
+import com.bangkit23.hidupsehat.presentation.screen.scanfood.ScanFoodScreen
+import com.bangkit23.hidupsehat.presentation.screen.scanfood_result.ScanFoodResultScreen
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 
 @Composable
@@ -54,16 +50,6 @@ fun HidupSehatApp(
     val currentRoute = navBackStackEntry?.destination?.route
     Scaffold(
         modifier = modifier,
-        topBar = {
-            if (currentRoute == Screen.Home.route) {
-                TopAppBarWithProfile(
-                    name = "Rijal",
-                    userAvatar = "",
-                    onNotificationClick = {},
-                    onProfileClick = {}
-                )
-            }
-        },
         bottomBar = {
             if (currentRoute.shouldShowBottomAppBar()) {
                 BottomAppBar(
@@ -74,40 +60,79 @@ fun HidupSehatApp(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.PreferenceTarget.route,
+            startDestination = "auth-graph",
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(Screen.PreferenceTarget.route) {
-                UserTargetScreen(
-                    onNextClick = { choiceId, targetWeight ->
-                        navController.navigate(
-                            Screen.PreferenceInformation.createRoute(choiceId, targetWeight)
-                        )
-                    }
-                )
-            }
-            composable(
-                Screen.PreferenceInformation.route,
-                arguments = listOf(
-                    navArgument("choiceId") { NavType.IntType },
-                    navArgument("weightTarget") { NavType.StringType }
-                )
-            ) {
-                val choiceId = it.arguments?.getInt("choiceId") ?: -1
-                val weightTarget = it.arguments?.getString("weightTarget") ?: "0"
-                UserInformationScreen(
-                    choiceId = choiceId,
-                    weightTarget = weightTarget,
-                    navigateToHome = {
-                        navController.navigate(Screen.Home.route)
-                    }
-                )
-            }
             composable(Screen.Home.route) {
-                HomeScreen()
+                HomeScreen(
+                    onScanClicked = {
+                        navController.navigate("scan-graph")
+                    }
+                )
             }
             composable(Screen.Feeds.route) {
                 FeedScreen()
+            }
+            navigation(
+                startDestination = Screen.PreferenceTarget.route,
+                route = "auth-graph"
+            ) {
+                composable(Screen.PreferenceTarget.route) {
+                    UserTargetScreen(
+                        onNextClick = { choiceId, targetWeight ->
+                            navController.navigate(
+                                Screen.PreferenceInformation.createRoute(choiceId, targetWeight)
+                            )
+                        }
+                    )
+                }
+                composable(
+                    Screen.PreferenceInformation.route,
+                    arguments = listOf(
+                        navArgument("choiceId") { NavType.IntType },
+                        navArgument("weightTarget") { NavType.StringType }
+                    )
+                ) {
+                    val choiceId = it.arguments?.getInt("choiceId") ?: -1
+                    val weightTarget = it.arguments?.getString("weightTarget") ?: "0"
+                    UserInformationScreen(
+                        choiceId = choiceId,
+                        weightTarget = weightTarget,
+                        navigateToHome = {
+                            navController.navigate(Screen.Home.route)
+                        }
+                    )
+                }
+            }
+            navigation(
+                startDestination = Screen.Scan.route,
+                route = "scan-graph"
+            ) {
+                composable(Screen.Scan.route) { entry ->
+                    val viewModel = entry.sharedViewModel<ScanSharedViewModel>(navController)
+                    ScanFoodScreen(
+                        onDetectedImage = { bitmap, detectionResults ->
+                            viewModel.setBitmap(bitmap)
+                            viewModel.setScanResults(detectionResults)
+                            navController.navigate(Screen.ScanResult.route)
+                        },
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        }
+                    )
+                }
+                composable(Screen.ScanResult.route) { entry ->
+                    val viewModel = entry.sharedViewModel<ScanSharedViewModel>(navController)
+                    val mBitmap by viewModel.bitmap.collectAsStateWithLifecycle()
+                    val results by viewModel.scanResults.collectAsStateWithLifecycle()
+                    mBitmap?.let {
+                        ScanFoodResultScreen(
+                            imageResult = it,
+                            listDetection = results,
+                            onRescanClick = { navController.navigateUp() }
+                        )
+                    }
+                }
             }
         }
     }
@@ -120,6 +145,17 @@ private fun String?.shouldShowBottomAppBar(): Boolean {
         Screen.Consultation.route,
         Screen.Leaderboard.route
     )
+}
+
+@Composable
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(
+    navController: NavHostController,
+): T {
+    val navGraphRoute = destination.parent?.route ?: return viewModel()
+    val parentEntry = remember(this) {
+        navController.getBackStackEntry(navGraphRoute)
+    }
+    return viewModel(parentEntry)
 }
 
 @Composable
@@ -164,7 +200,7 @@ fun BottomAppBar(
                 label = { Text(item.title) },
                 onClick = {
                     navController.navigate(item.screen.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
+                        popUpTo(navController.graph[Screen.Home.route].id) {
                             saveState = true
                         }
                         restoreState = true
@@ -174,45 +210,6 @@ fun BottomAppBar(
             )
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TopAppBarWithProfile(
-    name: String,
-    userAvatar: String,
-    onNotificationClick: () -> Unit,
-    onProfileClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    TopAppBar(
-        modifier = modifier,
-        title = { Text("Hi, $name!") },
-        actions = {
-            IconButton(onClick = onNotificationClick) {
-                Icon(Icons.Outlined.Notifications, contentDescription = null)
-            }
-            Spacer(Modifier.width(8.dp))
-            IconButton(
-                onClick = onProfileClick,
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            color = MaterialTheme.colorScheme.secondaryContainer,
-                            shape = CircleShape
-                        )
-                ) {
-                    Text(
-                        text = "${name.first()}",
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-            }
-            Spacer(Modifier.width(8.dp))
-        },
-    )
 }
 
 @Preview(showBackground = true)

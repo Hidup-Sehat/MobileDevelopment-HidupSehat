@@ -23,32 +23,35 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
 import com.bangkit23.hidupsehat.R
 import com.bangkit23.hidupsehat.presentation.components.CardEmotionFeel
+import com.bangkit23.hidupsehat.presentation.model.Food
 import com.bangkit23.hidupsehat.presentation.screen.home.components.CardPersonalHealthInfo
 import com.bangkit23.hidupsehat.presentation.screen.home.components.HomeSection
 import com.bangkit23.hidupsehat.presentation.screen.home.components.SheetWriteFoodsManual
@@ -59,61 +62,119 @@ import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 
 @Composable
 fun HomeScreen(
+    onScanClicked: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    HomeContent()
+    val chosenEmotion by viewModel.chosenEmotion
+    val foods = viewModel.foods
+    HomeContent(
+        chosenEmotion = chosenEmotion,
+        onEmotionChosen = viewModel::setEmotion,
+        foods = foods,
+        onScanClicked = onScanClicked
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeContent(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-            .verticalScroll(rememberScrollState())
-        ,
-    ) {
-        var chosenEmotion by remember { mutableStateOf<Feel?>(null) }
-        var openBottomSheet by rememberSaveable { mutableStateOf(false) }
-        val sheetState = rememberModalBottomSheetState(
-            skipPartiallyExpanded = true
-        )
-        CardEmotionFeel(
-            emotions = emotions,
-            onEmotionChosen = { feel ->
-                chosenEmotion = feel
-            },
-            chosenEmotion = chosenEmotion
-        )
-        CardPersonalHealthInfo(
-            caloriesIntakeActual = 200.0,
-            waterDrunkActual = 3.4,
-            sleepTimeActual = 4.0,
-            caloriesBurnedActual = 400.0,
-            onScanClicked = {},
-            onWriteManualClicked = {
-                openBottomSheet = !openBottomSheet
-            },
-            onCardClicked = {
-                openBottomSheet = !openBottomSheet
-            }
-        )
-        FeaturesMenu()
-//        HomeSection(
-//            title = "Terbaru",
-//            content = { NewFeaturePager() }
-//        )
-        HomeSection(
-            title = "Monitoring",
-            content = { MonitoringPager() }
-        )
-        if (openBottomSheet) {
-            SheetWriteFoodsManual(
-                sheetState = sheetState,
-                onDismiss = { openBottomSheet = false },
-                onSaveClick = {},
+fun HomeContent(
+    chosenEmotion: Feel?,
+    foods: List<Food>,
+    onEmotionChosen: (Feel?) -> Unit,
+    onScanClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Scaffold(
+        topBar = {
+            TopAppBarWithProfile(
+                name = "Rijal",
+                userAvatar = "",
+                onNotificationClick = {},
+                onProfileClick = {}
             )
         }
+    ) {
+        Column(
+            modifier = modifier.padding(it)
+                .verticalScroll(rememberScrollState())
+            ,
+        ) {
+            var openBottomSheet by rememberSaveable { mutableStateOf(false) }
+            val sheetState = rememberModalBottomSheetState(
+                skipPartiallyExpanded = true
+            )
+            CardEmotionFeel(
+                emotions = emotions,
+                onEmotionChosen = onEmotionChosen,
+                chosenEmotion = chosenEmotion
+            )
+            CardPersonalHealthInfo(
+                caloriesIntakeActual = 200.0,
+                waterDrunkActual = 3.4,
+                sleepTimeActual = 4.0,
+                caloriesBurnedActual = 400.0,
+                onScanClicked = onScanClicked,
+                onWriteManualClicked = {
+                    openBottomSheet = !openBottomSheet
+                },
+                onCardClicked = {
+                    openBottomSheet = !openBottomSheet
+                }
+            )
+            FeaturesMenu()
+            HomeSection(
+                title = "Monitoring",
+                content = { MonitoringPager() }
+            )
+            if (openBottomSheet) {
+                SheetWriteFoodsManual(
+                    foods = foods,
+                    sheetState = sheetState,
+                    onDismiss = { openBottomSheet = false },
+                    onSaveClick = {},
+                )
+            }
+        }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopAppBarWithProfile(
+    name: String,
+    userAvatar: String,
+    onNotificationClick: () -> Unit,
+    onProfileClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    TopAppBar(
+        modifier = modifier,
+        title = { Text("Hi, $name!") },
+        actions = {
+            IconButton(onClick = onNotificationClick) {
+                Icon(Icons.Outlined.Notifications, contentDescription = null)
+            }
+            Spacer(Modifier.width(8.dp))
+            IconButton(
+                onClick = onProfileClick,
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            color = MaterialTheme.colorScheme.secondaryContainer,
+                            shape = CircleShape
+                        )
+                ) {
+                    Text(
+                        text = "${name.first()}",
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            }
+            Spacer(Modifier.width(8.dp))
+        },
+    )
 }
 
 @Composable
@@ -184,45 +245,6 @@ fun CardFeatureMenu(cardData: CardFeature, modifier: Modifier = Modifier) {
                     .size(24.dp)
             )
         }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun NewFeaturePager(modifier: Modifier = Modifier) {
-    var sliderImage by remember { mutableStateOf("") }
-    val pagerState = rememberPagerState()
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.padding(top = 16.dp),
-    ) {
-        HorizontalPager(
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            pageCount = 3,
-            state = pagerState,
-            pageSpacing = 16.dp,
-        ) { page ->
-            sliderImage = when (page) {
-                0 -> "https://www.chameleon.io/img/containers/assets/blog/new-feature-announcements.jpg/af6dab444f841848b57180bb941222b2.jpg"
-                1 -> "https://announcekit.app/blog/wp-content/uploads/2021/12/Frame-41.png"
-                else -> "https://i.ytimg.com/vi/QTkpSTHLcIE/maxresdefault.jpg"
-            }
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                AsyncImage(
-                    model = sliderImage,
-                    contentScale = ContentScale.Crop,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxWidth()
-                        .height(112.dp)
-                        .clip(RoundedCornerShape(MaterialTheme.shapes.medium.topStart))
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        DotsIndicator(
-            totalDots = 3,
-            selectedIndex = pagerState.currentPage,
-        )
     }
 }
 
@@ -301,6 +323,11 @@ fun DotsIndicator(
 @Composable
 fun HomeContentPreview() {
     HidupSehatTheme {
-        HomeContent()
+        HomeContent(
+            foods = emptyList(),
+            chosenEmotion = null,
+            onEmotionChosen = {},
+            onScanClicked = {}
+        )
     }
 }
