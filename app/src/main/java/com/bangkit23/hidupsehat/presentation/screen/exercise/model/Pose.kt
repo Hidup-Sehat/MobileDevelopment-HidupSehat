@@ -1,4 +1,4 @@
-package com.bangkit23.hidupsehat.presentation.screen.yoga.model
+package com.bangkit23.hidupsehat.presentation.screen.exercise.model
 
 data class Pose(
     val title : String,
