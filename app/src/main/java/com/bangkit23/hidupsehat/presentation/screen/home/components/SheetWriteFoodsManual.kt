@@ -133,7 +133,7 @@ fun BodySheetFoods(
                 name = it.name,
                 count = it.count,
                 size = 1,
-                calories = it.calories.toDouble()
+                calories = it.calories.toDouble(),
             )
         }
         item {
@@ -158,12 +158,15 @@ fun ItemFood(
     count: Int,
     size: Int,
     calories: Double,
+    onItemClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .padding(horizontal = 16.dp)
-            .clickable {  }
+            .clickable {
+                onItemClick?.let { it() }
+            }
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -202,6 +205,7 @@ fun ItemFoodPreview() {
             count = 40,
             size = 5,
             calories = 46.0,
+            onItemClick = {}
         )
     }
 }
