@@ -23,7 +23,7 @@ fun CustomTextFieldLabel(
     onValueChange: (String) -> Unit
 ) {
     OutlinedTextField(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         value = value, onValueChange = onValueChange,
         label = { Text(text = label) },
         shape = RoundedCornerShape(16.dp),

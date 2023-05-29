@@ -4,9 +4,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -59,13 +61,19 @@ fun SheetEditContent(
     onSaveClick: (() -> Unit)? = null
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CustomTextFieldLabel(label = "Nama Makanan", enabled = false, onValueChange = {}, value = food.name)
         CustomTextFieldLabel(label = "Kalori", enabled = false, onValueChange = {}, value = food.calories.toString())
-        CustomTextFieldLabel(label = "Ukuran", onValueChange = {})
-        CustomTextFieldLabel(label = "Jumlah", onValueChange = {}, value = food.count.toString())
+        Row(modifier = Modifier.fillMaxWidth()) {
+            CustomTextFieldLabel(modifier = Modifier.weight(1f), label = "Ukuran", onValueChange = {})
+            Spacer(modifier = Modifier.width(18.dp))
+            CustomTextFieldLabel(modifier = Modifier.weight(1f),label = "Jumlah", onValueChange = {}, value = food.count.toString())
+        }
+
         ButtonWithIcon(
             modifier = Modifier.padding(top = 32.dp),
             text = "Simpan", icon = Icons.Default.Done, onClick = { onSaveClick?.let { it() } })
