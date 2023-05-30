@@ -2,7 +2,6 @@ package com.bangkit23.hidupsehat.presentation.screen.preference
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.bangkit23.hidupsehat.presentation.screen.preference.model.UserPreference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -35,10 +34,5 @@ class UserInformationViewModel @Inject constructor() : ViewModel() {
 
     fun setCurrentWeight(userWeight: String) {
         currentWeight.value = userWeight
-    }
-
-    fun saveUserPreferences(userPreference: UserPreference) {
-        //TODO_SAVE_TO_SERVER
-        userPreference.userAge
     }
 }

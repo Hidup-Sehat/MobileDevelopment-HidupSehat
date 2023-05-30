@@ -21,12 +21,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,18 +36,21 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bangkit23.hidupsehat.R
 import com.bangkit23.hidupsehat.presentation.components.ButtonWithIcon
+import com.bangkit23.hidupsehat.presentation.model.User
+import com.bangkit23.hidupsehat.presentation.screen.auth.common.GoogleAuthUiClient
 import com.bangkit23.hidupsehat.presentation.screen.preference.components.ItemGender
 import com.bangkit23.hidupsehat.presentation.screen.preference.components.PreferenceHeader
 import com.bangkit23.hidupsehat.presentation.screen.preference.components.UserPreferenceSection
 import com.bangkit23.hidupsehat.presentation.screen.preference.model.Gender
-import com.bangkit23.hidupsehat.presentation.screen.preference.model.UserPreference
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
+import com.google.android.gms.auth.api.identity.Identity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun UserInformationScreen(
+    user: User,
     choiceId: Int,
     weightTarget: String,
     navigateToHome: () -> Unit,
@@ -55,6 +60,16 @@ fun UserInformationScreen(
     val age by viewModel.age
     val height by viewModel.height
     val currentWeight by viewModel.currentWeight
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    val googleAuthUiClient = remember { 
+        GoogleAuthUiClient(
+            context = context.applicationContext,
+            onTapClient = Identity.getSignInClient(context.applicationContext)
+        )
+    }
+
     UserInformationContent(
         selectedGenderId = selectedGenderId,
         age = age,
@@ -65,17 +80,19 @@ fun UserInformationScreen(
         onHeightChange = viewModel::setUserHeight,
         onCurrentWeightChange = viewModel::setCurrentWeight,
         onFinishedClick = {
-            viewModel.saveUserPreferences(
-                UserPreference(
-                    targetChoiceId = choiceId,
-                    targetWeight = weightTarget,
-                    genderId = selectedGenderId,
-                    userHeight = height,
-                    userWeight = currentWeight,
-                    userAge = age
+            scope.launch {
+                googleAuthUiClient.saveUser(
+                    user.copy(
+                        targetUser = choiceId,
+                        targetWeight = weightTarget.toInt(),
+                        gender = selectedGenderId,
+                        age = age.toInt(),
+                        height = height.toInt(),
+                        currentWeight = currentWeight.toInt()
+                    )
                 )
-            )
-            navigateToHome()
+                navigateToHome()
+            }
         },
     )
 }

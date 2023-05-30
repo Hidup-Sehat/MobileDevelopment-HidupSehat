@@ -2,6 +2,7 @@ package com.bangkit23.hidupsehat.presentation.screen.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -50,8 +52,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bangkit23.hidupsehat.R
+import com.bangkit23.hidupsehat.domain.model.food.Food
 import com.bangkit23.hidupsehat.presentation.components.CardEmotionFeel
-import com.bangkit23.hidupsehat.presentation.model.Food
 import com.bangkit23.hidupsehat.presentation.screen.home.components.CardPersonalHealthInfo
 import com.bangkit23.hidupsehat.presentation.screen.home.components.HomeSection
 import com.bangkit23.hidupsehat.presentation.screen.home.components.SheetWriteFoodsManual
@@ -63,6 +65,7 @@ import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 @Composable
 fun HomeScreen(
     onScanClicked: () -> Unit,
+    onPoseMenuClicked: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val chosenEmotion by viewModel.chosenEmotion
@@ -71,17 +74,19 @@ fun HomeScreen(
         chosenEmotion = chosenEmotion,
         onEmotionChosen = viewModel::setEmotion,
         foods = foods,
-        onScanClicked = onScanClicked
+        onScanClicked = onScanClicked,
+        onPoseMenuClicked = onPoseMenuClicked
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeContent(
     chosenEmotion: Feel?,
     foods: List<Food>,
     onEmotionChosen: (Feel?) -> Unit,
     onScanClicked: () -> Unit,
+    onPoseMenuClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -121,7 +126,9 @@ fun HomeContent(
                     openBottomSheet = !openBottomSheet
                 }
             )
-            FeaturesMenu()
+            FeaturesMenu(
+                onPoseMenuClicked = onPoseMenuClicked
+            )
             HomeSection(
                 title = "Monitoring",
                 content = { MonitoringPager() }
@@ -132,6 +139,7 @@ fun HomeContent(
                     sheetState = sheetState,
                     onDismiss = { openBottomSheet = false },
                     onSaveClick = {},
+                    onItemClick = {}
                 )
             }
         }
@@ -179,6 +187,7 @@ fun TopAppBarWithProfile(
 
 @Composable
 fun FeaturesMenu(
+    onPoseMenuClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val itemsCard = listOf(
@@ -209,7 +218,7 @@ fun FeaturesMenu(
             .padding(12.dp)
     ) {
         Row {
-            CardFeatureMenu(itemsCard[0], modifier = Modifier.weight(1f))
+            CardFeatureMenu(itemsCard[0], modifier = Modifier.weight(1f).clickable { onPoseMenuClicked() })
             CardFeatureMenu(itemsCard[1], modifier = Modifier.weight(1f))
         }
         Row {
@@ -250,8 +259,10 @@ fun CardFeatureMenu(cardData: CardFeature, modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MonitoringPager(modifier: Modifier = Modifier) {
-    val pagerState = rememberPagerState()
+fun MonitoringPager(
+    modifier: Modifier = Modifier,
+    pagerState: PagerState = rememberPagerState(),
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.padding(top = 16.dp, bottom = 16.dp),
@@ -284,9 +295,9 @@ fun MonitoringPager(modifier: Modifier = Modifier) {
 
 @Composable
 fun DotsIndicator(
-    modifier: Modifier = Modifier,
     totalDots: Int,
     selectedIndex: Int,
+    modifier: Modifier = Modifier,
     selectedColor: Color = MaterialTheme.colorScheme.primary,
     unselectedColor: Color = MaterialTheme.colorScheme.secondaryContainer,
 ) {
@@ -327,7 +338,8 @@ fun HomeContentPreview() {
             foods = emptyList(),
             chosenEmotion = null,
             onEmotionChosen = {},
-            onScanClicked = {}
+            onScanClicked = {},
+            onPoseMenuClicked = {}
         )
     }
 }
