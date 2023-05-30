@@ -42,12 +42,11 @@ fun CustomTextField(
         placeholder = {
             Text(text = label)
         },
-        shape = RoundedCornerShape(15.dp),
+        shape = RoundedCornerShape(16.dp),
         trailingIcon = trailingIcon,
         visualTransformation = visualTransformation,
         keyboardOptions = keyboardOptions
     )
-
 }
 
 @Composable

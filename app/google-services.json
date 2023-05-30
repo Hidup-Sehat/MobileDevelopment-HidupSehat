@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1066502000503",
+    "project_id": "hidup-sehat-server",
+    "storage_bucket": "hidup-sehat-server.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1066502000503:android:483ec038b1f303f9429b72",
+        "android_client_info": {
+          "package_name": "com.bangkit23.hidupsehat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1066502000503-hgv2mc8h5a86qn49bvv84j7mgkmagb2g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bangkit23.hidupsehat",
+            "certificate_hash": "d1fcf2fe18e7fecf3199af96b26a61dcaef4a908"
+          }
+        },
+        {
+          "client_id": "1066502000503-spu4t12ij6tu7hqacp3itv8k4o6gj0o4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHtL-0wX2w76nucMtk0cJDZWF9mMr0l3E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1066502000503-glaru3t1e0uearn0kv5tq8eph609cnd0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

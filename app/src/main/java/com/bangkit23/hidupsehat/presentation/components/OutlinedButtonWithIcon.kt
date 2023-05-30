@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,7 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bangkit23.hidupsehat.R
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
-import com.bangkit23.hidupsehat.presentation.ui.theme.md_theme_light_primary
 
 @Composable
 fun OutlinedButtonWithIcon(
@@ -46,9 +46,9 @@ fun OutlinedButtonWithIcon(
 fun OutlinedButtonWithIcon(
     text: String,
     icon: Painter,
-    textColor: Color = md_theme_light_primary,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    textColor: Color = MaterialTheme.colorScheme.primary,
     contentDescription: String? = null,
 ) {
     OutlinedButton(

@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -21,30 +23,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bangkit23.hidupsehat.domain.model.food.Food
 import com.bangkit23.hidupsehat.presentation.components.ButtonWithIcon
 import com.bangkit23.hidupsehat.presentation.components.SheetWithHeader
-import com.bangkit23.hidupsehat.presentation.model.Food
 import com.bangkit23.hidupsehat.presentation.screen.scanfood_edit.components.CustomTextFieldLabel
-import com.bangkit23.hidupsehat.presentation.ui.theme.md_theme_light_error
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScanFoodResultEditScreen(
-    modifier: Modifier = Modifier,
-    food: Food,
+    food: Food?,
     onDismiss: (() -> Unit)? = null,
     onSaveClick: (() -> Unit)? = null,
     onDeleteClick: (() -> Unit)? = null,
     sheetState: SheetState = rememberModalBottomSheetState(
         confirmValueChange = { false },
         skipPartiallyExpanded = true
-    )
+    ),
 ) {
     if (onDismiss != null) {
         SheetWithHeader(
             sheetState = sheetState,
             contentBody = {
-                SheetEditContent(food = food
+                SheetEditContent(
+                    food = food
                 )
             }, onDismiss = onDismiss,
             contentHeader = {
@@ -57,8 +58,8 @@ fun ScanFoodResultEditScreen(
 
 @Composable
 fun SheetEditContent(
-    food : Food,
-    onSaveClick: (() -> Unit)? = null
+    food: Food?,
+    onSaveClick: (() -> Unit)? = null,
 ) {
     Column(
         modifier = Modifier
@@ -66,12 +67,32 @@ fun SheetEditContent(
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        CustomTextFieldLabel(label = "Nama Makanan", enabled = false, onValueChange = {}, value = food.name)
-        CustomTextFieldLabel(label = "Kalori", enabled = false, onValueChange = {}, value = food.calories.toString())
+        CustomTextFieldLabel(
+            label = "Nama Makanan",
+            enabled = false,
+            onValueChange = {},
+            value = "${food?.name}"
+        )
+        Spacer(Modifier.height(16.dp))
+        CustomTextFieldLabel(
+            label = "Kalori",
+            enabled = false,
+            onValueChange = {},
+            value = "${food?.energyKKal}"
+        )
+        Spacer(Modifier.height(16.dp))
         Row(modifier = Modifier.fillMaxWidth()) {
-            CustomTextFieldLabel(modifier = Modifier.weight(1f), label = "Ukuran", onValueChange = {})
-            Spacer(modifier = Modifier.width(18.dp))
-            CustomTextFieldLabel(modifier = Modifier.weight(1f),label = "Jumlah", onValueChange = {}, value = food.count.toString())
+            CustomTextFieldLabel(
+                modifier = Modifier.weight(1f),
+                label = "Takaran",
+                onValueChange = {})
+            Spacer(modifier = Modifier.width(8.dp))
+            CustomTextFieldLabel(
+                modifier = Modifier.weight(1f),
+                label = "Jumlah",
+                onValueChange = {},
+                value = food?.count.toString()
+            )
         }
 
         ButtonWithIcon(
@@ -82,7 +103,7 @@ fun SheetEditContent(
 
 @Composable
 fun SheetEditHeader(
-    onDeleteClick: (() -> Unit)? = null
+    onDeleteClick: (() -> Unit)? = null,
 ) {
     Row(
         modifier = Modifier
@@ -99,7 +120,7 @@ fun SheetEditHeader(
             text = "Hapus",
             fontWeight = FontWeight.Medium,
             fontSize = 14.sp,
-            color = md_theme_light_error
+            color = MaterialTheme.colorScheme.error
         )
     }
 }

@@ -3,7 +3,7 @@ package com.bangkit23.hidupsehat.presentation.screen.home
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.bangkit23.hidupsehat.presentation.model.Food
+import com.bangkit23.hidupsehat.domain.model.food.Food
 import com.bangkit23.hidupsehat.presentation.screen.home.model.Feel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

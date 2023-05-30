@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -30,9 +31,16 @@ import androidx.navigation.get
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.bangkit23.hidupsehat.R
+import com.bangkit23.hidupsehat.presentation.common.AuthSharedViewModel
+import com.bangkit23.hidupsehat.presentation.common.ExerciseSharedViewModel
 import com.bangkit23.hidupsehat.presentation.common.ScanSharedViewModel
+import com.bangkit23.hidupsehat.presentation.model.User
 import com.bangkit23.hidupsehat.presentation.navigation.NavigationItem
 import com.bangkit23.hidupsehat.presentation.navigation.Screen
+import com.bangkit23.hidupsehat.presentation.screen.auth.login.LoginScreen
+import com.bangkit23.hidupsehat.presentation.screen.auth.register.RegisterScreen
+import com.bangkit23.hidupsehat.presentation.screen.exercise.ExerciseScreen
+import com.bangkit23.hidupsehat.presentation.screen.exercise_play.ExercisePlayScreen
 import com.bangkit23.hidupsehat.presentation.screen.feeds.FeedScreen
 import com.bangkit23.hidupsehat.presentation.screen.home.HomeScreen
 import com.bangkit23.hidupsehat.presentation.screen.preference.UserInformationScreen
@@ -40,11 +48,13 @@ import com.bangkit23.hidupsehat.presentation.screen.preference.UserTargetScreen
 import com.bangkit23.hidupsehat.presentation.screen.scanfood.ScanFoodScreen
 import com.bangkit23.hidupsehat.presentation.screen.scanfood_result.ScanFoodResultScreen
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
+import com.bangkit23.hidupsehat.util.toUser
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HidupSehatApp(
     modifier: Modifier = Modifier,
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -67,6 +77,9 @@ fun HidupSehatApp(
                 HomeScreen(
                     onScanClicked = {
                         navController.navigate("scan-graph")
+                    },
+                    onPoseMenuClicked = {
+                        navController.navigate("exercise-graph")
                     }
                 )
             }
@@ -74,9 +87,36 @@ fun HidupSehatApp(
                 FeedScreen()
             }
             navigation(
-                startDestination = Screen.PreferenceTarget.route,
+                startDestination = Screen.Login.route,
                 route = "auth-graph"
             ) {
+                composable(Screen.Login.route) { entry ->
+                    val viewModel = entry.sharedViewModel<AuthSharedViewModel>(navController)
+                    LoginScreen(
+                        onLoggedIn = {
+                            navController.navigate(Screen.Home.route)
+                        },
+                        moveToUserPreference = { userData ->
+                            viewModel.setUser(userData?.toUser() ?: User())
+                            navController.navigate(Screen.PreferenceTarget.route)
+                        },
+                        onRegisterClick = {
+                            navController.navigate(Screen.Register.route)
+                        }
+                    )
+                }
+                composable(Screen.Register.route) { entry ->
+                    val viewModel = entry.sharedViewModel<AuthSharedViewModel>(navController)
+                    RegisterScreen(
+                        onRegistered = {
+                            navController.navigate(Screen.Home.route)
+                        },
+                        moveToUserPreference = { userData ->
+                            viewModel.setUser(userData?.toUser() ?: User())
+                            navController.navigate(Screen.PreferenceTarget.route)
+                        }
+                    )
+                }
                 composable(Screen.PreferenceTarget.route) {
                     UserTargetScreen(
                         onNextClick = { choiceId, targetWeight ->
@@ -89,13 +129,16 @@ fun HidupSehatApp(
                 composable(
                     Screen.PreferenceInformation.route,
                     arguments = listOf(
-                        navArgument("choiceId") { NavType.IntType },
-                        navArgument("weightTarget") { NavType.StringType }
+                        navArgument("choiceId") { type = NavType.IntType },
+                        navArgument("weightTarget") { type = NavType.StringType }
                     )
-                ) {
-                    val choiceId = it.arguments?.getInt("choiceId") ?: -1
-                    val weightTarget = it.arguments?.getString("weightTarget") ?: "0"
+                ) { entry ->
+                    val viewModel = entry.sharedViewModel<AuthSharedViewModel>(navController)
+                    val user by viewModel.user.collectAsStateWithLifecycle()
+                    val choiceId = entry.arguments?.getInt("choiceId") ?: -1
+                    val weightTarget = entry.arguments?.getString("weightTarget") ?: "0"
                     UserInformationScreen(
+                        user = user,
                         choiceId = choiceId,
                         weightTarget = weightTarget,
                         navigateToHome = {
@@ -134,6 +177,33 @@ fun HidupSehatApp(
                     }
                 }
             }
+            navigation(
+                startDestination = "exercise",
+                route = "exercise-graph"
+            ) {
+                composable("exercise") { entry ->
+                    val viewModel = entry.sharedViewModel<ExerciseSharedViewModel>(navController)
+                    ExerciseScreen(
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        },
+                        moveToExercisePlay = { exercise ->
+                            viewModel.setExercise(exercise)
+                            navController.navigate("exercise-play")
+                        }
+                    )
+                }
+                composable("exercise-play") { entry ->
+                    val viewModel = entry.sharedViewModel<ExerciseSharedViewModel>(navController)
+                    val exercise by viewModel.exercise.collectAsStateWithLifecycle()
+                    ExercisePlayScreen(
+                        exercise = exercise,
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        }
+                    )
+                }
+            }
         }
     }
 }
@@ -161,7 +231,7 @@ inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(
 @Composable
 fun BottomAppBar(
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route

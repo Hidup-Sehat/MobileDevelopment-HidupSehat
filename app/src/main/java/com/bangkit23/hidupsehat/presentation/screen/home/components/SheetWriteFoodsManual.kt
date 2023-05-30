@@ -27,10 +27,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.bangkit23.hidupsehat.domain.model.food.Food
 import com.bangkit23.hidupsehat.presentation.components.ButtonWithIcon
 import com.bangkit23.hidupsehat.presentation.components.OutlinedButtonWithIcon
 import com.bangkit23.hidupsehat.presentation.components.SheetWithHeader
-import com.bangkit23.hidupsehat.presentation.model.Food
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,6 +39,7 @@ fun SheetWriteFoodsManual(
     foods: List<Food>,
     onDismiss: () -> Unit,
     onSaveClick: () -> Unit,
+    onItemClick: (Food) -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(
         confirmValueChange = {
@@ -56,7 +57,8 @@ fun SheetWriteFoodsManual(
         },
         contentBody = {
             BodySheetFoods(
-                foods = foods
+                foods = foods,
+                onItemClick = onItemClick
             )
         },
         modifier = modifier
@@ -97,6 +99,7 @@ fun HeaderSheetFoods(
 @Composable
 fun BodySheetFoods(
     foods: List<Food>,
+    onItemClick: (Food) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -130,10 +133,13 @@ fun BodySheetFoods(
         }
         items(items = foods) {
             ItemFood(
-                name = it.name,
+                name = "${it.name}",
                 count = it.count,
-                size = 1,
-                calories = it.calories.toDouble(),
+                portionSize = it.portionSize ?: "",
+                calories = it.energyKKal ?: 0.0,
+                onItemClick = {
+                    onItemClick(it)
+                }
             )
         }
         item {
@@ -156,17 +162,15 @@ fun BodySheetFoods(
 fun ItemFood(
     name: String,
     count: Int,
-    size: Int,
+    portionSize: String,
     calories: Double,
-    onItemClick: (() -> Unit)? = null,
+    onItemClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .padding(horizontal = 16.dp)
-            .clickable {
-                onItemClick?.let { it() }
-            }
+            .clickable { onItemClick() }
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -179,7 +183,7 @@ fun ItemFood(
                 modifier = Modifier.width(112.dp)
             )
             Text(
-                text = "$size",
+                text = portionSize,
                 modifier = Modifier
             )
             Text(
@@ -203,7 +207,7 @@ fun ItemFoodPreview() {
         ItemFood(
             name = "Ayam Goreng",
             count = 40,
-            size = 5,
+            portionSize = "",
             calories = 46.0,
             onItemClick = {}
         )
@@ -215,7 +219,8 @@ fun ItemFoodPreview() {
 fun PreviewSheetWriteFoodsManual() {
     HidupSehatTheme {
         BodySheetFoods(
-            foods = listOf(Food("Kentang", 3, 500))
+            foods = emptyList(),
+            onItemClick = {}
         )
     }
 }
