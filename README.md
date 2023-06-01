@@ -1,5 +1,8 @@
 # Hidup Sehat - Mobile Development
 
+### Architecture
+We use MVVM (Model View ViewModel) design pattern with a Clean Architecture.
+
 ### Requirements
 - Minimum SDK 21
 - Target SDK 33
