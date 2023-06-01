@@ -1,6 +1,6 @@
 # Hidup Sehat - Mobile Development
 
-# Requirements
+### Requirements
 - Minimum SDK 21
 - Target SDK 33
 - JDK 17
@@ -8,7 +8,7 @@
 - Android Gradle Plugin 8.1.0
 - Gradle 8.0
 
-# Dependencies
+### Dependencies
 - [Material 3](https://m3.material.io/)
 - [Jetpack Compose](https://developer.android.com/jetpack/compose?gclid=CjwKCAjwg-GjBhBnEiwAMUvNW3yzekVX4nip-iL9Zw-ANUPQ_4eFDIJ0NU5Do0dTMhZCX6caIh3J8BoCdgoQAvD_BwE&gclsrc=aw.ds&hl=id)
 - [Firebase Auth](https://firebase.google.com/docs/auth/android/google-signin?hl=id)
