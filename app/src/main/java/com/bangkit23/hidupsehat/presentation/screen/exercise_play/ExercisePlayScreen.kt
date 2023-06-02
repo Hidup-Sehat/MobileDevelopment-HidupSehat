@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -21,9 +23,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -38,10 +42,12 @@ import com.bangkit23.hidupsehat.util.executor
 import com.bangkit23.hidupsehat.util.getCameraProvider
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionRequired
+import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ExercisePlayScreen(
     exercise: Exercise,
@@ -54,11 +60,11 @@ fun ExercisePlayScreen(
 
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(key1 = state.currentPosePosition) {
-        delay(20000L)
-        viewModel.onEvent(ExercisePlayEvent.OnTimerEnd(state.currentPosePosition))
-    }
-    LaunchedEffect(key1 = state.isExerciseDone) {
+    LaunchedEffect(key1 = state.poseScore, key2 = state.isExerciseDone) {
+        if (state.poseScore > 0.9) {
+            viewModel.onEvent(ExercisePlayEvent.OnPosePerfect(state.currentPosePosition))
+        }
+
         if (state.isExerciseDone) {
             onNavigateUp()
         }
@@ -67,8 +73,12 @@ fun ExercisePlayScreen(
     ExercisePlayContent(
         score = state.poseScore,
         poseImage = exercise.poses[state.currentPosePosition].image,
+        isTimerShouldStarted = state.isTimerStarted,
+        timer = state.timer,
         onAngleChange = {
-            viewModel.onEvent(ExercisePlayEvent.SetScore(it))
+            if (state.poseScore <= 0.9) {
+                viewModel.onEvent(ExercisePlayEvent.SetScore(it))
+            }
         },
         onNoPerson = {
             viewModel.onEvent(ExercisePlayEvent.ResetScore)
@@ -81,16 +91,16 @@ fun ExercisePlayScreen(
 fun ExercisePlayContent(
     score: Double,
     poseImage: String,
+    isTimerShouldStarted: Boolean,
+    timer: Int,
     onAngleChange: (PersonBodyAngle) -> Unit,
     onNoPerson: () -> Unit,
     modifier: Modifier = Modifier,
     cameraSelector: CameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA,
+    systemUiController: SystemUiController = rememberSystemUiController(),
+    permissionState: PermissionState = rememberPermissionState(Manifest.permission.CAMERA),
 ) {
     val context = LocalContext.current
-    val systemUiController = rememberSystemUiController()
-    val permissionState = rememberPermissionState(
-        Manifest.permission.CAMERA
-    )
     val poseDetector by remember {
         mutableStateOf(
             MoveNet.create(context, Device.CPU)
@@ -159,6 +169,17 @@ fun ExercisePlayContent(
                         .rotate(90f)
                         .offset(x = 48.dp, y = (-48).dp)
                 )
+                if (isTimerShouldStarted) {
+                    Text(
+                        text = "$timer",
+                        style = MaterialTheme.typography.displayLarge,
+                        color = Color.Red,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .rotate(90f)
+                    )
+                }
             }
             LaunchedEffect(surfaceView, imageAnalyzer) {
                 val cameraProvider = context.getCameraProvider()

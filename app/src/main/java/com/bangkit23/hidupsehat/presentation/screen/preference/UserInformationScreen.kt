@@ -20,30 +20,28 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bangkit23.hidupsehat.R
 import com.bangkit23.hidupsehat.presentation.components.ButtonWithIcon
 import com.bangkit23.hidupsehat.presentation.model.User
-import com.bangkit23.hidupsehat.presentation.screen.auth.common.GoogleAuthUiClient
 import com.bangkit23.hidupsehat.presentation.screen.preference.components.ItemGender
 import com.bangkit23.hidupsehat.presentation.screen.preference.components.PreferenceHeader
 import com.bangkit23.hidupsehat.presentation.screen.preference.components.UserPreferenceSection
 import com.bangkit23.hidupsehat.presentation.screen.preference.model.Gender
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
-import com.google.android.gms.auth.api.identity.Identity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
@@ -54,45 +52,53 @@ fun UserInformationScreen(
     choiceId: Int,
     weightTarget: String,
     navigateToHome: () -> Unit,
-    viewModel: UserInformationViewModel = hiltViewModel()
+    viewModel: UserInformationViewModel = hiltViewModel(),
 ) {
-    val selectedGenderId by viewModel.selectedGenderId
-    val age by viewModel.age
-    val height by viewModel.height
-    val currentWeight by viewModel.currentWeight
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
-    val googleAuthUiClient = remember { 
-        GoogleAuthUiClient(
-            context = context.applicationContext,
-            onTapClient = Identity.getSignInClient(context.applicationContext)
-        )
+    LaunchedEffect(key1 = state.success) {
+        if (state.success) {
+            navigateToHome()
+        }
     }
 
     UserInformationContent(
-        selectedGenderId = selectedGenderId,
-        age = age,
-        height = height,
-        currentWeight = currentWeight,
-        onAgeChange = viewModel::setUserAge,
-        onGenderChosen = viewModel::setSelectedGenderId,
-        onHeightChange = viewModel::setUserHeight,
-        onCurrentWeightChange = viewModel::setCurrentWeight,
+        selectedGenderId = state.selectedGenderId,
+        age = state.age,
+        height = state.height,
+        currentWeight = state.currentWeight,
+        onAgeChange = {
+            viewModel.onEvent(UserInformationEvent.OnAgeChanged(it))
+        },
+        onGenderChosen = {
+            viewModel.onEvent(UserInformationEvent.OnGenderIdChanged(it))
+        },
+        onHeightChange = {
+            viewModel.onEvent(UserInformationEvent.OnHeightChanged(it))
+        },
+        onCurrentWeightChange = {
+            viewModel.onEvent(UserInformationEvent.OnCurrentWeightChanged(it))
+        },
         onFinishedClick = {
-            scope.launch {
-                googleAuthUiClient.saveUser(
-                    user.copy(
-                        targetUser = choiceId,
-                        targetWeight = weightTarget.toInt(),
-                        gender = selectedGenderId,
-                        age = age.toInt(),
-                        height = height.toInt(),
-                        currentWeight = currentWeight.toInt()
-                    )
+            viewModel.onEvent(
+                UserInformationEvent.CreateUserDetailPreferences(
+                    username = user.name.toString(),
+                    name = user.name.toString(),
+                    age = state.age.toIntOrNull() ?: 0,
+                    gender = if (user.gender == 0) "Male" else "Female",
+                    height = state.height.toIntOrNull() ?: 0,
+                    weight = state.currentWeight.toIntOrNull() ?: 0,
+                    target = when (choiceId) {
+                        0 -> "Menurunkan berat badan"
+                        1 -> "Menjaga berat badan"
+                        2 -> "Menaikkan berat badan"
+                        else -> "Unknown Target"
+                    },
+                    weightTarget = weightTarget.toIntOrNull() ?: 0,
+                    contactNumber = "",
+                    dateOfBirth = "",
                 )
-                navigateToHome()
-            }
+            )
         },
     )
 }
@@ -108,7 +114,7 @@ fun UserInformationContent(
     onHeightChange: (String) -> Unit,
     onCurrentWeightChange: (String) -> Unit,
     onFinishedClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
@@ -256,17 +262,20 @@ fun UserInformationBody(
 fun GenderChoices(
     selectedGenderId: Int,
     onGenderChosen: (genderId: Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val genders = listOf(
-        Gender(id = 0, title = "Laki-laki", avatar = ImageVector.vectorResource(R.drawable.ic_male)),
+        Gender(
+            id = 0,
+            title = "Laki-laki",
+            avatar = ImageVector.vectorResource(R.drawable.ic_male)
+        ),
         Gender(id = 1, title = "Perempuan", avatar = ImageVector.vectorResource(R.drawable.ic_girl))
     )
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier
-            .fillMaxWidth()
-        ,
+            .fillMaxWidth(),
     ) {
         genders.forEach { gender ->
             ItemGender(

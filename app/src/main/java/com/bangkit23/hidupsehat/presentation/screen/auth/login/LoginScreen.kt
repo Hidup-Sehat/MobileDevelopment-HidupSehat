@@ -21,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,71 +38,59 @@ import com.bangkit23.hidupsehat.presentation.components.CustomTextField
 import com.bangkit23.hidupsehat.presentation.components.OutlinedButtonWithIcon
 import com.bangkit23.hidupsehat.presentation.components.PasswordTextField
 import com.bangkit23.hidupsehat.presentation.components.TextWithSupport
-import com.bangkit23.hidupsehat.presentation.screen.auth.common.GoogleAuthUiClient
+import com.bangkit23.hidupsehat.presentation.screen.auth.common.signInIntentSender
 import com.bangkit23.hidupsehat.presentation.screen.auth.components.SpannableText
 import com.bangkit23.hidupsehat.presentation.screen.auth.components.TextOr
 import com.bangkit23.hidupsehat.presentation.screen.auth.model.UserData
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
-import com.google.android.gms.auth.api.identity.Identity
 import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
-    onLoggedIn: () -> Unit,
+    navigateToHome: () -> Unit,
     moveToUserPreference: (userData: UserData?) -> Unit,
     onRegisterClick: () -> Unit,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
-    val email by viewModel.email
-    val password by viewModel.password
-    val loginState by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-
-    val googleSignInClient = remember {
-        GoogleAuthUiClient(
-            context = context.applicationContext,
-            onTapClient = Identity.getSignInClient(context.applicationContext)
-        )
-    }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
         onResult = { result ->
             if (result.resultCode == RESULT_OK) {
                 scope.launch {
-                    val signInResult = googleSignInClient.signInWithIntent(
-                        intent = result.data ?: return@launch
-                    )
-                    viewModel.onSignInResult(signInResult)
+                    viewModel.onEvent(LoginEvent.SignInGoogleWithIntent(result.data ?: return@launch))
                 }
             }
         }
     )
 
-    LaunchedEffect(key1 = loginState.isSignInSuccessful) {
-        if (loginState.isSignInSuccessful) {
-            moveToUserPreference(loginState.userData)
-//            else onLoggedIn()
-            viewModel.resetState()
+    LaunchedEffect(key1 = state.signInSuccessful) {
+        if (state.signInSuccessful) {
+            if (state.signInResult?.data?.isNewUser == true) moveToUserPreference(state.signInResult?.data)
+            else navigateToHome()
+            viewModel.onEvent(LoginEvent.ResetState)
         }
     }
 
     LoginContent(
-        email = email,
-        password = password,
-        onEmailChanged = viewModel::setEmail,
-        onPasswordChanged = viewModel::setPassword,
+        email = state.email,
+        password = state.password,
+        onEmailChanged = {
+            viewModel.onEvent(LoginEvent.OnEmailChanged(it))
+        },
+        onPasswordChanged = {
+            viewModel.onEvent(LoginEvent.OnPasswordChanged(it))
+        },
         onRegisterClick = onRegisterClick,
         onLoggedIn = {
-            scope.launch {
-                val signInResult = googleSignInClient.signInWithEmail(email, password)
-                viewModel.onSignInResult(signInResult)
-            }
+            viewModel.onEvent(LoginEvent.LoginWithEmailPassword(state.email, state.password))
         },
         onSignInWithGoogleClick = {
             scope.launch {
-                val signInIntentSender = googleSignInClient.signIn()
+                val signInIntentSender = signInIntentSender(context)
                 launcher.launch(
                     IntentSenderRequest.Builder(
                         signInIntentSender ?: return@launch

@@ -32,7 +32,7 @@ fun TableFoodItem(
     count: Int?,
     energyKKal: Double?,
     portionSizes: List<Food>,
-    onDropDownItemClick: (Food) -> Unit,
+    onDropDownItemClick: (Food, Int?) -> Unit,
     onPortionSizeClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -95,7 +95,7 @@ fun TableFoodItem(
                 isContextMenuVisible = false
             },
             onDropDownItemClick = {
-                onDropDownItemClick(it)
+                onDropDownItemClick(it, count)
                 isContextMenuVisible = false
             }
         )

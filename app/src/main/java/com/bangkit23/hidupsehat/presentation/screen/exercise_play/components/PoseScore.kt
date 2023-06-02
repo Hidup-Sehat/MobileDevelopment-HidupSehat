@@ -67,7 +67,6 @@ fun ScoreProgressBar(
             .size(160.dp)
             .padding(8.dp)
     ) {
-        // Background Line
         drawArc(
             color = backgroundColor,
             140f,

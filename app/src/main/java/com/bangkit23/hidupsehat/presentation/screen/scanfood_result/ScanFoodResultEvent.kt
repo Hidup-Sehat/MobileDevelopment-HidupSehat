@@ -12,7 +12,9 @@ sealed class ScanFoodResultEvent {
     object ShowDialogAddFoods : ScanFoodResultEvent()
     object HideDialogAddFoods : ScanFoodResultEvent()
     object HideDialogEditFood : ScanFoodResultEvent()
-    data class ChangePortionSize(val food: Food) : ScanFoodResultEvent()
+    data class ChangePortionSize(val food: Food, val count: Int?) : ScanFoodResultEvent()
     data class ShowDropDownPortionSize(val food: Food) : ScanFoodResultEvent()
     object HideDropDownPortionSize : ScanFoodResultEvent()
+    data class DeleteFood(val food: Food?) : ScanFoodResultEvent()
+    data class SaveEditedFood(val food: Food?) : ScanFoodResultEvent()
 }
