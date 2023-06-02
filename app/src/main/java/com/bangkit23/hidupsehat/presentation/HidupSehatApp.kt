@@ -1,7 +1,10 @@
 package com.bangkit23.hidupsehat.presentation
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,8 +18,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -29,6 +34,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.get
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
 import com.bangkit23.hidupsehat.R
 import com.bangkit23.hidupsehat.presentation.common.AuthSharedViewModel
@@ -45,6 +51,10 @@ import com.bangkit23.hidupsehat.presentation.screen.feeds.FeedScreen
 import com.bangkit23.hidupsehat.presentation.screen.home.HomeScreen
 import com.bangkit23.hidupsehat.presentation.screen.preference.UserInformationScreen
 import com.bangkit23.hidupsehat.presentation.screen.preference.UserTargetScreen
+import com.bangkit23.hidupsehat.presentation.screen.profile.ChangePasswordScreen
+import com.bangkit23.hidupsehat.presentation.screen.profile.FaqScreen
+import com.bangkit23.hidupsehat.presentation.screen.profile.ProfileScreen
+import com.bangkit23.hidupsehat.presentation.screen.profile.UpdateProfile
 import com.bangkit23.hidupsehat.presentation.screen.scanfood.ScanFoodScreen
 import com.bangkit23.hidupsehat.presentation.screen.scanfood_result.ScanFoodResultScreen
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
@@ -58,6 +68,7 @@ fun HidupSehatApp(
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val context = LocalContext.current
     Scaffold(
         modifier = modifier,
         bottomBar = {
@@ -80,6 +91,9 @@ fun HidupSehatApp(
                     },
                     onPoseMenuClicked = {
                         navController.navigate("exercise-graph")
+                    },
+                    onProfileClicked = {
+                        navController.navigate("profile-graph")
                     }
                 )
             }
@@ -202,6 +216,58 @@ fun HidupSehatApp(
                             navController.navigateUp()
                         }
                     )
+                }
+            }
+            navigation(
+                startDestination = "profile",
+                route = "profile-graph"
+            ) {
+                composable("profile") {
+                    ProfileScreen(
+                        moveToUpdateProfile = {
+                            navController.navigate("update-profile")
+                        },
+                        moveToChangePassword = {
+                            navController.navigate("change-password")
+                        },
+                        moveToFaq = {
+                            navController.navigate("faq")
+                        },
+                        moveToRating = {
+                            navController.navigate("rating")
+                        },
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        }
+                    )
+                }
+                composable("update-profile") {
+                    UpdateProfile(
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        }
+                    )
+                }
+                composable("change-password") {
+                    ChangePasswordScreen(
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        }
+                    )
+                }
+                composable("faq") {
+                    FaqScreen(
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        },
+                        faq = listOf("Pertanyaan 1"))
+                }
+                composable("rating", deepLinks = listOf(navDeepLink {
+                    uriPattern = "https://play.google.com/store/apps/details?id=com.gojek.app"
+                })) {
+                    val uri = Uri.parse("https://play.google.com/store/apps/details?id=com.gojek.app")
+                    val intent = Intent(Intent.ACTION_VIEW, uri)
+                    context.startActivity(intent)
                 }
             }
         }

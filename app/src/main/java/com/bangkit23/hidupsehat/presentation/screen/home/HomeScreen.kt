@@ -66,6 +66,7 @@ import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 fun HomeScreen(
     onScanClicked: () -> Unit,
     onPoseMenuClicked: () -> Unit,
+    onProfileClicked: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val chosenEmotion by viewModel.chosenEmotion
@@ -75,7 +76,8 @@ fun HomeScreen(
         onEmotionChosen = viewModel::setEmotion,
         foods = foods,
         onScanClicked = onScanClicked,
-        onPoseMenuClicked = onPoseMenuClicked
+        onPoseMenuClicked = onPoseMenuClicked,
+        onProfileClicked = onProfileClicked
     )
 }
 
@@ -87,6 +89,7 @@ fun HomeContent(
     onEmotionChosen: (Feel?) -> Unit,
     onScanClicked: () -> Unit,
     onPoseMenuClicked: () -> Unit,
+    onProfileClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -95,7 +98,9 @@ fun HomeContent(
                 name = "Rijal",
                 userAvatar = "",
                 onNotificationClick = {},
-                onProfileClick = {}
+                onProfileClick = {
+                    onProfileClicked()
+                }
             )
         }
     ) {
@@ -339,7 +344,8 @@ fun HomeContentPreview() {
             chosenEmotion = null,
             onEmotionChosen = {},
             onScanClicked = {},
-            onPoseMenuClicked = {}
+            onPoseMenuClicked = {},
+            onProfileClicked = {}
         )
     }
 }
