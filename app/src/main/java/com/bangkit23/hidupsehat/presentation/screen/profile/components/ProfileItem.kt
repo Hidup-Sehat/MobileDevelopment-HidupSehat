@@ -24,10 +24,11 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun ProfileItem(
+    modifier : Modifier = Modifier,
     title : String,
     icon : ImageVector,
 ) {
-    Column(modifier = Modifier
+    Column(modifier = modifier
         .fillMaxWidth()
         .height(56.dp)) {
         Row(modifier = Modifier
