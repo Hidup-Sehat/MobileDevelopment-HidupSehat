@@ -57,9 +57,9 @@ fun UserInformationScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = state.success) {
-        if (state.success) {
-            navigateToHome()
-        }
+//        if (state.success) {
+//            navigateToHome()
+//        }
     }
 
     UserInformationContent(
@@ -80,6 +80,7 @@ fun UserInformationScreen(
             viewModel.onEvent(UserInformationEvent.OnCurrentWeightChanged(it))
         },
         onFinishedClick = {
+            navigateToHome()
             viewModel.onEvent(
                 UserInformationEvent.CreateUserDetailPreferences(
                     username = user.name.toString(),
