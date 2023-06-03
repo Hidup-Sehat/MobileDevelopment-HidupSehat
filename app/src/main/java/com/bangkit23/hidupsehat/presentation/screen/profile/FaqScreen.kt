@@ -3,7 +3,6 @@ package com.bangkit23.hidupsehat.presentation.screen.profile
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -90,7 +89,7 @@ fun ItemFaq(question : String, answer : String) {
 @Preview(showBackground = true)
 @Composable
 fun FaqScreenPrev() {
-    val list = listOf<String>(
+    val list = listOf(
         "Pertanyaan 1",
         "Pertanyaan 2",
         "Pertanyaan 3",

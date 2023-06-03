@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.rounded.Call
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,7 +20,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -49,6 +47,7 @@ import com.bangkit23.hidupsehat.presentation.screen.exercise.ExerciseScreen
 import com.bangkit23.hidupsehat.presentation.screen.exercise_play.ExercisePlayScreen
 import com.bangkit23.hidupsehat.presentation.screen.feeds.FeedScreen
 import com.bangkit23.hidupsehat.presentation.screen.home.HomeScreen
+import com.bangkit23.hidupsehat.presentation.screen.leaderboard.LeaderboardScreen
 import com.bangkit23.hidupsehat.presentation.screen.preference.UserInformationScreen
 import com.bangkit23.hidupsehat.presentation.screen.preference.UserTargetScreen
 import com.bangkit23.hidupsehat.presentation.screen.profile.ChangePasswordScreen
@@ -100,6 +99,9 @@ fun HidupSehatApp(
             composable(Screen.Feeds.route) {
                 FeedScreen(data = listOf())
             }
+            composable(Screen.Leaderboard.route) {
+                LeaderboardScreen()
+            }
             navigation(
                 startDestination = Screen.Login.route,
                 route = "auth-graph"
@@ -107,7 +109,7 @@ fun HidupSehatApp(
                 composable(Screen.Login.route) { entry ->
                     val viewModel = entry.sharedViewModel<AuthSharedViewModel>(navController)
                     LoginScreen(
-                        onLoggedIn = {
+                        navigateToHome = {
                             navController.navigate(Screen.Home.route)
                         },
                         moveToUserPreference = { userData ->
@@ -122,7 +124,7 @@ fun HidupSehatApp(
                 composable(Screen.Register.route) { entry ->
                     val viewModel = entry.sharedViewModel<AuthSharedViewModel>(navController)
                     RegisterScreen(
-                        onRegistered = {
+                        navigateToHome = {
                             navController.navigate(Screen.Home.route)
                         },
                         moveToUserPreference = { userData ->
@@ -186,7 +188,8 @@ fun HidupSehatApp(
                         ScanFoodResultScreen(
                             imageResult = it,
                             listDetection = results,
-                            onRescanClick = { navController.navigateUp() }
+                            onRescanClick = { navController.navigateUp() },
+                            onNavigateUp = { navController.navigateUp() }
                         )
                     }
                 }

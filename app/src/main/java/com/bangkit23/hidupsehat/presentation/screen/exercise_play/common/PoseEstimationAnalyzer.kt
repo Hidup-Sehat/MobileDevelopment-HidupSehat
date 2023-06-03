@@ -71,9 +71,9 @@ fun getAngle(firstPoint: KeyPoint, midPoint: KeyPoint, lastPoint: KeyPoint): Dou
             firstPoint.coordinate.x - midPoint.coordinate.x
         ).toDouble()
     )
-    result = abs(result) // Angle should never be negative
+    result = abs(result)
     if (result > 180) {
-        result = 360.0 - result // Always get the acute representation of the angle
+        result = 360.0 - result
     }
     return result
 }
@@ -121,8 +121,8 @@ private fun visualize(person: Person, bitmap: Bitmap, surfaceView: SurfaceView) 
 }
 
 fun ImageProxy.toRotatedBitmap(): Bitmap {
-    val yBuffer = planes[0].buffer // Y
-    val vuBuffer = planes[2].buffer // VU
+    val yBuffer = planes[0].buffer
+    val vuBuffer = planes[2].buffer
 
     val ySize = yBuffer.remaining()
     val vuSize = vuBuffer.remaining()
