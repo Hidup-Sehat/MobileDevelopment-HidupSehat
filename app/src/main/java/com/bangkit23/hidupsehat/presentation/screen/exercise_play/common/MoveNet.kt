@@ -1,7 +1,11 @@
 package com.bangkit23.hidupsehat.presentation.screen.exercise_play.common
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Matrix
+import android.graphics.PointF
+import android.graphics.RectF
 import android.os.SystemClock
 import com.bangkit23.hidupsehat.presentation.screen.exercise_play.model.ml.BodyPart
 import com.bangkit23.hidupsehat.presentation.screen.exercise_play.model.ml.Device
@@ -23,7 +27,6 @@ import kotlin.math.min
 
 enum class ModelType {
     Lightning,
-    Thunder
 }
 
 class MoveNet(private val interpreter: Interpreter, private var gpuDelegate: GpuDelegate?) :
@@ -33,16 +36,12 @@ class MoveNet(private val interpreter: Interpreter, private var gpuDelegate: Gpu
         private const val MIN_CROP_KEYPOINT_SCORE = .2f
         private const val CPU_NUM_THREADS = 4
 
-        // Parameters that control how large crop region should be expanded from previous frames'
-        // body keypoints.
         private const val TORSO_EXPANSION_RATIO = 1.9f
         private const val BODY_EXPANSION_RATIO = 1.2f
 
-        // TFLite file names.
         private const val LIGHTNING_FILENAME = "movenet_lightning.tflite"
-        private const val THUNDER_FILENAME = "movenet_thunder.tflite"
+        private const val THUNDER_FILENAME = "empty.tflite"
 
-        // allow specifying model type.
         fun create(context: Context, device: Device, modelType: ModelType): MoveNet {
             val options = Interpreter.Options()
             var gpuDelegate: GpuDelegate? = null
@@ -68,7 +67,6 @@ class MoveNet(private val interpreter: Interpreter, private var gpuDelegate: Gpu
             )
         }
 
-        // default to lightning.
         fun create(context: Context, device: Device): MoveNet =
             create(context, device, ModelType.Lightning)
     }
@@ -149,7 +147,6 @@ class MoveNet(private val interpreter: Interpreter, private var gpuDelegate: Gpu
                         points[index * 2 + 1]
                     )
             }
-            // new crop region
             cropRegion = determineRectF(keyPoints, bitmap.width, bitmap.height)
         }
         lastInferenceTimeNanos =
@@ -168,9 +165,6 @@ class MoveNet(private val interpreter: Interpreter, private var gpuDelegate: Gpu
         cropRegion = null
     }
 
-    /**
-     * Prepare input image for detection
-     */
     private fun processInputImage(bitmap: Bitmap, inputWidth: Int, inputHeight: Int): TensorImage? {
         val width: Int = bitmap.width
         val height: Int = bitmap.height
@@ -185,12 +179,6 @@ class MoveNet(private val interpreter: Interpreter, private var gpuDelegate: Gpu
         return imageProcessor.process(tensorImage)
     }
 
-    /**
-     * Defines the default crop region.
-     * The function provides the initial crop region (pads the full image from both
-     * sides to make it a square image) when the algorithm cannot reliably determine
-     * the crop region from the previous frame.
-     */
     private fun initRectF(imageWidth: Int, imageHeight: Int): RectF {
         val xMin: Float
         val yMin: Float
@@ -215,11 +203,6 @@ class MoveNet(private val interpreter: Interpreter, private var gpuDelegate: Gpu
         )
     }
 
-    /**
-     * Checks whether there are enough torso keypoints.
-     * This function checks whether the model is confident at predicting one of the
-     * shoulders/hips which is required to determine a good crop region.
-     */
     private fun torsoVisible(keyPoints: List<KeyPoint>): Boolean {
         return ((keyPoints[BodyPart.LEFT_HIP.position].score > MIN_CROP_KEYPOINT_SCORE).or(
             keyPoints[BodyPart.RIGHT_HIP.position].score > MIN_CROP_KEYPOINT_SCORE
@@ -230,15 +213,6 @@ class MoveNet(private val interpreter: Interpreter, private var gpuDelegate: Gpu
         )
     }
 
-    /**
-     * Determines the region to crop the image for the model to run inference on.
-     * The algorithm uses the detected joints from the previous frame to estimate
-     * the square region that encloses the full body of the target person and
-     * centers at the midpoint of two hip joints. The crop size is determined by
-     * the distances between each joints and the center point.
-     * When the model is not confident with the four torso joint predictions, the
-     * function returns a default crop which is the full image padded to square.
-     */
     private fun determineRectF(
         keyPoints: List<KeyPoint>,
         imageWidth: Int,
@@ -296,12 +270,6 @@ class MoveNet(private val interpreter: Interpreter, private var gpuDelegate: Gpu
         }
     }
 
-    /**
-     * Calculates the maximum distance from each keypoints to the center location.
-     * The function returns the maximum distances from the two sets of keypoints:
-     * full 17 keypoints and 4 torso keypoints. The returned information will be
-     * used to determine the crop size. See determineRectF for more detail.
-     */
     private fun determineTorsoAndBodyDistances(
         keyPoints: List<KeyPoint>,
         targetKeyPoints: List<KeyPoint>,

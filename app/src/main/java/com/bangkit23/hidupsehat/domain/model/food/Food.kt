@@ -5,7 +5,7 @@ data class Food(
     val name: String? = null,
     val portionSize: String? = null,
     val energyKj: Double? = null,
-    val energyKKal: Double? = null,
+    var energyKKal: Double? = null,
     val sugar: Double? = null,
     val potassium: Double? = null,
     val carbohydrate: Double? = null,
@@ -18,5 +18,5 @@ data class Food(
     val protein: Double? = null,
     val fiber: Double? = null,
     val sodium: Double? = null,
-    val count: Int = 1,
+    var count: Int = 1,
 )

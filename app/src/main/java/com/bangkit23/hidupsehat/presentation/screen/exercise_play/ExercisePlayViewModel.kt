@@ -1,13 +1,15 @@
 package com.bangkit23.hidupsehat.presentation.screen.exercise_play
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.bangkit23.hidupsehat.presentation.screen.exercise_play.model.PersonBodyAngle
 import com.bangkit23.hidupsehat.util.calculateSimilarity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,18 +28,9 @@ class ExercisePlayViewModel @Inject constructor() : ViewModel() {
                 }
             }
             is ExercisePlayEvent.OnPosePerfect -> {
-                //Start-Timer
-            }
-            is ExercisePlayEvent.OnTimerEnd -> {
-                _state.update {
-                    val posesSize = it.exercise.poses.size
-                    Log.d("ONTIMER-END", "onEvent: $posesSize | ${event.currentPosePosition} | ${event.currentPosePosition == posesSize - 1}")
-                    it.copy(
-                        currentPosePosition = if (event.currentPosePosition != posesSize - 1)
-                            event.currentPosePosition + 1 else posesSize - 1,
-                        isExerciseDone = event.currentPosePosition == posesSize - 1
-                    )
-                }
+                countDownTimer(
+                    currentPosePosition = event.currentPosePosition
+                ).start()
             }
             is ExercisePlayEvent.ResetScore -> {
                 _state.update {
@@ -60,5 +53,28 @@ class ExercisePlayViewModel @Inject constructor() : ViewModel() {
 
     private fun PersonBodyAngle.getSimilarityScore(expectedScore: PersonBodyAngle): Double {
         return calculateSimilarity(this, expectedScore)
+    }
+
+    private fun countDownTimer(currentPosePosition: Int) = viewModelScope.launch {
+        (8 downTo 0).forEach { timer ->
+            _state.update {
+                it.copy(
+                    isTimerStarted = true,
+                    timer = timer
+                )
+            }
+            delay(1000)
+        }
+        _state.update {
+            val posesSize = it.exercise.poses.size
+            it.copy(
+                currentPosePosition = if (currentPosePosition != posesSize - 1)
+                    currentPosePosition + 1 else posesSize - 1,
+                isExerciseDone = currentPosePosition == posesSize - 1,
+                poseScore = 0.0,
+                timer = -1,
+                isTimerStarted = false
+            )
+        }
     }
 }

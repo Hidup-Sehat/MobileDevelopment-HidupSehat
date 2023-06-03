@@ -17,7 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -27,42 +27,71 @@ import com.bangkit23.hidupsehat.domain.model.food.Food
 import com.bangkit23.hidupsehat.presentation.components.ButtonWithIcon
 import com.bangkit23.hidupsehat.presentation.components.SheetWithHeader
 import com.bangkit23.hidupsehat.presentation.screen.scanfood_edit.components.CustomTextFieldLabel
+import com.bangkit23.hidupsehat.presentation.screen.scanfood_edit.components.DropDownEditFood
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScanFoodResultEditScreen(
     food: Food?,
-    onDismiss: (() -> Unit)? = null,
-    onSaveClick: (() -> Unit)? = null,
-    onDeleteClick: (() -> Unit)? = null,
+    portionSizes: List<Food>,
+    onDismiss: () -> Unit,
+    onSaveClick: (Food?) -> Unit,
+    onDeleteClick: (Food?) -> Unit,
+    onPortionSizeClick: (Food?) -> Unit,
     sheetState: SheetState = rememberModalBottomSheetState(
         confirmValueChange = { false },
         skipPartiallyExpanded = true
     ),
 ) {
-    if (onDismiss != null) {
-        SheetWithHeader(
-            sheetState = sheetState,
-            contentBody = {
-                SheetEditContent(
-                    food = food
-                )
-            }, onDismiss = onDismiss,
-            contentHeader = {
-                SheetEditHeader(
-                    onDeleteClick = onDeleteClick
-                )
-            })
-    }
+    var editFood by remember { mutableStateOf(food) }
+    var foodCount by remember { mutableStateOf(food?.count) }
+
+    SheetWithHeader(
+        sheetState = sheetState,
+        contentBody = {
+            SheetEditContent(
+                food = editFood,
+                onSaveClick = {
+                    onSaveClick(
+                        editFood?.copy(count = foodCount ?: 1)
+                    )
+                },
+                onPortionSizeClick = onPortionSizeClick,
+                onDropDownItemClick = {
+                    editFood = it
+                },
+                portionSizes = portionSizes,
+                onFoodCountChange = {
+                    foodCount = if (it.isNotEmpty()) {
+                        it.toInt()
+                    } else null
+                },
+                foodCount = foodCount
+            )
+        },
+        onDismiss = onDismiss,
+        contentHeader = {
+            SheetEditHeader(
+                onDeleteClick = {
+                    onDeleteClick(food)
+                }
+            )
+        })
 }
 
 @Composable
 fun SheetEditContent(
     food: Food?,
-    onSaveClick: (() -> Unit)? = null,
+    foodCount: Int?,
+    portionSizes: List<Food>,
+    onSaveClick: () -> Unit,
+    onPortionSizeClick: (Food?) -> Unit,
+    onDropDownItemClick: (Food?) -> Unit,
+    onFoodCountChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -82,28 +111,35 @@ fun SheetEditContent(
         )
         Spacer(Modifier.height(16.dp))
         Row(modifier = Modifier.fillMaxWidth()) {
-            CustomTextFieldLabel(
+            DropDownEditFood(
+                value = "${food?.portionSize}",
+                portionSizes = portionSizes,
+                onDropDownItemClick = onDropDownItemClick,
+                onPortionSizeClick = {
+                    onPortionSizeClick(food)
+                },
                 modifier = Modifier.weight(1f),
-                label = "Takaran",
-                onValueChange = {})
+            )
             Spacer(modifier = Modifier.width(8.dp))
             CustomTextFieldLabel(
                 modifier = Modifier.weight(1f),
                 label = "Jumlah",
-                onValueChange = {},
-                value = food?.count.toString()
+                onValueChange = onFoodCountChange,
+                value = (foodCount ?: "").toString()
             )
         }
-
         ButtonWithIcon(
             modifier = Modifier.padding(top = 32.dp),
-            text = "Simpan", icon = Icons.Default.Done, onClick = { onSaveClick?.let { it() } })
+            text = "Simpan Perubahan",
+            icon = Icons.Default.Done,
+            onClick = { onSaveClick() }
+        )
     }
 }
 
 @Composable
 fun SheetEditHeader(
-    onDeleteClick: (() -> Unit)? = null,
+    onDeleteClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -115,7 +151,7 @@ fun SheetEditHeader(
         Text(text = "Ubah", fontWeight = FontWeight.SemiBold, fontSize = 22.sp)
         Text(
             modifier = Modifier.clickable {
-                onDeleteClick?.let { it() }
+                onDeleteClick()
             },
             text = "Hapus",
             fontWeight = FontWeight.Medium,

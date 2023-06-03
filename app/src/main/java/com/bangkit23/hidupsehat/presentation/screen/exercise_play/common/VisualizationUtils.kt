@@ -8,13 +8,10 @@ import com.bangkit23.hidupsehat.presentation.screen.exercise_play.model.ml.BodyP
 import com.bangkit23.hidupsehat.presentation.screen.exercise_play.model.ml.Person
 
 object VisualizationUtils {
-    /** Radius of circle used to draw keypoints.  */
     private const val CIRCLE_RADIUS = 6f
 
-    /** Width of line used to connected two keypoints.  */
     private const val LINE_WIDTH = 4f
 
-    /** Pair of keypoints to draw lines between.  */
     private val bodyJoints = listOf(
         Pair(BodyPart.NOSE, BodyPart.LEFT_EYE),
         Pair(BodyPart.NOSE, BodyPart.RIGHT_EYE),
@@ -36,7 +33,6 @@ object VisualizationUtils {
         Pair(BodyPart.RIGHT_KNEE, BodyPart.RIGHT_ANKLE)
     )
 
-    // Draw line and point indicate body pose
     fun drawBodyKeyPoints(input: Bitmap, person: Person): Bitmap {
         val paintCircle = Paint().apply {
             strokeWidth = CIRCLE_RADIUS

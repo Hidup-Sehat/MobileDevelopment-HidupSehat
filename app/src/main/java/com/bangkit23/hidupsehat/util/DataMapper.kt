@@ -1,7 +1,11 @@
 package com.bangkit23.hidupsehat.util
 
 import com.bangkit23.hidupsehat.data.source.local.entity.FoodEntity
+import com.bangkit23.hidupsehat.data.source.remote.request.UserDetailRequest
+import com.bangkit23.hidupsehat.data.source.remote.response.UserDetailResult
 import com.bangkit23.hidupsehat.domain.model.food.Food
+import com.bangkit23.hidupsehat.domain.model.user.UserDetail
+import com.bangkit23.hidupsehat.domain.model.user.UserDetailRequestDto
 import com.bangkit23.hidupsehat.presentation.model.User
 import com.bangkit23.hidupsehat.presentation.screen.auth.model.UserData
 
@@ -27,4 +31,29 @@ fun Food.toEntity(): FoodEntity = FoodEntity(
     potassium, carbohydrate, cholesterol, fat, saturatedFat,
     transFat, polyunsaturatedFat, monounsaturatedFat,
     protein, fiber, sodium
+)
+
+fun UserDetailRequestDto.toRemote() = UserDetailRequest(
+    username = username,
+    name = name,
+    contactNumber = contactNumber,
+    dateOfBirth = dateOfBirth,
+    age = age,
+    gender = gender,
+    height = height,
+    weight = weight,
+    target = target,
+    weightTarget = weightTarget,
+)
+
+fun UserDetailResult.toDomain() = UserDetail(
+    photoUrl = photoUrl,
+    currentWeight = currentWeight,
+    gender = gender,
+    name = name,
+    targetWeight = targetWeight,
+    userId = userId,
+    targetUser = targetUser,
+    age = age,
+    height = height
 )

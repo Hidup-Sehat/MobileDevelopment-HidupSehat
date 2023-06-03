@@ -108,7 +108,7 @@ fun Uri.toFile(context: Context): File {
     outputStream.close()
     inputStream.close()
 
-    return myFile.reduceImageFile()
+    return myFile
 }
 
 fun File.reduceImageFile(): File {

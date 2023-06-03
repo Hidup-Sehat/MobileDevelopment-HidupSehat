@@ -32,7 +32,7 @@ fun Context.runObjectDetection(
             .build()
         val detector = ObjectDetector.createFromFileAndOptions(
             this@runObjectDetection,
-            "salad.tflite",
+            "model.tflite",
             options
         )
         val results = detector.detect(image)

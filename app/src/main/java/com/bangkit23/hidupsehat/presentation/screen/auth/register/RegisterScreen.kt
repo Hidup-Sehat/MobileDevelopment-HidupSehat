@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,75 +36,65 @@ import com.bangkit23.hidupsehat.presentation.components.CustomTextField
 import com.bangkit23.hidupsehat.presentation.components.OutlinedButtonWithIcon
 import com.bangkit23.hidupsehat.presentation.components.PasswordTextField
 import com.bangkit23.hidupsehat.presentation.components.TextWithSupport
-import com.bangkit23.hidupsehat.presentation.screen.auth.common.GoogleAuthUiClient
+import com.bangkit23.hidupsehat.presentation.screen.auth.common.signInIntentSender
 import com.bangkit23.hidupsehat.presentation.screen.auth.components.SpannableText
 import com.bangkit23.hidupsehat.presentation.screen.auth.components.TextOr
 import com.bangkit23.hidupsehat.presentation.screen.auth.model.UserData
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
-import com.google.android.gms.auth.api.identity.Identity
 import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(
-    onRegistered: () -> Unit,
+    navigateToHome: () -> Unit,
     moveToUserPreference: (userData: UserData?) -> Unit,
-    viewModel: RegisterViewModel = hiltViewModel()
+    viewModel: RegisterViewModel = hiltViewModel(),
 ) {
-    val name by viewModel.name
-    val email by viewModel.email
-    val password by viewModel.password
-    val confirmationPassword by viewModel.confirmationPassword
-    val registerState by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-
-    val googleSignInClient = remember {
-        GoogleAuthUiClient(
-            context = context.applicationContext,
-            onTapClient = Identity.getSignInClient(context.applicationContext)
-        )
-    }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
         onResult = { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 scope.launch {
-                    val signInResult = googleSignInClient.signInWithIntent(
-                        intent = result.data ?: return@launch
-                    )
-                    viewModel.onSignInResult(signInResult)
+                    viewModel.onEvent(RegisterEvent.SignInGoogleWithIntent(result.data ?: return@launch))
                 }
             }
         }
     )
 
-    LaunchedEffect(key1 = registerState.isSignInSuccessful) {
-        if (registerState.isSignInSuccessful) {
-            if (registerState.userData?.isNewUser == true) moveToUserPreference(registerState.userData)
-            else onRegistered()
-            viewModel.resetState()
+    LaunchedEffect(key1 = state.signInSuccessful) {
+        if (state.signInSuccessful) {
+            if (state.signInResult?.data?.isNewUser == true) moveToUserPreference(state.signInResult?.data)
+            else navigateToHome()
+            viewModel.onEvent(RegisterEvent.ResetState)
         }
     }
 
     RegisterContent(
-        name = name,
-        email = email,
-        password = password,
-        confirmationPassword = confirmationPassword,
-        onNameChanged = viewModel::setName,
-        onEmailChanged = viewModel::setEmail,
-        onPasswordChanged = viewModel::setPassword,
-        onConfirmationPasswordChanged = viewModel::setConfirmationPassword,
+        name = state.name,
+        email = state.email,
+        password = state.password,
+        confirmationPassword = state.confirmationPassword,
+        onNameChanged = {
+            viewModel.onEvent(RegisterEvent.OnNameChanged(it))
+        },
+        onEmailChanged = {
+            viewModel.onEvent(RegisterEvent.OnEmailChanged(it))
+        },
+        onPasswordChanged = {
+            viewModel.onEvent(RegisterEvent.OnPasswordChanged(it))
+        },
+        onConfirmationPasswordChanged = {
+            viewModel.onEvent(RegisterEvent.OnPasswordConfirmationChanged(it))
+        },
         onRegistered = {
-            scope.launch {
-                val signInResult = googleSignInClient.registerWithEmail(email, confirmationPassword)
-                viewModel.onSignInResult(signInResult)
-            }
+            viewModel.onEvent(RegisterEvent.RegisterWithEmailPassword(state.name, state.email, state.password))
         },
         signInWithGoogleClick = {
             scope.launch {
-                val intentSender = googleSignInClient.signIn()
+                val intentSender = signInIntentSender(context)
                 launcher.launch(
                     IntentSenderRequest.Builder(
                         intentSender ?: return@launch

@@ -1,5 +1,7 @@
 package com.bangkit23.hidupsehat.presentation.screen.scanfood_result
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.bangkit23.hidupsehat.domain.model.food.Food
 
 data class ScanFoodResultState(
@@ -11,6 +13,6 @@ data class ScanFoodResultState(
     val foodEdit: Food? = null,
     val portionSizes: List<Food> = emptyList(),
     val foodSearched: List<Food> = emptyList(),
-    val foods: MutableList<Food?> = mutableListOf(),
+    val foods: SnapshotStateList<Food?> = mutableStateListOf(),
 )
 

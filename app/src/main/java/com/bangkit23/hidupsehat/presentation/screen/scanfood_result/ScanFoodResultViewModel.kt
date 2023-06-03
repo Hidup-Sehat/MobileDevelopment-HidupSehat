@@ -1,5 +1,6 @@
 package com.bangkit23.hidupsehat.presentation.screen.scanfood_result
 
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bangkit23.hidupsehat.domain.model.food.Food
@@ -52,7 +53,7 @@ class ScanFoodResultViewModel @Inject constructor(
                 }
             }
             is ScanFoodResultEvent.SaveAllFoods -> {
-
+                //Save
             }
             is ScanFoodResultEvent.OnSearchFoodQueryChange -> {
                 _state.update {
@@ -77,12 +78,7 @@ class ScanFoodResultViewModel @Inject constructor(
                 }
             }
             is ScanFoodResultEvent.ChangePortionSize -> {
-                _state.update {
-                    it.copy(
-                        isPortionSizeDropDownShow = false,
-                    )
-                }
-                changePortionSize(event.food)
+                changePortionSize(event.food, event.count)
             }
             is ScanFoodResultEvent.HideDropDownPortionSize -> {
                 _state.update {
@@ -95,11 +91,37 @@ class ScanFoodResultViewModel @Inject constructor(
             is ScanFoodResultEvent.ShowDropDownPortionSize -> {
                 _state.update {
                     it.copy(
-                        isPortionSizeDropDownShow = true,
                         portionSizes = emptyList()
                     )
                 }
                 getPortionSizes(event.food)
+            }
+            is ScanFoodResultEvent.DeleteFood -> {
+                _state.update {
+                    val currentFoods = it.foods
+                    val index = currentFoods.indexOfFirst { food -> food?.name == event.food?.name }
+                    currentFoods.removeAt(index)
+                    it.copy(
+                        foods = currentFoods,
+                        isDialogEditFoodShow = false
+                    )
+                }
+            }
+            is ScanFoodResultEvent.SaveEditedFood -> {
+                _state.update {
+                    val currentFoods = it.foods
+                    val index = currentFoods.indexOfFirst { food -> food?.name == event.food?.name }
+                    if (index != -1) {
+                        currentFoods[index] = event.food?.copy(
+                            energyKKal = getTotalKKal(event.food.energyKKal, event.food.count),
+                            count = event.food.count
+                        )
+                    }
+                    it.copy(
+                        foods = currentFoods,
+                        isDialogEditFoodShow = false,
+                    )
+                }
             }
         }
     }
@@ -109,16 +131,15 @@ class ScanFoodResultViewModel @Inject constructor(
             val result = foods.groupingBy { it.text }
                 .eachCount()
                 .map { (label, count) ->
-                    val food = foodUseCase.getFoodByName(label).firstOrNull()
+                    val food = foodUseCase.getFoodByName(label.trim()).firstOrNull()
                     food?.copy(
                         count = count,
-                        energyKKal = getTotalKKal(food.energyKKal, count)
+                        energyKKal = getTotalKKal(food.energyKKal, count),
                     )
                 }
-
             _state.update {
                 it.copy(
-                    foods = result.toMutableList()
+                    foods = result.toMutableStateList()
                 )
             }
         }
@@ -154,11 +175,15 @@ class ScanFoodResultViewModel @Inject constructor(
         }
     }
 
-    private fun changePortionSize(food: Food) {
+    private fun changePortionSize(food: Food, count: Int?) {
         _state.update {
             val foodIndex = it.foods.indexOfFirst { mFood -> mFood?.name == food.name }
             if (foodIndex != -1) {
-                it.foods[foodIndex] = food
+                val updatedFood = food.copy(
+                    count = count ?: 1,
+                    energyKKal = getTotalKKal(food.energyKKal, count ?: 1)
+                )
+                it.foods[foodIndex] = updatedFood
             }
             it.copy(
                 foods = it.foods

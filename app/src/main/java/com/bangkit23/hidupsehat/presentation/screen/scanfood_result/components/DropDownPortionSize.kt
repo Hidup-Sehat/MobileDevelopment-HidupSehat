@@ -1,7 +1,6 @@
 package com.bangkit23.hidupsehat.presentation.screen.scanfood_result.components
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -21,7 +20,6 @@ fun DropDownPortionSize(
 ) {
     Box(
         modifier = modifier
-            .fillMaxSize()
             .wrapContentSize(Alignment.Center),
     ) {
         DropdownMenu(

@@ -1,9 +1,12 @@
 package com.bangkit23.hidupsehat.presentation.screen.auth.login
 
-import com.bangkit23.hidupsehat.presentation.screen.auth.model.UserData
+import com.bangkit23.hidupsehat.presentation.screen.auth.model.SignInResult
 
 data class LoginState(
-    val isSignInSuccessful: Boolean = false,
+    val loading: Boolean = false,
+    val signInSuccessful: Boolean = false,
     val signInError: String? = null,
-    val userData: UserData? = null,
+    val signInResult: SignInResult? = null,
+    val email: String = "",
+    val password: String = "",
 )
