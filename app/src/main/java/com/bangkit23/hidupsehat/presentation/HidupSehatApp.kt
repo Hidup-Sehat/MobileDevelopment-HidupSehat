@@ -98,7 +98,7 @@ fun HidupSehatApp(
                 )
             }
             composable(Screen.Feeds.route) {
-                FeedScreen()
+                FeedScreen(data = listOf())
             }
             navigation(
                 startDestination = Screen.Login.route,
