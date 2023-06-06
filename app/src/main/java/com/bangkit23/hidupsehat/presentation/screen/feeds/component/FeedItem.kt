@@ -22,6 +22,7 @@ import coil.compose.AsyncImage
 @Composable
 fun FeedItem(
     modifier : Modifier = Modifier,
+    onClick : () -> Unit,
     image : String,
     title : String,
     createdAt : String,
@@ -32,7 +33,9 @@ fun FeedItem(
         modifier = modifier
             .fillMaxWidth().padding(horizontal = 16.dp),
         shape = RoundedCornerShape(16.dp),
-        onClick = {}
+        onClick = {
+            onClick()
+        }
     ) {
         AsyncImage(
             modifier = Modifier.height(200.dp),
@@ -55,5 +58,5 @@ fun FeedItem(
 @Preview
 @Composable
 fun FeedItemPrev() {
-    FeedItem(image = "", title = "Honey-Basted Grilled Peaches With Greek Yogurt", createdAt = "4 days ago", publishedBy = "MyFitnessPal Blog", description = "The grill is for more than steak and burgers, fire it up for this peachy dessert")
+    FeedItem(image = "", title = "Honey-Basted Grilled Peaches With Greek Yogurt", createdAt = "4 days ago", publishedBy = "MyFitnessPal Blog", description = "The grill is for more than steak and burgers, fire it up for this peachy dessert", onClick = {})
 }

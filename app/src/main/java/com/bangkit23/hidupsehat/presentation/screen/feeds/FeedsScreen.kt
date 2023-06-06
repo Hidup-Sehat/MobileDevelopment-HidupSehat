@@ -15,7 +15,7 @@ import com.bangkit23.hidupsehat.presentation.screen.feeds.model.Feed
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FeedScreen(modifier: Modifier = Modifier, data: List<Feed>) {
+fun FeedScreen(modifier: Modifier = Modifier, data: List<Feed>, onClick: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(title = {
@@ -25,7 +25,8 @@ fun FeedScreen(modifier: Modifier = Modifier, data: List<Feed>) {
         content = {
             FeedContent(
                 modifier = Modifier.padding(it),
-                data = data
+                data = data,
+                onClick = onClick,
             )
         }
     )
@@ -34,6 +35,7 @@ fun FeedScreen(modifier: Modifier = Modifier, data: List<Feed>) {
 @Composable
 fun FeedContent(
     modifier: Modifier = Modifier,
+    onClick : () -> Unit,
     data: List<Feed>
 ) {
     LazyColumn {
@@ -44,7 +46,8 @@ fun FeedContent(
                 title = it.title,
                 createdAt = it.createdAt,
                 publishedBy = it.publishedBy,
-                description = it.description
+                description = it.description,
+                onClick = onClick,
             )
         }
     }
@@ -63,5 +66,5 @@ fun FeeScreenPrev() {
             description = "The grill is for more than steak and burgers, fire it up for this peachy dessert"
         )
     )
-    FeedScreen(data = dummyList)
+    FeedScreen(data = dummyList, onClick = {})
 }

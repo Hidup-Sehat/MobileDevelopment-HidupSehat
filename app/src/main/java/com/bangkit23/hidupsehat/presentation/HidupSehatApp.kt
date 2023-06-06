@@ -46,6 +46,8 @@ import com.bangkit23.hidupsehat.presentation.screen.auth.register.RegisterScreen
 import com.bangkit23.hidupsehat.presentation.screen.exercise.ExerciseScreen
 import com.bangkit23.hidupsehat.presentation.screen.exercise_play.ExercisePlayScreen
 import com.bangkit23.hidupsehat.presentation.screen.feeds.FeedScreen
+import com.bangkit23.hidupsehat.presentation.screen.feeds.model.Feed
+import com.bangkit23.hidupsehat.presentation.screen.feeds_detail.FeedsDetailScreen
 import com.bangkit23.hidupsehat.presentation.screen.home.HomeScreen
 import com.bangkit23.hidupsehat.presentation.screen.leaderboard.LeaderboardScreen
 import com.bangkit23.hidupsehat.presentation.screen.preference.UserInformationScreen
@@ -97,7 +99,22 @@ fun HidupSehatApp(
                 )
             }
             composable(Screen.Feeds.route) {
-                FeedScreen(data = listOf())
+                val dummyList = listOf<Feed>(
+                    Feed(
+                        1,
+                        image = "",
+                        title = "Honey-Basted Grilled Peaches With Greek Yogurt",
+                        createdAt = "4 days ago",
+                        publishedBy = "MyFitnessPal Blog",
+                        description = "The grill is for more than steak and burgers, fire it up for this peachy dessert"
+                    )
+                )
+                FeedScreen(data = dummyList, onClick = {
+                    navController.navigate("feed-detail")
+                })
+            }
+            composable(Screen.FeedDetail.route){
+                FeedsDetailScreen()
             }
             composable(Screen.Leaderboard.route) {
                 LeaderboardScreen()
