@@ -67,6 +67,7 @@ fun HomeScreen(
     onScanClicked: () -> Unit,
     onPoseMenuClicked: () -> Unit,
     onProfileClicked: () -> Unit,
+    onFoodInformationClicked: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val chosenEmotion by viewModel.chosenEmotion
@@ -77,7 +78,8 @@ fun HomeScreen(
         foods = foods,
         onScanClicked = onScanClicked,
         onPoseMenuClicked = onPoseMenuClicked,
-        onProfileClicked = onProfileClicked
+        onProfileClicked = onProfileClicked,
+        onFoodInformationClicked = onFoodInformationClicked
     )
 }
 
@@ -90,6 +92,7 @@ fun HomeContent(
     onScanClicked: () -> Unit,
     onPoseMenuClicked: () -> Unit,
     onProfileClicked: () -> Unit,
+    onFoodInformationClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -132,7 +135,8 @@ fun HomeContent(
                 }
             )
             FeaturesMenu(
-                onPoseMenuClicked = onPoseMenuClicked
+                onPoseMenuClicked = onPoseMenuClicked,
+                onFoodInformationClicked = onFoodInformationClicked
             )
             HomeSection(
                 title = "Monitoring",
@@ -193,6 +197,7 @@ fun TopAppBarWithProfile(
 @Composable
 fun FeaturesMenu(
     onPoseMenuClicked: () -> Unit,
+    onFoodInformationClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val itemsCard = listOf(
@@ -227,7 +232,7 @@ fun FeaturesMenu(
             CardFeatureMenu(itemsCard[1], modifier = Modifier.weight(1f))
         }
         Row {
-            CardFeatureMenu(itemsCard[2], modifier = Modifier.weight(1f))
+            CardFeatureMenu(itemsCard[2], modifier = Modifier.weight(1f).clickable { onFoodInformationClicked() })
             CardFeatureMenu(itemsCard[3], modifier = Modifier.weight(1f))
         }
     }
@@ -345,7 +350,8 @@ fun HomeContentPreview() {
             onEmotionChosen = {},
             onScanClicked = {},
             onPoseMenuClicked = {},
-            onProfileClicked = {}
+            onProfileClicked = {},
+            onFoodInformationClicked = {}
         )
     }
 }

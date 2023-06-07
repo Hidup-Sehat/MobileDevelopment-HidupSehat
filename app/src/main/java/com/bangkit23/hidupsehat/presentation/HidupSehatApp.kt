@@ -48,6 +48,7 @@ import com.bangkit23.hidupsehat.presentation.screen.exercise_play.ExercisePlaySc
 import com.bangkit23.hidupsehat.presentation.screen.feeds.FeedScreen
 import com.bangkit23.hidupsehat.presentation.screen.feeds.model.Feed
 import com.bangkit23.hidupsehat.presentation.screen.feeds_detail.FeedsDetailScreen
+import com.bangkit23.hidupsehat.presentation.screen.food_information.FoodInformationScreen
 import com.bangkit23.hidupsehat.presentation.screen.home.HomeScreen
 import com.bangkit23.hidupsehat.presentation.screen.leaderboard.LeaderboardScreen
 import com.bangkit23.hidupsehat.presentation.screen.preference.UserInformationScreen
@@ -95,6 +96,9 @@ fun HidupSehatApp(
                     },
                     onProfileClicked = {
                         navController.navigate("profile-graph")
+                    },
+                    onFoodInformationClicked = {
+                        navController.navigate("food-information-graph")
                     }
                 )
             }
@@ -288,6 +292,14 @@ fun HidupSehatApp(
                     val uri = Uri.parse("https://play.google.com/store/apps/details?id=com.gojek.app")
                     val intent = Intent(Intent.ACTION_VIEW, uri)
                     context.startActivity(intent)
+                }
+            }
+            navigation(
+                startDestination = Screen.FoodInformation.route,
+                route = "food-information-graph"
+            ){
+                composable(Screen.FoodInformation.route){
+                    FoodInformationScreen(data = listOf())
                 }
             }
         }
