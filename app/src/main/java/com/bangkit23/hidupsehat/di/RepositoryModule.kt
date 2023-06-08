@@ -1,9 +1,11 @@
 package com.bangkit23.hidupsehat.di
 
 import com.bangkit23.hidupsehat.data.repository.AuthRepositoryImpl
+import com.bangkit23.hidupsehat.data.repository.FeedRepositoryImpl
 import com.bangkit23.hidupsehat.data.repository.FoodRepositoryImpl
 import com.bangkit23.hidupsehat.data.repository.UserRepositoryImpl
 import com.bangkit23.hidupsehat.domain.reporitory.AuthRepository
+import com.bangkit23.hidupsehat.domain.reporitory.FeedRepository
 import com.bangkit23.hidupsehat.domain.reporitory.FoodRepository
 import com.bangkit23.hidupsehat.domain.reporitory.UserRepository
 import dagger.Binds
@@ -27,4 +29,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun provideUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository
+
+    @Binds
+    @Singleton
+    abstract fun provideFeedRepository(feedRepositoryImpl: FeedRepositoryImpl) : FeedRepository
 }

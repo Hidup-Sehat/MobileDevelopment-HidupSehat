@@ -8,14 +8,25 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bangkit23.hidupsehat.presentation.screen.feeds.component.FeedItem
 import com.bangkit23.hidupsehat.presentation.screen.feeds.model.Feed
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FeedScreen(modifier: Modifier = Modifier, data: List<Feed>, onClick: () -> Unit) {
+fun FeedScreen(
+    modifier: Modifier = Modifier,
+    data: List<Feed>, onClick: () -> Unit,
+    viewModel: FeedViewModel = hiltViewModel()
+    ) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(key1 = state.feedResult){}
     Scaffold(
         topBar = {
             TopAppBar(title = {
@@ -25,7 +36,7 @@ fun FeedScreen(modifier: Modifier = Modifier, data: List<Feed>, onClick: () -> U
         content = {
             FeedContent(
                 modifier = Modifier.padding(it),
-                data = data,
+                data = state.feedResult,
                 onClick = onClick,
             )
         }
@@ -35,18 +46,18 @@ fun FeedScreen(modifier: Modifier = Modifier, data: List<Feed>, onClick: () -> U
 @Composable
 fun FeedContent(
     modifier: Modifier = Modifier,
-    onClick : () -> Unit,
-    data: List<Feed>
+    onClick: () -> Unit,
+    data: List<com.bangkit23.hidupsehat.domain.model.feed.Feed>
 ) {
     LazyColumn {
         items(data) {
             FeedItem(
                 modifier = modifier,
-                image = it.image,
-                title = it.title,
-                createdAt = it.createdAt,
-                publishedBy = it.publishedBy,
-                description = it.description,
+                image = it.imgUrl!!,
+                title = it.title!!,
+                createdAt = it.createdAt!!,
+                publishedBy = it.author!!,
+                description = it.summary!!,
                 onClick = onClick,
             )
         }

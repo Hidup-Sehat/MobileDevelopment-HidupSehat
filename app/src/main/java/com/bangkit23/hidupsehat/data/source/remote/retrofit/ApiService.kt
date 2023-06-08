@@ -1,6 +1,8 @@
 package com.bangkit23.hidupsehat.data.source.remote.retrofit
 
+import com.bangkit23.hidupsehat.data.source.remote.request.FeedRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.UserDetailRequest
+import com.bangkit23.hidupsehat.data.source.remote.response.FeedResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.UserDetailResponse
 import retrofit2.http.Body
 import retrofit2.http.Headers
@@ -15,4 +17,10 @@ interface ApiService {
         @Path("user_id") userId: String,
         @Body requestBody: UserDetailRequest,
     ): UserDetailResponse
+
+    @POST("feeds?page=1&limit=20")
+    @Headers("Content-Type: application/json")
+    suspend fun getFeeds(
+        @Body requestBody : FeedRequest
+    ) : FeedResponse
 }

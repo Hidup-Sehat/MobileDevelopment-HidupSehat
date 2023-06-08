@@ -2,6 +2,8 @@ package com.bangkit23.hidupsehat.di
 
 import com.bangkit23.hidupsehat.domain.usecase.auth.AuthInteractor
 import com.bangkit23.hidupsehat.domain.usecase.auth.AuthUseCase
+import com.bangkit23.hidupsehat.domain.usecase.feed.FeedInteractor
+import com.bangkit23.hidupsehat.domain.usecase.feed.FeedUseCase
 import com.bangkit23.hidupsehat.domain.usecase.food.FoodInteractor
 import com.bangkit23.hidupsehat.domain.usecase.food.FoodUseCase
 import com.bangkit23.hidupsehat.domain.usecase.user.UserInteractor
@@ -27,4 +29,8 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun provideUserUseCase(userInteractor: UserInteractor): UserUseCase
+
+    @Binds
+    @Singleton
+    abstract fun provideFeedUseCase(feedInteractor: FeedInteractor) : FeedUseCase
 }
