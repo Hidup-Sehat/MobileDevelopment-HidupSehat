@@ -35,4 +35,15 @@ class UserRepositoryImpl @Inject constructor(
             emit(Result.Error(e.message))
         }
     }.flowOn(Dispatchers.IO)
+
+    override fun getUserNeeds() = flow {
+        emit(Result.Loading())
+        try {
+            val userId = firebaseAuth.getSignedUser()?.userId
+            val response = remoteDataSource.getUserNeeds(userId.toString())
+            emit(Result.Success(response.toDomain()))
+        } catch (e: Exception) {
+            emit(Result.Error(e.message))
+        }
+    }.flowOn(Dispatchers.IO)
 }

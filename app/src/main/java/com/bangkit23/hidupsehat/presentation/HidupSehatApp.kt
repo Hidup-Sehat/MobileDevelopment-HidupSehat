@@ -48,14 +48,18 @@ import com.bangkit23.hidupsehat.presentation.screen.exercise_play.ExercisePlaySc
 import com.bangkit23.hidupsehat.presentation.screen.feeds.FeedScreen
 import com.bangkit23.hidupsehat.presentation.screen.home.HomeScreen
 import com.bangkit23.hidupsehat.presentation.screen.leaderboard.LeaderboardScreen
+import com.bangkit23.hidupsehat.presentation.screen.monitoring.MonitoringScreen
+import com.bangkit23.hidupsehat.presentation.screen.onboarding.OnBoardingScreen
 import com.bangkit23.hidupsehat.presentation.screen.preference.UserInformationScreen
 import com.bangkit23.hidupsehat.presentation.screen.preference.UserTargetScreen
 import com.bangkit23.hidupsehat.presentation.screen.profile.ChangePasswordScreen
 import com.bangkit23.hidupsehat.presentation.screen.profile.FaqScreen
 import com.bangkit23.hidupsehat.presentation.screen.profile.ProfileScreen
 import com.bangkit23.hidupsehat.presentation.screen.profile.UpdateProfile
+import com.bangkit23.hidupsehat.presentation.screen.reminder.ReminderScreen
 import com.bangkit23.hidupsehat.presentation.screen.scanfood.ScanFoodScreen
 import com.bangkit23.hidupsehat.presentation.screen.scanfood_result.ScanFoodResultScreen
+import com.bangkit23.hidupsehat.presentation.screen.splash.SplashScreen
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 import com.bangkit23.hidupsehat.util.toUser
 
@@ -80,9 +84,28 @@ fun HidupSehatApp(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = "auth-graph",
+            startDestination = "splash-screen",
             modifier = Modifier.padding(innerPadding)
         ) {
+            composable("splash-screen") {
+                SplashScreen(
+                    onTimeOut = { isLoggedIn ->
+                        if (isLoggedIn) {
+                            navController.navigate(Screen.Home.route) {
+                                popUpTo("splash-screen") {
+                                    inclusive = true
+                                }
+                            }
+                        } else {
+                            navController.navigate("auth-graph") {
+                                popUpTo("splash-screen") {
+                                    inclusive = true
+                                }
+                            }
+                        }
+                    }
+                )
+            }
             composable(Screen.Home.route) {
                 HomeScreen(
                     onScanClicked = {
@@ -93,6 +116,12 @@ fun HidupSehatApp(
                     },
                     onProfileClicked = {
                         navController.navigate("profile-graph")
+                    },
+                    onReminderMenuClicked = {
+                        navController.navigate("reminder-graph")
+                    },
+                    onSeeAllMonitoringClick = {
+                        navController.navigate("monitoring-graph")
                     }
                 )
             }
@@ -103,14 +132,25 @@ fun HidupSehatApp(
                 LeaderboardScreen()
             }
             navigation(
-                startDestination = Screen.Login.route,
+                startDestination = "on-boarding",
                 route = "auth-graph"
             ) {
+                composable("on-boarding") {
+                    OnBoardingScreen(
+                        moveToLogin = {
+                            navController.navigate(Screen.Login.route)
+                        }
+                    )
+                }
                 composable(Screen.Login.route) { entry ->
                     val viewModel = entry.sharedViewModel<AuthSharedViewModel>(navController)
                     LoginScreen(
                         navigateToHome = {
-                            navController.navigate(Screen.Home.route)
+                            navController.navigate(Screen.Home.route) {
+                                popUpTo("auth-graph") {
+                                    inclusive = true
+                                }
+                            }
                         },
                         moveToUserPreference = { userData ->
                             viewModel.setUser(userData?.toUser() ?: User())
@@ -125,7 +165,11 @@ fun HidupSehatApp(
                     val viewModel = entry.sharedViewModel<AuthSharedViewModel>(navController)
                     RegisterScreen(
                         navigateToHome = {
-                            navController.navigate(Screen.Home.route)
+                            navController.navigate(Screen.Home.route) {
+                                popUpTo("auth-graph") {
+                                    inclusive = true
+                                }
+                            }
                         },
                         moveToUserPreference = { userData ->
                             viewModel.setUser(userData?.toUser() ?: User())
@@ -158,7 +202,11 @@ fun HidupSehatApp(
                         choiceId = choiceId,
                         weightTarget = weightTarget,
                         navigateToHome = {
-                            navController.navigate(Screen.Home.route)
+                            navController.navigate(Screen.Home.route) {
+                                popUpTo("auth-graph") {
+                                    inclusive = true
+                                }
+                            }
                         }
                     )
                 }
@@ -271,6 +319,22 @@ fun HidupSehatApp(
                     val uri = Uri.parse("https://play.google.com/store/apps/details?id=com.gojek.app")
                     val intent = Intent(Intent.ACTION_VIEW, uri)
                     context.startActivity(intent)
+                }
+            }
+            navigation(
+                startDestination = "reminder",
+                route = "reminder-graph"
+            ) {
+                composable( "reminder") {
+                    ReminderScreen()
+                }
+            }
+            navigation(
+                startDestination = "monitoring",
+                route = "monitoring-graph"
+            ) {
+                composable("monitoring") {
+                    MonitoringScreen()
                 }
             }
         }

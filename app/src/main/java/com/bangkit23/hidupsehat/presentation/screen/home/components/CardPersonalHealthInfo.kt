@@ -7,8 +7,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Create
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,18 +35,18 @@ import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 
 @Composable
 fun CardPersonalHealthInfo(
-    caloriesIntakeActual: Double,
-    waterDrunkActual: Double,
-    sleepTimeActual: Double,
-    caloriesBurnedActual: Double,
+    caloriesIntakeActual: Int,
+    waterDrunkActual: Int,
+    sleepTimeActual: Int,
+    caloriesBurnedActual: Int,
+    caloriesIntakeExpected: Int,
+    waterDrunkExpected: Int,
+    sleepTimeExpected: Int,
+    caloriesBurnedExpected: Int,
     onScanClicked: () -> Unit,
     onWriteManualClicked: () -> Unit,
     onCardClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    caloriesIntakeExpected: Double = 2400.0,
-    waterDrunkExpected: Double = 4.0,
-    sleepTimeExpected: Double = 8.0,
-    caloriesBurnedExpected: Double = 2000.0,
 ) {
     ElevatedCard(
         modifier = modifier
@@ -56,7 +60,7 @@ fun CardPersonalHealthInfo(
                 .padding(16.dp)
                 .fillMaxWidth()
         ) {
-            val (progress, bodyNeeds, foodButton) = createRefs()
+            val (progress, bodyNeeds, foodButton, editButton) = createRefs()
 
             ProgressCaloriesIntake(
                 caloriesIntakeActual = caloriesIntakeActual,
@@ -69,23 +73,23 @@ fun CardPersonalHealthInfo(
             Column(
                 modifier = Modifier.constrainAs(bodyNeeds) {
                     start.linkTo(progress.end)
-                    end.linkTo(parent.end)
+                    end.linkTo(editButton.start)
                     top.linkTo(parent.top, margin = 16.dp)
                 },
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 TextWithIcon(
-                    text = "2.4/4 L",
+                    text = "$waterDrunkActual/$waterDrunkExpected L",
                     icon = ImageVector.vectorResource(R.drawable.ic_glass_water),
                     textStyle = MaterialTheme.typography.bodyMedium
                 )
                 TextWithIcon(
-                    text = "5/8 jam",
+                    text = "$sleepTimeActual/$sleepTimeExpected jam",
                     icon = ImageVector.vectorResource(R.drawable.ic_sleep),
                     textStyle = MaterialTheme.typography.bodyMedium
                 )
                 TextWithIcon(
-                    text = "20/220 kal",
+                    text = "$caloriesBurnedActual/$caloriesBurnedExpected kal",
                     icon = ImageVector.vectorResource(R.drawable.ic_fire),
                     textStyle = MaterialTheme.typography.bodyMedium
                 )
@@ -99,16 +103,26 @@ fun CardPersonalHealthInfo(
                     end.linkTo(parent.end)
                 }
             )
+            Icon(
+                imageVector = Icons.Rounded.Create,
+                contentDescription = "Update User Info",
+                modifier = Modifier
+                    .size(20.dp)
+                    .constrainAs(editButton) {
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end)
+                    }.clickable { onCardClicked() }
+            )
         }
     }
 }
 
 @Composable
 fun ProgressCaloriesIntake(
-    caloriesIntakeActual: Double,
-    caloriesIntakeExpected: Double,
-    modifier: Modifier = Modifier
-) { 
+    caloriesIntakeActual: Int,
+    caloriesIntakeExpected: Int,
+    modifier: Modifier = Modifier,
+) {
     val progress by remember { mutableStateOf((caloriesIntakeActual / caloriesIntakeExpected) * 100.0) }
     val percentage by remember { mutableStateOf(progress / 100.0) }
     ConstraintLayout(modifier = modifier) {
@@ -122,7 +136,7 @@ fun ProgressCaloriesIntake(
             }
         )
         Text(
-            text = "${caloriesIntakeActual.toInt()}/${caloriesIntakeExpected.toInt()}",
+            text = "${caloriesIntakeActual}/${caloriesIntakeExpected}",
             style = MaterialTheme.typography.titleLarge,
             overflow = TextOverflow.Visible,
             modifier = Modifier.constrainAs(caloriesIntake) {
@@ -174,7 +188,7 @@ fun ButtonInputFoods(
         Spacer(Modifier.width(16.dp))
         ButtonWithIcon(
             text = "Manual Input",
-            icon = ImageVector.vectorResource(R.drawable.ic_create),
+            icon = Icons.Rounded.Add,
             onClick = onWriteManualClicked,
             contentDescription = "Manual Input",
             modifier = Modifier.weight(1f)
@@ -187,13 +201,17 @@ fun ButtonInputFoods(
 fun CardPersonalHealthInfo() {
     HidupSehatTheme {
         CardPersonalHealthInfo(
-            caloriesIntakeActual = 200.0,
-            waterDrunkActual = 3.4,
-            sleepTimeActual = 4.0,
-            caloriesBurnedActual = 400.0,
+            caloriesIntakeActual = 200,
+            waterDrunkActual = 3,
+            sleepTimeActual = 4,
+            caloriesBurnedActual = 400,
+            caloriesBurnedExpected = 220,
+            sleepTimeExpected = 7,
+            waterDrunkExpected = 4,
+            caloriesIntakeExpected = 2400,
             onScanClicked = {},
             onWriteManualClicked = {},
-            onCardClicked = {}
+            onCardClicked = {},
         )
     }
 }

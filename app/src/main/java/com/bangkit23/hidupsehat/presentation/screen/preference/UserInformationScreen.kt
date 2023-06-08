@@ -17,11 +17,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,11 +57,17 @@ fun UserInformationScreen(
     viewModel: UserInformationViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(key1 = state.success) {
-//        if (state.success) {
-//            navigateToHome()
-//        }
+    LaunchedEffect(state.success) {
+        if (state.success) {
+            navigateToHome()
+        }
+    }
+    LaunchedEffect(state.errorMessage) {
+        state.errorMessage?.let {
+            snackbarHostState.showSnackbar(it)
+        }
     }
 
     UserInformationContent(
@@ -80,13 +88,12 @@ fun UserInformationScreen(
             viewModel.onEvent(UserInformationEvent.OnCurrentWeightChanged(it))
         },
         onFinishedClick = {
-            navigateToHome()
             viewModel.onEvent(
                 UserInformationEvent.CreateUserDetailPreferences(
                     username = user.name.toString(),
                     name = user.name.toString(),
                     age = state.age.toIntOrNull() ?: 0,
-                    gender = if (user.gender == 0) "Male" else "Female",
+                    gender = if (state.selectedGenderId == 0) "Male" else "Female",
                     height = state.height.toIntOrNull() ?: 0,
                     weight = state.currentWeight.toIntOrNull() ?: 0,
                     target = when (choiceId) {
@@ -271,7 +278,11 @@ fun GenderChoices(
             title = "Laki-laki",
             avatar = ImageVector.vectorResource(R.drawable.ic_male)
         ),
-        Gender(id = 1, title = "Perempuan", avatar = ImageVector.vectorResource(R.drawable.ic_girl))
+        Gender(
+            id = 1,
+            title = "Perempuan",
+            avatar = ImageVector.vectorResource(R.drawable.ic_girl)
+        )
     )
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp),

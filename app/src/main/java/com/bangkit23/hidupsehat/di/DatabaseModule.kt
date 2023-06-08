@@ -1,13 +1,16 @@
 package com.bangkit23.hidupsehat.di
 
 import android.content.Context
+import androidx.annotation.RawRes
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.bangkit23.hidupsehat.R
 import com.bangkit23.hidupsehat.data.source.local.entity.FoodEntity
+import com.bangkit23.hidupsehat.data.source.local.entity.ReminderEntity
 import com.bangkit23.hidupsehat.data.source.local.room.FoodDao
 import com.bangkit23.hidupsehat.data.source.local.room.HidupSehatDatabase
+import com.bangkit23.hidupsehat.data.source.local.room.ReminderDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,14 +32,15 @@ object DatabaseModule {
     @Singleton
     fun provideHidupSehatDatabase(
         @ApplicationContext context: Context,
-        provider: Provider<FoodDao>,
+        foodDaoProvider: Provider<FoodDao>,
+        reminderDaoProvider: Provider<ReminderDao>,
     ): HidupSehatDatabase {
         return Room.databaseBuilder(
             context,
             HidupSehatDatabase::class.java,
             "hidup_sehat.db"
         ).fallbackToDestructiveMigration()
-            .addCallback(FoodCallback(context, provider))
+            .addCallback(DatabaseCallback(context, foodDaoProvider, reminderDaoProvider))
             .build()
     }
 
@@ -44,49 +48,82 @@ object DatabaseModule {
     @Singleton
     fun provideFoodDao(hidupSehatDatabase: HidupSehatDatabase): FoodDao =
         hidupSehatDatabase.foodDao()
+
+    @Provides
+    @Singleton
+    fun provideReminderDao(hidupSehatDatabase: HidupSehatDatabase): ReminderDao =
+        hidupSehatDatabase.reminderDao()
 }
 
-class FoodCallback(
+class DatabaseCallback(
     private val context: Context,
-    private val provider: Provider<FoodDao>,
+    private val foodDaoProvider: Provider<FoodDao>,
+    private val reminderDaoProvider: Provider<ReminderDao>,
 ) : RoomDatabase.Callback() {
 
     override fun onCreate(db: SupportSQLiteDatabase) {
         super.onCreate(db)
         CoroutineScope(Dispatchers.IO).launch {
-            fillWithStartingFoods(context, provider.get())
+            fillWithStartingReminders(context, reminderDaoProvider.get())
+            fillWithStartingFoods(context, foodDaoProvider.get())
         }
     }
 
-    private fun loadJsonArray(context: Context): JSONArray {
-        val inputStream = context.resources.openRawResource(R.raw.foods)
+    private fun loadJsonArray(context: Context, @RawRes rawFile: Int): JSONArray {
+        val inputStream = context.resources.openRawResource(rawFile)
         BufferedReader(inputStream.reader()).use {
             return JSONArray(it.readText())
         }
     }
 
+    private suspend fun fillWithStartingReminders(context: Context, reminderDao: ReminderDao) {
+        try {
+            val reminders = loadJsonArray(context, R.raw.reminders)
+            for (i in 0 until  reminders.length()) {
+                val item = reminders.getJSONObject(i)
+
+                val id = item.getInt("id")
+                val title = item.getString("title")
+                val time = item.getLong("time")
+                val type = item.getInt("type")
+                val isActive = item.getBoolean("isActive")
+
+                val reminderEntity = ReminderEntity(
+                    id = id,
+                    title = title,
+                    time = time,
+                    type = type,
+                    isActive = isActive,
+                )
+                reminderDao.upsertReminder(reminderEntity)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     private suspend fun fillWithStartingFoods(context: Context, foodDao: FoodDao) {
         try {
-            val foods = loadJsonArray(context)
+            val foods = loadJsonArray(context, R.raw.foods)
             for (i in 0 until  foods.length()) {
                 val item = foods.getJSONObject(i)
 
                 val id = item.getInt("id")
-                val name = item?.getString("name")
-                val portionSize = item?.getString("portion-size")
-                val energyKj = item?.getDouble("energy-kj")
-                val energyKKal = item?.getDouble( "energy-kkal")
-                val sugar = item?.getDouble("sugar")
-                val potassium = item?.getDouble("potassium")
-                val carbohydrate = item?.getDouble("carbohydrate")
-                val cholesterol = item?.getDouble("cholesterol")
-                val fat = item?.getDouble("fat")
-                val saturatedFat = item?.getDouble("saturated-fat")
-                val transFat = item?.getDouble("trans-fat")
-                val polyunsaturatedFat = item?.getDouble("polyunsaturated-fat")
-                val monounsaturatedFat = item?.getDouble("monounsaturated-fat")
+                val name = item?.getString("nama")
+                val portionSize = item?.getString("ukuran_porsi")
+                val energyKj = item?.getDouble("energi_kj")
+                val energyKKal = item?.getDouble( "energi_kkal")
+                val sugar = item?.getDouble("gula")
+                val potassium = item?.getDouble("kalium")
+                val carbohydrate = item?.getDouble("karbohidrat")
+                val cholesterol = item?.getDouble("kolesterol")
+                val fat = item?.getDouble("lemak")
+                val saturatedFat = item?.getDouble("lemak_jenuh")
+                val transFat = item?.getDouble("lemak_trans")
+                val polyunsaturatedFat = item?.getDouble("lemak_tak_jenuh_ganda")
+                val monounsaturatedFat = item?.getDouble("lemak_tak_jenuh_tunggal")
                 val protein = item?.getDouble("protein")
-                val fiber = item?.getDouble("fiber")
+                val fiber = item?.getDouble("serat")
                 val sodium = item?.getDouble("sodium")
 
                 val foodEntity = FoodEntity(

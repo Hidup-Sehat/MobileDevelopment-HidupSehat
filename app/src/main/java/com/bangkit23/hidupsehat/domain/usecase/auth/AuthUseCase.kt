@@ -10,6 +10,6 @@ interface AuthUseCase {
     fun signInWithIntent(intent: Intent): Flow<Result<SignInResult>>
     fun signInWithEmail(email: String, password: String): Flow<Result<SignInResult>>
     fun registerWithEmail(name: String, email: String, password: String): Flow<Result<SignInResult>>
-    fun getSignedUser(): Flow<Result<UserData?>>
+    fun getSignedUser(): Flow<UserData?>
     suspend fun signOut()
 }
