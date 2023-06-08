@@ -12,4 +12,9 @@
     <color name="mental_health">#dce2f9</color>
     <color name="foods">#d7e8cd</color>
     <color name="reminder">#f9daed</color>
+
+    <color name="green_tile">#FF36B067</color>
+    <color name="blue_tile">#FF4FB6D7</color>
+    <color name="yellow_tile">#ffCB933F</color>
+    <color name="red_tile">#ffB74B4B</color>
 </resources>

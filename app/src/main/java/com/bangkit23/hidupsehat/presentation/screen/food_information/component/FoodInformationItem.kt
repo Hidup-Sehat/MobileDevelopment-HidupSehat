@@ -1,5 +1,6 @@
 package com.bangkit23.hidupsehat.presentation.screen.food_information.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowRight
@@ -19,7 +20,8 @@ fun FoodInformationItem(
     modifier: Modifier = Modifier,
     name: String,
     unit: String,
-    calories: String
+    calories: String,
+    onItemClick : () -> Unit
 ) {
     Column(modifier = modifier) {
         ListItem(
@@ -28,7 +30,9 @@ fun FoodInformationItem(
                 Text(text = "$unit $calories")
             },
             trailingContent = {
-                IconButton(onClick = {}) {
+                IconButton(onClick = {
+                    onItemClick()
+                }) {
                     Icon(imageVector = Icons.Default.ArrowRight, contentDescription = null)
                 }
             }
@@ -40,5 +44,5 @@ fun FoodInformationItem(
 @Preview
 @Composable
 fun FoodInformationItemPrev() {
-    FoodInformationItem(name = "Nasi Goreng", unit = "100g", calories = "168 kal")
+    FoodInformationItem(name = "Nasi Goreng", unit = "100g", calories = "168 kal", onItemClick = {})
 }

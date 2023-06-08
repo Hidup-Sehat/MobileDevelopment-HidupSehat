@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
@@ -48,7 +49,9 @@ import com.bangkit23.hidupsehat.presentation.screen.exercise_play.ExercisePlaySc
 import com.bangkit23.hidupsehat.presentation.screen.feeds.FeedScreen
 import com.bangkit23.hidupsehat.presentation.screen.feeds.model.Feed
 import com.bangkit23.hidupsehat.presentation.screen.feeds_detail.FeedsDetailScreen
+import com.bangkit23.hidupsehat.presentation.screen.food_information.DetailFoodInformationScreen
 import com.bangkit23.hidupsehat.presentation.screen.food_information.FoodInformationScreen
+import com.bangkit23.hidupsehat.presentation.screen.food_information.model.FoodInformation
 import com.bangkit23.hidupsehat.presentation.screen.home.HomeScreen
 import com.bangkit23.hidupsehat.presentation.screen.leaderboard.LeaderboardScreen
 import com.bangkit23.hidupsehat.presentation.screen.preference.UserInformationScreen
@@ -61,6 +64,7 @@ import com.bangkit23.hidupsehat.presentation.screen.scanfood.ScanFoodScreen
 import com.bangkit23.hidupsehat.presentation.screen.scanfood_result.ScanFoodResultScreen
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 import com.bangkit23.hidupsehat.util.toUser
+import kotlinx.coroutines.selects.SelectClause1
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -299,7 +303,17 @@ fun HidupSehatApp(
                 route = "food-information-graph"
             ){
                 composable(Screen.FoodInformation.route){
-                    FoodInformationScreen(data = listOf())
+                    val list = listOf<FoodInformation>(
+                        FoodInformation(1,"Nasi Goreng","100g","168kal")
+                    )
+                    FoodInformationScreen(data = list,
+                    onItemClick = {
+                        navController.navigate(Screen.FoodInformationDetail.route)
+                    }
+                    )
+                }
+                composable(Screen.FoodInformationDetail.route){
+                    DetailFoodInformationScreen()
                 }
             }
         }

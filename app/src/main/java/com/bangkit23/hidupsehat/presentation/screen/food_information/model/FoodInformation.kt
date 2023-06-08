@@ -4,5 +4,5 @@ data class FoodInformation(
     val id : Int,
     val name : String,
     val unit : String,
-    val calories : String
+    val calories : String,
 )

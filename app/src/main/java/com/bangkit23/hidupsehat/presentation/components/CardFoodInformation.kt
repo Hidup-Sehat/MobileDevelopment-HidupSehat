@@ -26,7 +26,7 @@ fun CardFoodInformation(
     color: Color
 ) {
     Card(
-        modifier = modifier.width(155.dp),
+        modifier = modifier.width(170.dp),
         colors = CardDefaults.cardColors(containerColor = color, contentColor = Color.White)
     ) {
         Column(
@@ -38,7 +38,10 @@ fun CardFoodInformation(
                 modifier = Modifier.fillMaxWidth(),
                 text = unit,
                 textAlign = TextAlign.End,
-                style = MaterialTheme.typography.displayMedium.copy(fontSize = 32.sp, fontWeight = FontWeight.Bold)
+                style = MaterialTheme.typography.displayMedium.copy(
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold
+                )
             )
         }
     }

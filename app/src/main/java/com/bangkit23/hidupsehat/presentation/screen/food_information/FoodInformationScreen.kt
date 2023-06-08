@@ -14,13 +14,18 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.bangkit23.hidupsehat.R
 import com.bangkit23.hidupsehat.presentation.screen.food_information.component.FoodInformationItem
 import com.bangkit23.hidupsehat.presentation.screen.food_information.model.FoodInformation
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FoodInformationScreen(data : List<FoodInformation>) {
+fun FoodInformationScreen(
+    data : List<FoodInformation>,
+    onItemClick: () -> Unit,
+    ) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -42,7 +47,9 @@ fun FoodInformationScreen(data : List<FoodInformation>) {
         content = {
             FoodInformationContent(
                 modifier = Modifier.padding(it),
-                data = data)
+                data = data,
+                onItemClick = onItemClick
+            )
         }
     )
 }
@@ -50,10 +57,13 @@ fun FoodInformationScreen(data : List<FoodInformation>) {
 @Composable
 fun FoodInformationContent(
     modifier : Modifier = Modifier,
-    data : List<FoodInformation>) {
+    data : List<FoodInformation>,
+    onItemClick : () -> Unit
+    ) {
     LazyColumn(modifier = modifier){
         items(data){ data->
-            FoodInformationItem(name = data.name, unit = data.unit, calories = data.calories)
+            FoodInformationItem(name = data.name, unit = data.unit, calories = data.calories,
+            onItemClick = onItemClick)
         }
     }
 
@@ -65,5 +75,5 @@ fun FoodInformationScreePrev() {
     val dummyData = listOf<FoodInformation>(
         FoodInformation(1,"Nasi Goreng","100g","168kal")
     )
-    FoodInformationScreen(dummyData)
+    FoodInformationScreen(dummyData, onItemClick = {})
 }
