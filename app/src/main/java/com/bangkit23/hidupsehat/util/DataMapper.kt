@@ -2,9 +2,11 @@ package com.bangkit23.hidupsehat.util
 
 import com.bangkit23.hidupsehat.data.source.local.entity.FoodEntity
 import com.bangkit23.hidupsehat.data.source.remote.request.UserDetailRequest
+import com.bangkit23.hidupsehat.data.source.remote.response.FeedDetailResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.FeedResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.FeedResult
 import com.bangkit23.hidupsehat.data.source.remote.response.UserDetailResult
+import com.bangkit23.hidupsehat.domain.model.feed.DetailFeed
 import com.bangkit23.hidupsehat.domain.model.feed.Feed
 import com.bangkit23.hidupsehat.domain.model.food.Food
 import com.bangkit23.hidupsehat.domain.model.user.UserDetail
@@ -74,3 +76,8 @@ fun List<FeedResult>.toDomainn(): List<Feed> {
         )
     }
 }
+
+fun FeedDetailResponse.toDomain() = DetailFeed(
+    link = link,
+    title = title
+)

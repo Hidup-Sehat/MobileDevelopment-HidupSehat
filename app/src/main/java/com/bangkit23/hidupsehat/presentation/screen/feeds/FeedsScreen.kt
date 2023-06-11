@@ -1,5 +1,9 @@
 package com.bangkit23.hidupsehat.presentation.screen.feeds
 
+import android.util.Log
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,6 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bangkit23.hidupsehat.presentation.screen.feeds.component.FeedItem
@@ -21,12 +26,13 @@ import com.bangkit23.hidupsehat.presentation.screen.feeds.model.Feed
 @Composable
 fun FeedScreen(
     modifier: Modifier = Modifier,
-    data: List<Feed>, onClick: () -> Unit,
+    data: List<Feed>,
+    navigateToDetail: (String) -> Unit,
     viewModel: FeedViewModel = hiltViewModel()
-    ) {
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(key1 = state.feedResult){}
+    LaunchedEffect(key1 = state.feedResult) {}
     Scaffold(
         topBar = {
             TopAppBar(title = {
@@ -37,7 +43,7 @@ fun FeedScreen(
             FeedContent(
                 modifier = Modifier.padding(it),
                 data = state.feedResult,
-                onClick = onClick,
+                navigateToDetail = navigateToDetail,
             )
         }
     )
@@ -46,20 +52,25 @@ fun FeedScreen(
 @Composable
 fun FeedContent(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
+    navigateToDetail: (String) -> Unit,
     data: List<com.bangkit23.hidupsehat.domain.model.feed.Feed>
 ) {
-    LazyColumn {
-        items(data) {
+    LazyColumn(modifier = modifier) {
+        items(data) { feed ->
+//            Log.d("testtest",feed.key!!)
             FeedItem(
                 modifier = modifier,
-                image = it.imgUrl!!,
-                title = it.title!!,
-                createdAt = it.createdAt!!,
-                publishedBy = it.author!!,
-                description = it.summary!!,
-                onClick = onClick,
+                image = feed.imgUrl!!,
+                title = feed.title!!,
+                createdAt = feed.createdAt!!,
+                publishedBy = feed.author!!,
+                description = feed.summary!!,
+                id = feed.key!!,
+                onClick = {navigateToDetail(feed.key)}
             )
+        }
+        item(){
+            Spacer(modifier = Modifier.height(4.dp))
         }
     }
 }
@@ -77,5 +88,5 @@ fun FeeScreenPrev() {
             description = "The grill is for more than steak and burgers, fire it up for this peachy dessert"
         )
     )
-    FeedScreen(data = dummyList, onClick = {})
+    FeedScreen(data = dummyList, navigateToDetail = {})
 }

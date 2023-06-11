@@ -18,7 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
@@ -49,7 +48,7 @@ import com.bangkit23.hidupsehat.presentation.screen.exercise_play.ExercisePlaySc
 import com.bangkit23.hidupsehat.presentation.screen.feeds.FeedScreen
 import com.bangkit23.hidupsehat.presentation.screen.feeds.model.Feed
 import com.bangkit23.hidupsehat.presentation.screen.feeds_detail.FeedsDetailScreen
-import com.bangkit23.hidupsehat.presentation.screen.food_information.DetailFoodInformationScreen
+import com.bangkit23.hidupsehat.presentation.screen.food_information_detail.DetailFoodInformationScreen
 import com.bangkit23.hidupsehat.presentation.screen.food_information.FoodInformationScreen
 import com.bangkit23.hidupsehat.presentation.screen.food_information.model.FoodInformation
 import com.bangkit23.hidupsehat.presentation.screen.home.HomeScreen
@@ -64,7 +63,6 @@ import com.bangkit23.hidupsehat.presentation.screen.scanfood.ScanFoodScreen
 import com.bangkit23.hidupsehat.presentation.screen.scanfood_result.ScanFoodResultScreen
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 import com.bangkit23.hidupsehat.util.toUser
-import kotlinx.coroutines.selects.SelectClause1
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -117,12 +115,20 @@ fun HidupSehatApp(
                         description = "The grill is for more than steak and burgers, fire it up for this peachy dessert"
                     )
                 )
-                FeedScreen(data = dummyList, onClick = {
-                    navController.navigate("feed-detail")
+                FeedScreen(data = dummyList, navigateToDetail = {
+                    navController.navigate(Screen.FeedDetail.createRoute(it))
                 })
             }
-            composable(Screen.FeedDetail.route){
-                FeedsDetailScreen()
+            composable(
+                route = Screen.FeedDetail.route,
+                arguments = listOf(navArgument("id"){type = NavType.StringType})){
+                val id = it.arguments?.getString("id") ?: ""
+                FeedsDetailScreen(
+                    id = id,
+                    onNavigateUp = {
+                        navController.navigateUp()
+                    }
+                )
             }
             composable(Screen.Leaderboard.route) {
                 LeaderboardScreen()
@@ -306,14 +312,26 @@ fun HidupSehatApp(
                     val list = listOf<FoodInformation>(
                         FoodInformation(1,"Nasi Goreng","100g","168kal")
                     )
-                    FoodInformationScreen(data = list,
-                    onItemClick = {
-                        navController.navigate(Screen.FoodInformationDetail.route)
-                    }
+                    FoodInformationScreen(data = listOf(),
+                    navigateToDetail = {
+                        navController.navigate(Screen.FoodInformationDetail.createRoute(it))
+                    },
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        }
                     )
                 }
-                composable(Screen.FoodInformationDetail.route){
-                    DetailFoodInformationScreen()
+                composable(
+                    route = Screen.FoodInformationDetail.route,
+                    arguments = listOf(navArgument("name"){type = NavType.StringType})
+                    ){
+                    val name = it.arguments?.getString("name") ?: ""
+                    DetailFoodInformationScreen(
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        },
+                        name = name
+                    )
                 }
             }
         }

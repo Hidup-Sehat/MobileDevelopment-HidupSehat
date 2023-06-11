@@ -1,5 +1,6 @@
 package com.bangkit23.hidupsehat.presentation.screen.food_information
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,35 +12,60 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.bangkit23.hidupsehat.R
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.bangkit23.hidupsehat.domain.model.food.Food
 import com.bangkit23.hidupsehat.presentation.screen.food_information.component.FoodInformationItem
-import com.bangkit23.hidupsehat.presentation.screen.food_information.model.FoodInformation
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FoodInformationScreen(
-    data : List<FoodInformation>,
-    onItemClick: () -> Unit,
+    data : List<Food>,
+    navigateToDetail: (String) -> Unit,
+    onNavigateUp : () -> Unit,
+    viewModel: FoodInformationViewModel = hiltViewModel()
     ) {
+    var isSearching by remember { mutableStateOf(false) }
+    LaunchedEffect(key1 = Unit){
+        viewModel.onEvent(FoodInformationEvent.OnGetAllFeed(data))
+    }
+
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
     Scaffold(
         topBar = {
             TopAppBar(
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = {
+                        onNavigateUp()
+                    }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = null)
                     }
                 },
                 title = {
-                    Text("Informasi Makanan")
+                    if (!isSearching){
+                        Text("Informasi Makanan")
+                    }
                 },
                 actions = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = {
+                        //muncul text field
+                        isSearching = !isSearching
+                    }) {
                         Icon(Icons.Default.Search, contentDescription = null)
+                    }
+                    AnimatedVisibility(visible = isSearching) {
+                        TextField(value = "", onValueChange = {})
                     }
                 }
             )
@@ -47,8 +73,8 @@ fun FoodInformationScreen(
         content = {
             FoodInformationContent(
                 modifier = Modifier.padding(it),
-                data = data,
-                onItemClick = onItemClick
+                data = state.foods,
+                navigateToDetail = navigateToDetail
             )
         }
     )
@@ -57,13 +83,14 @@ fun FoodInformationScreen(
 @Composable
 fun FoodInformationContent(
     modifier : Modifier = Modifier,
-    data : List<FoodInformation>,
-    onItemClick : () -> Unit
+    data : List<Food>,
+    navigateToDetail: (String) -> Unit
     ) {
     LazyColumn(modifier = modifier){
-        items(data){ data->
-            FoodInformationItem(name = data.name, unit = data.unit, calories = data.calories,
-            onItemClick = onItemClick)
+        items(data){food ->
+            FoodInformationItem(name = food.name!!, onItemClick = {
+                navigateToDetail(food.name)
+            }, unit = "", calories = food.energyKKal.toString() )
         }
     }
 
@@ -72,8 +99,5 @@ fun FoodInformationContent(
 @Preview
 @Composable
 fun FoodInformationScreePrev() {
-    val dummyData = listOf<FoodInformation>(
-        FoodInformation(1,"Nasi Goreng","100g","168kal")
-    )
-    FoodInformationScreen(dummyData, onItemClick = {})
+    FoodInformationScreen(data = listOf(), navigateToDetail = {}, onNavigateUp = {})
 }

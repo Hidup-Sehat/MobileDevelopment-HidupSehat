@@ -1,4 +1,4 @@
-package com.bangkit23.hidupsehat.presentation.screen.food_information
+package com.bangkit23.hidupsehat.presentation.screen.food_information_detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -24,6 +23,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -32,20 +33,34 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bangkit23.hidupsehat.R
+import com.bangkit23.hidupsehat.domain.model.food.Food
 import com.bangkit23.hidupsehat.presentation.components.CardFoodInformation
-import com.google.common.math.LinearTransformation.vertical
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailFoodInformationScreen() {
+fun DetailFoodInformationScreen(
+    name : String,
+    onNavigateUp : () -> Unit,
+    viewModel: DetailFoodInformationViewModel = hiltViewModel()
+) {
+
+    LaunchedEffect(key1 = Unit){
+        viewModel.onEvent(DetailFoodInformationEvent.OnGetFoodById(name))
+    }
+
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("") },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = {
+                        onNavigateUp()
+                    }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = null)
                     }
                 },
@@ -56,16 +71,20 @@ fun DetailFoodInformationScreen() {
                 }
             )
         },
-        content = {
-            DetailFoodInformationContent(
-                modifier = Modifier.padding(it)
-            )
+        content = {padding ->
+            state.food?.let {
+                DetailFoodInformationContent(
+                    modifier = Modifier.padding(padding),
+                    food = it
+                )
+            }
         }
     )
 }
 
 @Composable
 fun DetailFoodInformationContent(
+    food : Food,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
@@ -73,7 +92,7 @@ fun DetailFoodInformationContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            text = "Nasi Goreng", maxLines = 3, style = MaterialTheme.typography.headlineMedium
+            text = food.name!!, maxLines = 3, style = MaterialTheme.typography.headlineMedium
         )
         Divider(
             modifier = Modifier.padding(vertical = 8.dp)
@@ -327,5 +346,5 @@ fun InformasiGiziPrev() {
 @Preview
 @Composable
 fun DetailFoodInformationScreenPrev() {
-    DetailFoodInformationScreen()
+
 }

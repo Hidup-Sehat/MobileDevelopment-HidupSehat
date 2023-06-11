@@ -21,4 +21,7 @@ interface FoodDao {
 
     @Query("SELECT * FROM food_entity WHERE name = :foodName")
     fun getFoodsPortionSize(foodName: String): Flow<List<FoodEntity>>
+
+    @Query("SELECT * FROM food_entity")
+    fun getAllFood(): Flow<List<FoodEntity>>
 }

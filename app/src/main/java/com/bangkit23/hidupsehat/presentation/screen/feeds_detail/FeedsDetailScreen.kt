@@ -13,19 +13,37 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FeedsDetailScreen() {
+fun FeedsDetailScreen(
+    id: String,
+    onNavigateUp: () -> Unit,
+    viewModel: FeedsDetailViewModel = hiltViewModel()
+) {
+    LaunchedEffect(key1 = Unit) {
+        viewModel.onEvent(FeedDetailEvent.OnGetDetailFeed(id))
+    }
+
+
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {Text("Detail")},
+                title = { Text(state.title) },
                 navigationIcon = {
                     IconButton(
-                        onClick = {},
+                        onClick = {
+                            onNavigateUp.invoke()
+                        },
                         content = {
                             Icon(Icons.Default.ArrowBack, contentDescription = null)
                         }
@@ -35,18 +53,16 @@ fun FeedsDetailScreen() {
         },
         content = {
             FeedsDetailContent(
-                modifier = Modifier.padding(it)
+                modifier = Modifier.padding(it),
+                linkUrl = state.link
             )
         }
     )
 }
-@Composable
-fun WebViewWidget() {
-    // Declare a string that contains a url
-    val url = "https://www.google.com"
 
-    // Adding a WebView inside AndroidView
-    // with layout as full screen
+@Composable
+fun WebViewLayout(linkUrl: String) {
+
     AndroidView(factory = {
         WebView(it).apply {
             layoutParams = ViewGroup.LayoutParams(
@@ -54,17 +70,18 @@ fun WebViewWidget() {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
             webViewClient = WebViewClient()
-            loadUrl(url)
+            loadUrl(linkUrl)
         }
     }, update = {
-        it.loadUrl(url)
+        it.loadUrl(linkUrl)
     })
 }
 
 @Composable
 fun FeedsDetailContent(
-    modifier : Modifier = Modifier
+    modifier: Modifier = Modifier,
+    linkUrl: String
 ) {
-    WebViewWidget()
+    WebViewLayout(linkUrl)
 
 }

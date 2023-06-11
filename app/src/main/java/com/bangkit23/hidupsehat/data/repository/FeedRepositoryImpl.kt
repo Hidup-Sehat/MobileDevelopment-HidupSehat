@@ -2,6 +2,7 @@ package com.bangkit23.hidupsehat.data.repository
 
 import com.bangkit23.hidupsehat.data.source.remote.RemoteDataSource
 import com.bangkit23.hidupsehat.data.source.remote.request.FeedRequest
+import com.bangkit23.hidupsehat.domain.model.feed.DetailFeed
 import com.bangkit23.hidupsehat.domain.model.feed.Feed
 import com.bangkit23.hidupsehat.domain.reporitory.FeedRepository
 import com.bangkit23.hidupsehat.util.Result
@@ -31,6 +32,17 @@ class FeedRepositoryImpl @Inject constructor(private val remoteDataSource: Remot
             }
 
         } catch (e: Exception) {
+            e.printStackTrace()
+            emit(Result.Error(e.message))
+        }
+    }.flowOn(Dispatchers.IO)
+
+    override fun feedDetailById(id: String): Flow<Result<DetailFeed>> = flow {
+        try {
+            val response = remoteDataSource.getFeedDetailById(id)
+            val data = response.toDomain()
+            emit(Result.Success(data))
+        }catch (e: Exception) {
             e.printStackTrace()
             emit(Result.Error(e.message))
         }

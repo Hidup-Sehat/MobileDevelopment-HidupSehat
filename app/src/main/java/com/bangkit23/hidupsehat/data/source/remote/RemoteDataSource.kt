@@ -16,4 +16,7 @@ class RemoteDataSource @Inject constructor(
 
     suspend fun getFeeds(feedRequest: FeedRequest) =
         apiService.getFeeds(feedRequest)
+
+    suspend fun getFeedDetailById(id: String) =
+        apiService.getFeedDetailById(id)
 }
