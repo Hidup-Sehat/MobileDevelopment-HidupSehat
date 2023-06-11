@@ -29,9 +29,11 @@ class FoodInformationViewModel @Inject constructor(
         viewModelScope.launch {
             foodUseCase.getAllFoods()
                 .collect { foods ->
+                    val shuffledFoods = foods.shuffled()
+                    val selectedFoods = shuffledFoods.take(20)
                     _state.update {
                         it.copy(
-                            foods = foods
+                            foods = selectedFoods
                         )
                     }
                 }
