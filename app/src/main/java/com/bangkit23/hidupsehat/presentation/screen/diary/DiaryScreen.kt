@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -26,10 +28,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -56,7 +56,51 @@ fun DiaryScreen() {
         "Penuh Cinta"
     )
 
-    var onItemClicked by remember { mutableStateOf(false) }
+    val listNegative = listOf<String>(
+        "Kecewa",
+        "Marah",
+        "Stress",
+        "Kesal",
+        "Takut",
+        "Cemas",
+        "Gelisah",
+        "Bingung",
+        "Bosan",
+        "Capek",
+        "Kesepian",
+        "Lesu",
+        "Berduka",
+        "Sedih",
+        "Patah Hati",
+        "Pusing"
+    )
+
+    val listAsalEmosi = listOf<String>(
+        "Keluarga",
+        "Pekerjaan",
+        "Teman",
+        "Hobi",
+        "Kesehatan",
+        "Percintaan",
+        "Keuangan",
+        "Pendidikan",
+        "Makanan",
+        "Olahraga",
+        "Seni",
+        "Ibadah",
+        "Refleksi diri",
+        "Cuaca",
+        "Belanja",
+        "Tidur",
+        "Santai",
+        "Hiburan",
+        "Orang Lain"
+    )
+    val selectedPositiveEmotions = remember { mutableStateListOf<String>() }
+    val selectedNegativeEmotions = remember { mutableStateListOf<String>() }
+    val selectedAsalEmotions = remember { mutableStateListOf<String>() }
+
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -69,97 +113,61 @@ fun DiaryScreen() {
             )
         },
         content = {
-//            DiaryContent(
-//                modifier = Modifier.padding(it),
-//                onItemClicked = {
-//                    onItemClicked = !onItemClicked
-//                },
-//                isSelected = onItemClicked
-//            )
-//            FlowRow(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(it), horizontalArrangement = Arrangement.SpaceEvenly,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//                FilterChip(selected = false, onClick = {}, label = { Text("Senang") })
-//                FilterChip(selected = false, onClick = {}, label = { Text("Senang") })
-//                FilterChip(selected = false, onClick = {}, label = { Text("Senang") })
-//                FilterChip(selected = false, onClick = {}, label = { Text("Senang") })
-//                FilterChip(selected = false, onClick = {}, label = { Text("Senang") })
-//                FilterChip(selected = false, onClick = {}, label = { Text("Senang") })
-//                FilterChip(selected = false, onClick = {}, label = { Text("Senang") })
-//                FilterChip(selected = false, onClick = {}, label = { Text("Senang") })
-//                FilterChip(selected = false, onClick = {}, label = { Text("Senang") })
-//                FilterChip(selected = false, onClick = {}, label = { Text("Senang") })
-//                FilterChip(selected = false, onClick = {}, label = { Text("Senang") })
-//            }
             Column(
-                modifier = Modifier.padding(it),
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(it),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
                     text = "Apa emosi yang kamu\n rasakan sekarang?",
                     style = MaterialTheme.typography.titleMedium.copy(
-                        color = MaterialTheme.colorScheme.primary, fontSize = 16.sp, textAlign = TextAlign.Center
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Center
                     )
                 )
 
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = "Emosi Positif", style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold, fontSize = 16.sp, textAlign = TextAlign.Center
-                    )
+//emosi positive
+                PositiveEmotionsInput(
+                    positiveEmotions = listPositive,
+                    selectedPositiveEmotions = selectedPositiveEmotions,
+                    onPositiveSelected = { emotion ->
+                        selectedPositiveEmotions.add(emotion)
+                    },
+                    onPositiveDeselected = { emotion ->
+                        selectedPositiveEmotions.remove(emotion)
+
+                    }
                 )
 
-                FlowRow(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    maxItemsInEachRow = 4,
-                    content = {
-                        listPositive.forEach {
-                            Chip(isSelected = false, label = it)
-                        }
-                    })
                 Divider()
 
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = "Emosi Negatif", style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold, fontSize = 16.sp, textAlign = TextAlign.Center
-                    )
+//emosi negatif
+                NegativeEmotionsInput(
+                    negativeEmotions = listNegative,
+                    selectedNegativeEmotions = selectedNegativeEmotions,
+                    onNegativeSelected = { emotion ->
+                        selectedNegativeEmotions.add(emotion)
+                    },
+                    onNegativeDeselected = { emotion ->
+                        selectedNegativeEmotions.remove(emotion)
+                    }
                 )
 
-                FlowRow(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    maxItemsInEachRow = 4,
-                    content = {
-                        listPositive.forEach {
-                            Chip(isSelected = false, label = it)
-                        }
-                    })
                 Divider()
 
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = "Asal Emosi Kamu", style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold, fontSize = 16.sp, textAlign = TextAlign.Center
-                    )
-                )
+                AsalEmotionsInput(
+                    asalEmotions = listAsalEmosi,
+                    selectedAsalEmotions = selectedAsalEmotions,
+                    onAsalSelected = { emotion ->
+                        selectedAsalEmotions.add(emotion)
 
-                FlowRow(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    maxItemsInEachRow = 4,
-                    content = {
-                        listPositive.forEach {
-                            Chip(isSelected = false, label = it)
-                        }
-                    })
+                    },
+                    onAsalDeselected = { emotion ->
+                        selectedAsalEmotions.remove(emotion)
+                    }
+                )
                 Divider()
 
                 Text(
@@ -236,14 +244,128 @@ fun DiaryContent(
     }
 }
 
-@Preview
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun DiaryScreenPrev() {
-    DiaryScreen()
+fun PositiveEmotionsInput(
+    positiveEmotions: List<String>,
+    selectedPositiveEmotions: List<String>,
+    onPositiveSelected: (String) -> Unit,
+    onPositiveDeselected: (String) -> Unit,
+) {
+    Column() {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "Emosi Positif", style = MaterialTheme.typography.titleMedium.copy(
+                fontWeight = FontWeight.Bold, fontSize = 16.sp, textAlign = TextAlign.Center
+            )
+        )
+
+        FlowRow(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            maxItemsInEachRow = 4,
+            content = {
+                positiveEmotions.forEach { emotion ->
+                    val isSelected = selectedPositiveEmotions.contains(emotion)
+                    Chip(
+                        selected = isSelected,
+                        label = emotion,
+                        onChipClicked = { clickedEmotion ->
+                            if (isSelected) {
+                                onPositiveDeselected(clickedEmotion)
+                            } else {
+                                onPositiveSelected(clickedEmotion)
+                            }
+                        })
+                }
+            })
+    }
+
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun NegativeEmotionsInput(
+    negativeEmotions: List<String>,
+    selectedNegativeEmotions: List<String>,
+    onNegativeSelected: (String) -> Unit,
+    onNegativeDeselected: (String) -> Unit,
+) {
+    Column() {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "Emosi Negatif", style = MaterialTheme.typography.titleMedium.copy(
+                fontWeight = FontWeight.Bold, fontSize = 16.sp, textAlign = TextAlign.Center
+            )
+        )
+
+        FlowRow(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            maxItemsInEachRow = 4,
+            content = {
+                negativeEmotions.forEach { emotion ->
+                    val isSelected = selectedNegativeEmotions.contains(emotion)
+                    Chip(
+                        selected = isSelected,
+                        label = emotion,
+                        onChipClicked = { clickedEmotion ->
+                            if (isSelected) {
+                                onNegativeDeselected(clickedEmotion)
+                            } else {
+                                onNegativeSelected(clickedEmotion)
+                            }
+                        })
+                }
+            })
+    }
+
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun AsalEmotionsInput(
+    asalEmotions: List<String>,
+    selectedAsalEmotions: List<String>,
+    onAsalSelected: (String) -> Unit,
+    onAsalDeselected: (String) -> Unit,
+) {
+    Column() {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "Emosi Negatif", style = MaterialTheme.typography.titleMedium.copy(
+                fontWeight = FontWeight.Bold, fontSize = 16.sp, textAlign = TextAlign.Center
+            )
+        )
+
+        FlowRow(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            maxItemsInEachRow = 4,
+            content = {
+                asalEmotions.forEach { emotion ->
+                    val isSelected = selectedAsalEmotions.contains(emotion)
+                    Chip(
+                        selected = isSelected,
+                        label = emotion,
+                        onChipClicked = { clickedEmotion ->
+                            if (isSelected) {
+                                onAsalDeselected(clickedEmotion)
+                            } else {
+                                onAsalSelected(clickedEmotion)
+                            }
+                        })
+                }
+            })
+    }
+
 }
 
 @Preview
 @Composable
-fun ContentPrev() {
-    DiaryContent(onItemClicked = {}, isSelected = false)
+fun DiaryScreenPrev() {
+    DiaryScreen()
 }
