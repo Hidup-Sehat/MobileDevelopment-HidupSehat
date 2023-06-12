@@ -38,6 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bangkit23.hidupsehat.R
 import com.bangkit23.hidupsehat.domain.model.food.Food
 import com.bangkit23.hidupsehat.presentation.components.CardFoodInformation
+import com.bangkit23.hidupsehat.presentation.screen.food_information_detail.component.CardFoodContent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -115,102 +116,10 @@ fun DetailFoodInformationContent(
                 onValueChange = {},
                 label = { Text("Ukuran Porsi") })
         }
-//        LazyVerticalGrid(columns = GridCells.Fixed(2),
-//            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-//            verticalArrangement = Arrangement.spacedBy(16.dp),
-//            horizontalArrangement = Arrangement.spacedBy(16.dp),
-//            content = {
-//                items(dummyList) {
-//                    CardFoodInformation(name = it.name, unit = it.calories, color = it.color)
-//                }
-//            })
-//        Row(
-//            modifier = Modifier.fillMaxWidth(),
-//            horizontalArrangement = Arrangement.Center
-//        ) {
-//            CardFoodInformation(
-//                name = "Karbohidrat",
-//                unit = "0.0g",
-//                color = colorResource(id = R.color.green_tile)
-//            )
-//            CardFoodInformation(
-//                name = "Lemak",
-//                unit = "0.0g",
-//                color = colorResource(id = R.color.blue_tile)
-//            )
-//        }
-//        Row(
-//            modifier = Modifier.fillMaxWidth(),
-//            horizontalArrangement = Arrangement.Center
-//        ) {
-//            CardFoodInformation(
-//                name = "Serat",
-//                unit = "0.6g",
-//                color = colorResource(id = R.color.yellow_tile)
-//            )
-//            CardFoodInformation(
-//                name = "Protein",
-//                unit = "4.2g",
-//                color = colorResource(id = R.color.red_tile)
-//            )
-//        }
 
-        ConstraintLayout(modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 20.dp)) {
-            val (cvKarbohidrat, cvLemak, cvSerat, cvProtein) = createRefs()
-            val horizontalGuideline = createGuidelineFromStart(fraction = 0.5f)
-            val verticalGuideline = createGuidelineFromTop(fraction = 0.5f)
-            CardFoodInformation(
-                name = "Karbohidrat",
-                unit = "44.08g",
-                color = colorResource(id = R.color.green_tile),
-                modifier = Modifier.constrainAs(cvKarbohidrat){
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(horizontalGuideline)
-                    bottom.linkTo(verticalGuideline)
-                }
-            )
-            CardFoodInformation(
-                name = "Lemak",
-                unit = "14.92g",
-                color = colorResource(id = R.color.blue_tile),
-                modifier = Modifier.constrainAs(cvLemak){
-                    top.linkTo(parent.top)
-                    start.linkTo(horizontalGuideline)
-                    end.linkTo(parent.end)
-                    bottom.linkTo(verticalGuideline)
-                }
-            )
-
-            CardFoodInformation(
-                name = "Serat",
-                unit = "0.6g",
-                color = colorResource(id = R.color.yellow_tile),
-                modifier = Modifier
-                    .padding(top = 10.dp)
-                    .constrainAs(cvSerat) {
-                        top.linkTo(verticalGuideline)
-                        start.linkTo(parent.start)
-                        end.linkTo(horizontalGuideline)
-                        bottom.linkTo(parent.bottom)
-                    }
-            )
-            CardFoodInformation(
-                name = "Protein",
-                unit = "4.2g",
-                color = colorResource(id = R.color.red_tile),
-                modifier = Modifier
-                    .padding(top = 10.dp)
-                    .constrainAs(cvProtein) {
-                        top.linkTo(verticalGuideline)
-                        start.linkTo(horizontalGuideline)
-                        end.linkTo(parent.end)
-                        bottom.linkTo(parent.bottom)
-                    }
-            )
-        }
+        CardFoodContent(
+            modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 20.dp)
+        )
 
         InformasiGizi(
             modifier = Modifier.padding(top = 20.dp)
@@ -225,7 +134,7 @@ fun InformasiGizi(
     Column(
         modifier = Modifier
             .padding(horizontal = 16.dp)
-            .background(Color(0xffEDEDED))
+            .background(Color.LightGray)
             .padding(horizontal = 16.dp, vertical = 20.dp)
     ) {
         Text(
@@ -335,16 +244,4 @@ fun InformasiGizi(
         }
         Divider(Modifier.padding(vertical = 6.dp), thickness = 4.dp)
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun InformasiGiziPrev() {
-    InformasiGizi()
-}
-
-@Preview
-@Composable
-fun DetailFoodInformationScreenPrev() {
-
 }
