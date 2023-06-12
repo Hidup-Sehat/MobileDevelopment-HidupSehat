@@ -8,13 +8,12 @@ import android.graphics.Paint
 import android.graphics.Rect
 import com.bangkit23.hidupsehat.presentation.screen.scanfood.model.DetectionResult
 import com.bangkit23.hidupsehat.util.rotateBitmap
-import com.bangkit23.hidupsehat.util.runOnUiThread
 import com.bangkit23.hidupsehat.util.toBitmap
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.task.vision.detector.ObjectDetector
 import java.io.File
 
-fun Context.runObjectDetection(
+suspend fun Context.runObjectDetection(
     imageFile: File?,
     isFromCamera: Boolean,
     onDetectedImage: (Bitmap, List<DetectionResult>) -> Unit,
@@ -46,9 +45,7 @@ fun Context.runObjectDetection(
             if (isFromCamera) rotatedBitmap else source,
             resultToDisplay
         )
-        runOnUiThread {
-            onDetectedImage(imageWithResult, resultToDisplay)
-        }
+        onDetectedImage(imageWithResult, resultToDisplay)
     }
 }
 

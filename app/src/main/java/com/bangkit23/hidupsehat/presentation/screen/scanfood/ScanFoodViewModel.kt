@@ -1,18 +1,41 @@
 package com.bangkit23.hidupsehat.presentation.screen.scanfood
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.io.File
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
 class ScanFoodViewModel @Inject constructor() : ViewModel() {
 
-    var photoFile = mutableStateOf<File?>(null)
-        private set
+    private val _state = MutableStateFlow(ScanFoodState())
+    val state = _state.asStateFlow()
 
-    fun setPhotoFile(file: File?) {
-        photoFile.value = file
+    fun onEvent(event: ScanFoodEvent) {
+        when (event) {
+            is ScanFoodEvent.OnImageFiled -> {
+                _state.update {
+                    it.copy(
+                        imageFile = event.photoFile
+                    )
+                }
+            }
+            is ScanFoodEvent.SetLoadingState -> {
+                _state.update {
+                    it.copy(
+                        isLoading = event.isLoading
+                    )
+                }
+            }
+            is ScanFoodEvent.OnFlashModeChange -> {
+                _state.update {
+                    it.copy(
+                        isFlashModeOn = event.isFlashOn
+                    )
+                }
+            }
+        }
     }
 }

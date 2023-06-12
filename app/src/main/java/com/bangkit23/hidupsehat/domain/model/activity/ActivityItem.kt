@@ -13,7 +13,9 @@ data class ActivityItem(
 )
 
 data class MovementItem(
+    val id: String? = null,
     val imgUrl: String? = null,
     val movementName: String? = null,
-    val movementDesc: String? = null
+    val movementDesc: String? = null,
+    val movementData: BodyAngle,
 )

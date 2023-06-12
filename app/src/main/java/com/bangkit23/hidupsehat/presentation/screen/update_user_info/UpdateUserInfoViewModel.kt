@@ -37,13 +37,27 @@ class UpdateUserInfoViewModel @Inject constructor() : ViewModel() {
                     )
                 }
             }
-            is UpdateUserInfoEvent.ResetState -> {
+            is UpdateUserInfoEvent.OnWaterNeedsChanged -> {
                 _state.update {
-                    UpdateUserInfoState()
+                    it.copy(
+                        waterNeeds = event.waterNeeds
+                    )
+                }
+            }
+            is UpdateUserInfoEvent.OnSleepNeedsChanged -> {
+                _state.update {
+                    it.copy(
+                        sleepNeeds = event.sleepNeeds
+                    )
                 }
             }
             is UpdateUserInfoEvent.SaveUpdatedInfo -> {
                 //Save To Server
+            }
+            is UpdateUserInfoEvent.ResetState -> {
+                _state.update {
+                    UpdateUserInfoState()
+                }
             }
         }
     }

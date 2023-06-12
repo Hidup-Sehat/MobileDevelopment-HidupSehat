@@ -6,6 +6,7 @@ data class Leaderboard(
 )
 
 data class LeaderboardItem(
+    val userId: String? = null,
     val name: String? = null,
     val username: String? = null,
     val points: Int? = null,

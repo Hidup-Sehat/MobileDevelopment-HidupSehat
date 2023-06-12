@@ -4,13 +4,17 @@ import com.bangkit23.hidupsehat.data.source.local.entity.FoodEntity
 import com.bangkit23.hidupsehat.data.source.local.entity.ReminderEntity
 import com.bangkit23.hidupsehat.data.source.remote.request.UserDetailRequest
 import com.bangkit23.hidupsehat.data.source.remote.response.ActivityResponseItem
+import com.bangkit23.hidupsehat.data.source.remote.response.AddPointsResponseData
+import com.bangkit23.hidupsehat.data.source.remote.response.BodyAngleResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.MovementResponseItem
 import com.bangkit23.hidupsehat.data.source.remote.response.UserDetailResult
 import com.bangkit23.hidupsehat.data.source.remote.response.UserNeedsResponse
 import com.bangkit23.hidupsehat.domain.model.activity.ActivityItem
+import com.bangkit23.hidupsehat.domain.model.activity.BodyAngle
 import com.bangkit23.hidupsehat.domain.model.activity.MovementItem
-import com.bangkit23.hidupsehat.domain.model.reminder.Reminder
 import com.bangkit23.hidupsehat.domain.model.food.Food
+import com.bangkit23.hidupsehat.domain.model.reminder.Reminder
+import com.bangkit23.hidupsehat.domain.model.user.AddPoints
 import com.bangkit23.hidupsehat.domain.model.user.UserDetail
 import com.bangkit23.hidupsehat.domain.model.user.UserDetailRequestDto
 import com.bangkit23.hidupsehat.domain.model.user.UserNeeds
@@ -120,6 +124,28 @@ fun ActivityResponseItem.toDomain() = ActivityItem(
 fun MovementResponseItem.toDomain() = MovementItem(
     imgUrl = imgUrl,
     movementName = movementName,
-    movementDesc = movementDesc
+    movementDesc = movementDesc,
+    movementData = movementData.toDomain(),
 )
 
+fun BodyAngleResponse.toDomain() = BodyAngle(
+    sudutKetiakKanan = sudutKetiakKanan,
+    sudutKetiakKiri = sudutKetiakKiri,
+    sudutLututKanan = sudutLututKanan,
+    sudutLututKiri = sudutLututKiri,
+    sudutPahaKanan = sudutPahaKanan,
+    sudutPahaKiri = sudutPahaKiri,
+    sudutPinggulKanan = sudutPinggulKanan,
+    sudutPinggulKiri = sudutPinggulKiri,
+    sudutPundakKanan = sudutPundakKanan,
+    sudutPundakKiri = sudutPundakKiri,
+    sudutSikuKanan = sudutSikuKanan,
+    sudutSikuKiri = sudutSikuKiri,
+    id = id
+)
+
+fun AddPointsResponseData.toDomain() = AddPoints(
+    pointsAdded = pointsAdded,
+    previousPoints = previousPoints,
+    points = points
+)

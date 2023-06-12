@@ -124,7 +124,7 @@ fun OnBoardingPagerContent(
                 .padding(horizontal = 24.dp, vertical = 16.dp)
                 .align(Alignment.CenterHorizontally)
         )
-        Spacer(Modifier.height(80.dp))
+        Spacer(Modifier.height(96.dp))
     }
 }
 

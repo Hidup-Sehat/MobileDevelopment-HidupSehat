@@ -7,5 +7,6 @@ sealed class LoginEvent {
     data class OnPasswordChanged(val password: String) : LoginEvent()
     data class LoginWithEmailPassword(val email: String, val password: String) : LoginEvent()
     data class SignInGoogleWithIntent(val intent: Intent) : LoginEvent()
+    data class SetLoadingState(val isLoading: Boolean) : LoginEvent()
     object ResetState : LoginEvent()
 }

@@ -34,13 +34,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,19 +51,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.bangkit23.hidupsehat.R
-import com.bangkit23.hidupsehat.domain.model.food.Food
 import com.bangkit23.hidupsehat.domain.model.user.UserNeeds
 import com.bangkit23.hidupsehat.presentation.components.CardEmotionFeel
 import com.bangkit23.hidupsehat.presentation.components.DotsIndicator
 import com.bangkit23.hidupsehat.presentation.screen.auth.model.UserData
 import com.bangkit23.hidupsehat.presentation.screen.home.components.CardPersonalHealthInfo
-import com.bangkit23.hidupsehat.presentation.screen.home.components.SheetWriteFoodsManual
 import com.bangkit23.hidupsehat.presentation.screen.home.model.CardFeature
 import com.bangkit23.hidupsehat.presentation.screen.home.model.Feel
 import com.bangkit23.hidupsehat.presentation.screen.home.model.emotions
-import com.bangkit23.hidupsehat.presentation.screen.point_popup.PointPopupDialog
 import com.bangkit23.hidupsehat.presentation.screen.update_user_info.UpdateUserInfoScreen
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
+import com.himanshoe.charty.line.LineChart
+import com.himanshoe.charty.line.model.LineData
 
 @Composable
 fun HomeScreen(
@@ -74,6 +71,8 @@ fun HomeScreen(
     onProfileClicked: () -> Unit,
     onReminderMenuClicked: () -> Unit,
     onSeeAllMonitoringClick: () -> Unit,
+    onManualFoodsClick: () -> Unit,
+    onMentalHealthClick: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -83,14 +82,15 @@ fun HomeScreen(
         onEmotionChosen = {
             viewModel.onEvent(HomeEvent.OnTodayEmotionChosen(it))
         },
-        foods = state.manualFoods,
         userNeeds = state.userNeeds,
         userData = state.userData,
         onScanClicked = onScanClicked,
         onPoseMenuClicked = onPoseMenuClicked,
         onProfileClicked = onProfileClicked,
         onReminderMenuClicked = onReminderMenuClicked,
-        onSeeAllMonitoringClick = onSeeAllMonitoringClick
+        onSeeAllMonitoringClick = onSeeAllMonitoringClick,
+        onManualFoodsClick = onManualFoodsClick,
+        onMentalHealthClick = onMentalHealthClick
     )
 }
 
@@ -98,7 +98,6 @@ fun HomeScreen(
 @Composable
 fun HomeContent(
     chosenEmotion: Feel?,
-    foods: SnapshotStateList<Food>,
     userNeeds: UserNeeds,
     userData: UserData?,
     onEmotionChosen: (Feel?) -> Unit,
@@ -107,6 +106,8 @@ fun HomeContent(
     onReminderMenuClicked: () -> Unit,
     onProfileClicked: () -> Unit,
     onSeeAllMonitoringClick: () -> Unit,
+    onManualFoodsClick: () -> Unit,
+    onMentalHealthClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -126,12 +127,7 @@ fun HomeContent(
                 .verticalScroll(rememberScrollState())
             ,
         ) {
-            var openBottomSheet by rememberSaveable { mutableStateOf(false) }
             var openUpdateInfoSheet by rememberSaveable { mutableStateOf(false) }
-            val sheetState = rememberModalBottomSheetState(
-                skipPartiallyExpanded = true
-            )
-            var pointDialogShow by rememberSaveable { mutableStateOf(false) }
 
             CardEmotionFeel(
                 emotions = emotions,
@@ -142,51 +138,33 @@ fun HomeContent(
                 caloriesIntakeActual = userNeeds.actualCalorie ?: 0,
                 waterDrunkActual = userNeeds.actualWater ?: 0,
                 sleepTimeActual = userNeeds.actualSleep ?: 0,
-                caloriesBurnedActual = userNeeds.calorieNeeds ?: 0,
-                caloriesIntakeExpected = userNeeds.actualCalorie ?: 2400,
-                waterDrunkExpected = userNeeds.waterNeeds ?: 0,
+                caloriesBurnedActual = userNeeds.actualCalorie ?: 0,
+                caloriesIntakeExpected = userNeeds.calorieNeeds ?: 2400,
+                waterDrunkExpected = userNeeds.waterNeeds ?: 0.0,
                 sleepTimeExpected = userNeeds.sleepNeeds ?: 0,
                 caloriesBurnedExpected = userNeeds.calorieNeeds ?: 0,
                 onScanClicked = onScanClicked,
-                onWriteManualClicked = {
-                    openBottomSheet = !openBottomSheet
-                },
-                onCardClicked = {
-                    pointDialogShow = !pointDialogShow
+                onWriteManualClicked = onManualFoodsClick,
+                onUpdateClicked = {
+                    openUpdateInfoSheet = true
                 }
             )
             FeaturesMenu(
                 onPoseMenuClicked = onPoseMenuClicked,
                 onReminderMenuClicked = onReminderMenuClicked,
+                onMentalHealthClick = onMentalHealthClick
             )
             MonitoringSection(
                 onSeeAllClick = onSeeAllMonitoringClick
             )
-            if (openBottomSheet) {
-                SheetWriteFoodsManual(
-                    foods = foods,
-                    sheetState = sheetState,
-                    onDismiss = { openBottomSheet = false },
-                    onSaveClick = {
 
-                    },
-                    onItemClick = {
-
-                    }
-                )
-            }
             if (openUpdateInfoSheet) {
                 UpdateUserInfoScreen(
-                    isExpanded = true,
+                    initialCalorieBurned = "${userNeeds.calorieNeeds}",
+                    initialCalorieNeeds = "${userNeeds.calorieNeeds}",
+                    initialSleepNeeds = userNeeds.sleepNeeds ?: 8,
+                    initialWaterNeeds = userNeeds.actualWater ?: 1,
                     onDismissRequest = { openUpdateInfoSheet = false }
-                )
-            }
-            if (pointDialogShow) {
-                PointPopupDialog(
-                    points = 25,
-                    onDismissRequest = {
-                        pointDialogShow = false
-                    }
                 )
             }
         }
@@ -274,6 +252,7 @@ fun TopAppBarWithProfile(
 fun FeaturesMenu(
     onPoseMenuClicked: () -> Unit,
     onReminderMenuClicked: () -> Unit,
+    onMentalHealthClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val itemsCard = listOf(
@@ -312,7 +291,9 @@ fun FeaturesMenu(
             )
             CardFeatureMenu(
                 cardData = itemsCard[1],
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { onMentalHealthClick() }
             )
         }
         Row {
@@ -378,10 +359,38 @@ fun MonitoringPager(
                 ElevatedCard(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp)
                         .clip(RoundedCornerShape(MaterialTheme.shapes.medium.topStart))
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = "Performa",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            text = "7 hari terakhir",
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                        Spacer(Modifier.height(16.dp))
+                        LineChart(
+                            lineData = listOf(
+                                LineData("3/6", 1.0f),
+                                LineData("4/6", 0.3f),
+                                LineData("5/6", 0.2f),
+                                LineData("6/6", 0.4f),
+                                LineData("7/6", 0.8f),
+                                LineData("8/6", 0.6f),
+                                LineData("9/6", 1.0f),
+                            ),
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(144.dp)
+                                .padding(16.dp)
+                        )
                     }
                 }
             }
@@ -399,16 +408,17 @@ fun MonitoringPager(
 fun HomeContentPreview() {
     HidupSehatTheme {
         HomeContent(
-            foods = SnapshotStateList(),
             userNeeds = UserNeeds(),
             userData = null,
             chosenEmotion = null,
+            onManualFoodsClick = {},
             onEmotionChosen = {},
             onScanClicked = {},
             onPoseMenuClicked = {},
             onProfileClicked = {},
             onReminderMenuClicked = {},
             onSeeAllMonitoringClick = {},
+            onMentalHealthClick = {},
         )
     }
 }

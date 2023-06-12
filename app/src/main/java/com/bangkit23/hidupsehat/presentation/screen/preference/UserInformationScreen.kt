@@ -38,6 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bangkit23.hidupsehat.R
 import com.bangkit23.hidupsehat.presentation.components.ButtonWithIcon
+import com.bangkit23.hidupsehat.presentation.components.LoadingDialog
 import com.bangkit23.hidupsehat.presentation.model.User
 import com.bangkit23.hidupsehat.presentation.screen.preference.components.ItemGender
 import com.bangkit23.hidupsehat.presentation.screen.preference.components.PreferenceHeader
@@ -109,6 +110,10 @@ fun UserInformationScreen(
             )
         },
     )
+
+    if (state.loading) {
+        LoadingDialog()
+    }
 }
 
 @Composable

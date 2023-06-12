@@ -3,6 +3,7 @@ package com.bangkit23.hidupsehat.presentation.screen.leaderboard
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bangkit23.hidupsehat.domain.model.leaderboard.LeaderboardItem
+import com.bangkit23.hidupsehat.domain.model.leaderboard.LeaderboardType
 import com.bangkit23.hidupsehat.domain.usecase.leaderboard.LeaderboardUseCase
 import com.bangkit23.hidupsehat.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,16 +25,16 @@ class LeaderboardViewModel @Inject constructor(
         when (event) {
             is LeaderboardEvent.OnLeaderboardTypeChanged -> {
                 when (event.position) {
-                    0 -> getDailyLeaderboard()
-                    1 -> getWeeklyLeaderboard()
-                    2 -> getMonthlyLeaderboard()
+                    0 -> getLeaderboard(LeaderboardType.DAILY)
+                    1 -> getLeaderboard(LeaderboardType.WEEKLY)
+                    2 -> getLeaderboard(LeaderboardType.MONTHLY)
                 }
             }
         }
     }
 
-    private fun getDailyLeaderboard() = viewModelScope.launch {
-        leaderboardUseCase.getLeaderboard().collect { result ->
+    private fun getLeaderboard(type: LeaderboardType) = viewModelScope.launch {
+        leaderboardUseCase.getLeaderboard(type).collect { result ->
             when (result) {
                 is Result.Loading -> {
                     _state.update {
@@ -42,6 +43,7 @@ class LeaderboardViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is Result.Success -> {
                     _state.update {
                         it.copy(
@@ -51,6 +53,7 @@ class LeaderboardViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is Result.Error -> {
                     _state.update {
                         it.copy(
@@ -61,40 +64,5 @@ class LeaderboardViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    private fun getWeeklyLeaderboard() = viewModelScope.launch {
-        leaderboardUseCase.getLeaderboard().collect { result ->
-            when (result) {
-                is Result.Loading -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = true
-                        )
-                    }
-                }
-                is Result.Success -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            listLeaderboard = result.data.leaderboards,
-                            userPosition = result.data.userPosition ?: LeaderboardItem()
-                        )
-                    }
-                }
-                is Result.Error -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = result.message
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    private fun getMonthlyLeaderboard() {
-
     }
 }

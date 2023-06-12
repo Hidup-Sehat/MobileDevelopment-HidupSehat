@@ -46,4 +46,15 @@ class UserRepositoryImpl @Inject constructor(
             emit(Result.Error(e.message))
         }
     }.flowOn(Dispatchers.IO)
+
+    override fun addUserPoints(points: Int) = flow {
+        emit(Result.Loading())
+        try {
+            val userId = firebaseAuth.getSignedUser()?.userId
+            val response = remoteDataSource.addUserPoints(userId.toString(), points)
+            emit(Result.Success(response.data.toDomain()))
+        } catch (e: Exception) {
+            emit(Result.Error(e.message))
+        }
+    }.flowOn(Dispatchers.IO)
 }

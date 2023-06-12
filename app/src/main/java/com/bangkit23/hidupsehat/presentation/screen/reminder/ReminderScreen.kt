@@ -31,6 +31,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,6 +39,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bangkit23.hidupsehat.R
 import com.bangkit23.hidupsehat.domain.model.reminder.Reminder
+import com.bangkit23.hidupsehat.infrastructure.reminder.ReminderAlarm
 import com.bangkit23.hidupsehat.presentation.components.TimePickerDialog
 import com.bangkit23.hidupsehat.presentation.screen.reminder.components.ItemReminder
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
@@ -53,6 +55,7 @@ fun ReminderScreen(
     viewModel: ReminderViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     var showTimePicker by remember { mutableStateOf(false) }
     val timePickerState = rememberTimePickerState()
     val formatter = remember { SimpleDateFormat("hh:mm a", Locale.getDefault()) }
@@ -67,10 +70,13 @@ fun ReminderScreen(
             showTimePicker = true
         },
         onSwitchChange = { isActive, reminder ->
+            ReminderAlarm.setAlarmActiveStatus(context, reminder, isActive)
             viewModel.onEvent(ReminderEvent.OnSwitchCheckedChanged(isActive, reminder))
         }
     )
-    SnackbarHost(hostState = snackState)
+    SnackbarHost(
+        hostState = snackState,
+    )
 
     if (showTimePicker) {
         TimePickerDialog(
@@ -82,9 +88,10 @@ fun ReminderScreen(
                 cal.isLenient = false
                 snackScope.launch {
                     state.editedReminder?.let {
+                        ReminderAlarm.setAlarmActiveStatus(context, it, it.isActive)
                         viewModel.onEvent(ReminderEvent.UpdateReminder(it.copy(time = cal.timeInMillis)))
                     }
-                    snackState.showSnackbar("Entered time: ${cal.timeInMillis} ${formatter.format(cal.time)}")
+                    snackState.showSnackbar("Reminder akan diaktifkan pada ${formatter.format(cal.time)}")
                 }
                 showTimePicker = false
             },

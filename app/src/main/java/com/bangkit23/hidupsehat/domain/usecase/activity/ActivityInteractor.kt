@@ -9,9 +9,7 @@ class ActivityInteractor @Inject constructor(
     private val activityRepository: ActivityRepository,
 ) : ActivityUseCase {
 
-    override fun getYogaActivities() =
-        activityRepository.getYogaActivities()
+    override fun getYogaActivities() = activityRepository.getYogaActivities()
 
-    override fun getWorkoutActivities() =
-        activityRepository.getWorkoutActivities()
+    override fun getWorkoutActivities() = activityRepository.getWorkoutActivities()
 }

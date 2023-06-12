@@ -35,6 +35,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bangkit23.hidupsehat.R
 import com.bangkit23.hidupsehat.presentation.components.CustomTextField
+import com.bangkit23.hidupsehat.presentation.components.LoadingDialog
 import com.bangkit23.hidupsehat.presentation.components.OutlinedButtonWithIcon
 import com.bangkit23.hidupsehat.presentation.components.PasswordTextField
 import com.bangkit23.hidupsehat.presentation.components.TextWithSupport
@@ -89,8 +90,10 @@ fun LoginScreen(
             viewModel.onEvent(LoginEvent.LoginWithEmailPassword(state.email, state.password))
         },
         onSignInWithGoogleClick = {
+            viewModel.onEvent(LoginEvent.SetLoadingState(isLoading = true))
             scope.launch {
                 val signInIntentSender = signInIntentSender(context)
+                viewModel.onEvent(LoginEvent.SetLoadingState(isLoading = false))
                 launcher.launch(
                     IntentSenderRequest.Builder(
                         signInIntentSender ?: return@launch
@@ -99,6 +102,10 @@ fun LoginScreen(
             }
         }
     )
+
+    if (state.loading) {
+        LoadingDialog()
+    }
 }
 
 @Composable

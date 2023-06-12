@@ -11,7 +11,7 @@ data class UserNeeds(
     val actualSleep: Int? = null,
     val imgUrl: String? = null,
     val actualWater: Int? = null,
-    val waterNeeds: Int? = null,
+    val waterNeeds: Double? = null,
     val name: String? = null,
     val contactNumber: String? = null,
     val calorieNeeds: Int? = null,

@@ -5,17 +5,23 @@ import com.google.gson.annotations.SerializedName
 data class LeaderboardResponse(
 
 	@field:SerializedName("data")
-	val data: List<LeaderboardResponseItem>
+	val data: List<LeaderboardItemResponse>
 )
 
-data class LeaderboardResponseItem(
+data class LeaderboardItemResponse(
 
-	@field:SerializedName("name")
-	val name: String? = null,
+	@field:SerializedName("imgUrl")
+	val imgUrl: String? = null,
+
+	@field:SerializedName("point")
+	val point: Int? = null,
+
+	@field:SerializedName("user_uid")
+	val userUid: String? = null,
 
 	@field:SerializedName("username")
 	val username: String? = null,
 
-	@field:SerializedName("points")
-	val points: Int? = null
+	@field:SerializedName("name")
+	val name: String? = null,
 )

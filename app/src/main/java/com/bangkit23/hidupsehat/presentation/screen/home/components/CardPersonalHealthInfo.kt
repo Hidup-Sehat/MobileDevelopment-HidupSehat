@@ -40,12 +40,12 @@ fun CardPersonalHealthInfo(
     sleepTimeActual: Int,
     caloriesBurnedActual: Int,
     caloriesIntakeExpected: Int,
-    waterDrunkExpected: Int,
+    waterDrunkExpected: Double,
     sleepTimeExpected: Int,
     caloriesBurnedExpected: Int,
     onScanClicked: () -> Unit,
     onWriteManualClicked: () -> Unit,
-    onCardClicked: () -> Unit,
+    onUpdateClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     ElevatedCard(
@@ -53,7 +53,6 @@ fun CardPersonalHealthInfo(
             .padding(horizontal = 16.dp)
             .fillMaxWidth()
             .wrapContentHeight()
-            .clickable { onCardClicked() }
     ) {
         ConstraintLayout(
             modifier = Modifier
@@ -111,7 +110,7 @@ fun CardPersonalHealthInfo(
                     .constrainAs(editButton) {
                         top.linkTo(parent.top)
                         end.linkTo(parent.end)
-                    }.clickable { onCardClicked() }
+                    }.clickable { onUpdateClicked() }
             )
         }
     }
@@ -123,13 +122,16 @@ fun ProgressCaloriesIntake(
     caloriesIntakeExpected: Int,
     modifier: Modifier = Modifier,
 ) {
-    val progress by remember { mutableStateOf((caloriesIntakeActual / caloriesIntakeExpected) * 100.0) }
-    val percentage by remember { mutableStateOf(progress / 100.0) }
+    val progress by remember(caloriesIntakeActual, caloriesIntakeExpected) {
+        mutableStateOf(
+            ((caloriesIntakeActual.toFloat() / caloriesIntakeExpected.toFloat()) * 100f) / 100f
+        )
+    }
     ConstraintLayout(modifier = modifier) {
         val (progressBar, foodIcon, caloriesIntake, calorieText) = createRefs()
 
         CircularProgressBar(
-            percentage = percentage.toFloat(),
+            percentage = progress,
             strokeWidth = 16.dp,
             modifier = Modifier.constrainAs(progressBar) {
                 top.linkTo(parent.top)
@@ -207,11 +209,11 @@ fun CardPersonalHealthInfo() {
             caloriesBurnedActual = 400,
             caloriesBurnedExpected = 220,
             sleepTimeExpected = 7,
-            waterDrunkExpected = 4,
+            waterDrunkExpected = 4.0,
             caloriesIntakeExpected = 2400,
             onScanClicked = {},
             onWriteManualClicked = {},
-            onCardClicked = {},
+            onUpdateClicked = {},
         )
     }
 }

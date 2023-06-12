@@ -33,10 +33,10 @@ fun SplashScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         Image(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_male),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_splash),
             contentDescription = null,
             modifier = Modifier
-                .size(128.dp)
+                .size(144.dp)
                 .align(Alignment.Center)
         )
     }

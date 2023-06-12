@@ -35,7 +35,7 @@ data class UserNeedsResponse(
 	val actualWater: Int? = null,
 
 	@field:SerializedName("waterNeeds")
-	val waterNeeds: Int? = null,
+	val waterNeeds: Double? = null,
 
 	@field:SerializedName("name")
 	val name: String? = null,

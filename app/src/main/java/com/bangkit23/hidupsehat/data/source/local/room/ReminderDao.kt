@@ -15,6 +15,6 @@ interface ReminderDao {
     @Upsert
     suspend fun upsertReminder(reminderEntity: ReminderEntity)
 
-    @Query("SELECT * FROM reminder_entity WHERE isActive = 1 ORDER BY time ASC LIMIT 1")
-    fun getNearestActiveReminder(): Flow<ReminderEntity>
+    @Query("SELECT * FROM reminder_entity WHERE isActive = 1 ORDER BY time")
+    fun getNearestActiveReminder(): Flow<List<ReminderEntity>>
 }

@@ -43,7 +43,7 @@ fun TextFieldWithIcon(
             Spacer(Modifier.width(8.dp))
             title()
         }
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(8.dp))
         OutlinedTextField(
             value = value,
             keyboardOptions = KeyboardOptions(

@@ -1,5 +1,6 @@
 package com.bangkit23.hidupsehat.data.source.remote
 
+import com.bangkit23.hidupsehat.data.source.remote.request.AddPointsRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.UserDetailRequest
 import com.bangkit23.hidupsehat.data.source.remote.retrofit.ApiService
 import javax.inject.Inject
@@ -16,9 +17,12 @@ class RemoteDataSource @Inject constructor(
     suspend fun getUserNeeds(userId: String) =
         apiService.getUserNeeds(userId)
 
-    suspend fun getLeaderboard() =
-        apiService.getLeaderboard()
+    suspend fun getLeaderboard(type: String) =
+        apiService.getLeaderboard(type)
 
     suspend fun getActivities() =
         apiService.getActivities()
+
+    suspend fun addUserPoints(userId: String, points: Int) =
+        apiService.addUserPoints(userId, AddPointsRequest(points))
 }

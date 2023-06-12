@@ -123,6 +123,9 @@ class ScanFoodResultViewModel @Inject constructor(
                     )
                 }
             }
+            is ScanFoodResultEvent.OnGetInitialAddFoods -> {
+                searchFoods("a")
+            }
         }
     }
 

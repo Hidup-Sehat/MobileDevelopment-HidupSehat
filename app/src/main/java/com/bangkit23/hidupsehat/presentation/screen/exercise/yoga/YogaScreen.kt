@@ -34,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bangkit23.hidupsehat.presentation.screen.exercise.component.DetailItemExercise
 import com.bangkit23.hidupsehat.presentation.screen.exercise.component.ListItemExercise
+import com.bangkit23.hidupsehat.presentation.screen.exercise.component.LoadingShimmerExercise
 import com.bangkit23.hidupsehat.presentation.screen.exercise.model.Exercise
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 
@@ -41,7 +42,7 @@ import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 @Composable
 fun YogaScreen(
     moveToExercisePlay: (Exercise) -> Unit,
-    viewModel: YogaViewModel = hiltViewModel()
+    viewModel: YogaViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -49,27 +50,32 @@ fun YogaScreen(
         viewModel.onEvent(YogaEvent.Refresh)
     }
 
-    YogaContent(
-        lastActivities = state.lastActivities,
-        flexibilityExercises = state.flexibilityExercises,
-        strengthExercises = state.strengthExercises,
-        recoveryExercises = state.recoveryExercises,
-        clickedExercise = state.clickedExercise,
-        openBottomSheet = state.openBottomSheet,
-        onStartClicked = moveToExercisePlay,
-        onItemClicked = {
-            viewModel.onEvent(YogaEvent.OpenSheet(it))
-        },
-        onDismissSheet = {
-            viewModel.onEvent(YogaEvent.DismissSheet)
-        },
-    )
+    if (state.isLoading) {
+        LoadingShimmerExercise(
+            modifier = Modifier
+                .padding(vertical = 32.dp, horizontal = 16.dp)
+        )
+    } else {
+        YogaContent(
+            flexibilityExercises = state.flexibilityExercises,
+            strengthExercises = state.strengthExercises,
+            recoveryExercises = state.recoveryExercises,
+            clickedExercise = state.clickedExercise,
+            openBottomSheet = state.openBottomSheet,
+            onStartClicked = moveToExercisePlay,
+            onItemClicked = {
+                viewModel.onEvent(YogaEvent.OpenSheet(it))
+            },
+            onDismissSheet = {
+                viewModel.onEvent(YogaEvent.DismissSheet)
+            },
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun YogaContent(
-    lastActivities: List<Exercise>,
     flexibilityExercises: List<Exercise>,
     strengthExercises: List<Exercise>,
     recoveryExercises: List<Exercise>,
@@ -79,19 +85,13 @@ fun YogaContent(
     onItemClicked: (Exercise) -> Unit,
     onStartClicked: (Exercise) -> Unit,
     modifier: Modifier = Modifier,
-    bottomSheetState: SheetState = rememberModalBottomSheetState()
+    bottomSheetState: SheetState = rememberModalBottomSheetState(),
 ) {
     Column(
         modifier = modifier.fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
         Spacer(Modifier.height(32.dp))
-        ListItemExercise(
-            headerText = "Aktivitas Terakhirmu",
-            data = lastActivities,
-            onItemClicked = onItemClicked
-        )
-        Spacer(Modifier.height(16.dp))
         ListItemExercise(
             headerText = "Untuk Melatih Kelenturan",
             data = flexibilityExercises,
@@ -131,7 +131,10 @@ fun YogaContent(
                     Text(text = "${clickedExercise.poses.size} Gerakan")
                 }
                 Button(
-                    onClick = { onStartClicked(clickedExercise) },
+                    onClick = {
+                        onStartClicked(clickedExercise)
+                        onDismissSheet()
+                    },
                     contentPadding = ButtonDefaults.ButtonWithIconContentPadding
                 ) {
                     Icon(
@@ -145,8 +148,8 @@ fun YogaContent(
                     Text(text = "Mulai")
                 }
             }
-            LazyColumn{
-                items(items = clickedExercise.poses){
+            LazyColumn {
+                items(items = clickedExercise.poses) {
                     DetailItemExercise(
                         icon = it.image,
                         title = it.title,
@@ -164,7 +167,6 @@ fun YogaContent(
 fun YogaContentPreview() {
     HidupSehatTheme {
         YogaContent(
-            lastActivities = emptyList(),
             flexibilityExercises = emptyList(),
             strengthExercises = emptyList(),
             recoveryExercises = emptyList(),

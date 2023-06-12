@@ -8,5 +8,7 @@ data class ExercisePlayState(
     val poseScore: Double = 0.0,
     val isExerciseDone: Boolean = false,
     val isTimerStarted: Boolean = false,
+    val isExitDialogShow: Boolean = false,
     val timer: Int = -1,
+    val exercisePoint: Int = 25
 )

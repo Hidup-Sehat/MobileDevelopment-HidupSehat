@@ -15,4 +15,7 @@ class UserInteractor @Inject constructor(
 
     override fun getUserNeeds() =
         userRepository.getUserNeeds()
+
+    override fun addUserPoints(points: Int) =
+        userRepository.addUserPoints(points)
 }

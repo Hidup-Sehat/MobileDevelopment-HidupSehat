@@ -43,11 +43,14 @@ import com.bangkit23.hidupsehat.presentation.navigation.NavigationItem
 import com.bangkit23.hidupsehat.presentation.navigation.Screen
 import com.bangkit23.hidupsehat.presentation.screen.auth.login.LoginScreen
 import com.bangkit23.hidupsehat.presentation.screen.auth.register.RegisterScreen
+import com.bangkit23.hidupsehat.presentation.screen.consultation.ConsultationScreen
 import com.bangkit23.hidupsehat.presentation.screen.exercise.ExerciseScreen
 import com.bangkit23.hidupsehat.presentation.screen.exercise_play.ExercisePlayScreen
 import com.bangkit23.hidupsehat.presentation.screen.feeds.FeedScreen
 import com.bangkit23.hidupsehat.presentation.screen.home.HomeScreen
 import com.bangkit23.hidupsehat.presentation.screen.leaderboard.LeaderboardScreen
+import com.bangkit23.hidupsehat.presentation.screen.manual_foods.ManualFoodsScreen
+import com.bangkit23.hidupsehat.presentation.screen.mental_health.MentalHealthScreen
 import com.bangkit23.hidupsehat.presentation.screen.monitoring.MonitoringScreen
 import com.bangkit23.hidupsehat.presentation.screen.onboarding.OnBoardingScreen
 import com.bangkit23.hidupsehat.presentation.screen.preference.UserInformationScreen
@@ -122,14 +125,30 @@ fun HidupSehatApp(
                     },
                     onSeeAllMonitoringClick = {
                         navController.navigate("monitoring-graph")
+                    },
+                    onManualFoodsClick = {
+                        navController.navigate("manual-foods")
+                    },
+                    onMentalHealthClick = {
+                        navController.navigate("mental-health-graph")
                     }
                 )
+            }
+            composable(Screen.Consultation.route) {
+                ConsultationScreen()
             }
             composable(Screen.Feeds.route) {
                 FeedScreen()
             }
             composable(Screen.Leaderboard.route) {
                 LeaderboardScreen()
+            }
+            composable("manual-foods") {
+                ManualFoodsScreen(
+                    navigateUp = {
+                        navController.navigateUp()
+                    }
+                )
             }
             navigation(
                 startDestination = "on-boarding",
@@ -174,6 +193,9 @@ fun HidupSehatApp(
                         moveToUserPreference = { userData ->
                             viewModel.setUser(userData?.toUser() ?: User())
                             navController.navigate(Screen.PreferenceTarget.route)
+                        },
+                        navigateUp = {
+                            navController.navigateUp()
                         }
                     )
                 }
@@ -265,7 +287,7 @@ fun HidupSehatApp(
                         exercise = exercise,
                         onNavigateUp = {
                             navController.navigateUp()
-                        }
+                        },
                     )
                 }
             }
@@ -289,7 +311,7 @@ fun HidupSehatApp(
                         },
                         onNavigateUp = {
                             navController.navigateUp()
-                        }
+                        },
                     )
                 }
                 composable("update-profile") {
@@ -335,6 +357,18 @@ fun HidupSehatApp(
             ) {
                 composable("monitoring") {
                     MonitoringScreen()
+                }
+            }
+            navigation(
+                startDestination = "mental-health",
+                route = "mental-health-graph"
+            ) {
+                composable("mental-health") {
+                    MentalHealthScreen(
+                        navigateUp = {
+                            navController.navigateUp()
+                        }
+                    )
                 }
             }
         }
