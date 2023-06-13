@@ -12,4 +12,5 @@
     <color name="mental_health">#dce2f9</color>
     <color name="foods">#d7e8cd</color>
     <color name="reminder">#f9daed</color>
+    <color name="music_card_color">#FF333333</color>
 </resources>

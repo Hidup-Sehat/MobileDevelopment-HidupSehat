@@ -43,7 +43,7 @@ import com.bangkit23.hidupsehat.infrastructure.reminder.ReminderAlarm
 import com.bangkit23.hidupsehat.presentation.components.TimePickerDialog
 import com.bangkit23.hidupsehat.presentation.screen.reminder.components.ItemReminder
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
-import com.bangkit23.hidupsehat.util.DateConverter
+import com.bangkit23.hidupsehat.util.DateHelper
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -196,7 +196,7 @@ fun CardReminder(
             items(items = reminders, key = { it.id } ) {
                 ItemReminder(
                     title = it.title,
-                    time = DateConverter.convertMillisToString(it.time),
+                    time = DateHelper.convertMillisToString(it.time),
                     isActive = it.isActive,
                     onItemClicked = {
                         onItemClick(it)

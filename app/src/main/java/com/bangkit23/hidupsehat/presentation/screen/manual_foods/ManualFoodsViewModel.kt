@@ -6,7 +6,7 @@ import com.bangkit23.hidupsehat.data.source.remote.request.AddFoodsRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.FoodRequestItem
 import com.bangkit23.hidupsehat.domain.model.food.Food
 import com.bangkit23.hidupsehat.domain.usecase.food.FoodUseCase
-import com.bangkit23.hidupsehat.util.DateConverter
+import com.bangkit23.hidupsehat.util.DateHelper
 import com.bangkit23.hidupsehat.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -183,8 +183,8 @@ class ManualFoodsViewModel @Inject constructor(
             )
         }
         val foodRequest = AddFoodsRequest(
-            date = DateConverter.getCurrentDate(),
-            lastUpdated = DateConverter.getCurrentDate(),
+            date = DateHelper.getCurrentDate(),
+            lastUpdated = DateHelper.getCurrentDate(),
             totalCarb = foods.sumOf { it?.carbohydrate?.toInt() ?: 0 },
             totalProtein = foods.sumOf { it?.protein?.toInt() ?: 0 },
             totalFat = foods.sumOf { it?.fat?.toInt() ?: 0 },

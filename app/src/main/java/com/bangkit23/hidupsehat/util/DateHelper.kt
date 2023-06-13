@@ -5,7 +5,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-object DateConverter {
+object DateHelper {
     fun convertMillisToString(timeMillis: Long): String {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = timeMillis
@@ -17,5 +17,15 @@ object DateConverter {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val currentDate = Date(System.currentTimeMillis())
         return dateFormat.format(currentDate)
+    }
+
+    fun getGreetingMessage(): String {
+        val calendar = Calendar.getInstance()
+
+        return when (calendar.get(Calendar.HOUR_OF_DAY)) {
+            in 0..11 -> "Good Morning"
+            in 12..16 -> "Good Afternoon"
+            else -> "Good Evening"
+        }
     }
 }

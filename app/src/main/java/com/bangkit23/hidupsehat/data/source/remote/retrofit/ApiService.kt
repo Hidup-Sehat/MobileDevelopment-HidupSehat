@@ -46,7 +46,7 @@ interface ApiService {
     @GET("activity")
     suspend fun getActivities() : ActivityResponse
 
-    @PUT("users/{user_id}/food")
+    @POST("users/{user_id}/food")
     suspend fun saveFoods(
         @Path("user_id") userId: String,
         @Body requestBody: AddFoodsRequest
