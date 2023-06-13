@@ -30,25 +30,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bangkit23.hidupsehat.R
 import com.bangkit23.hidupsehat.domain.model.food.Food
-import com.bangkit23.hidupsehat.presentation.components.CardFoodInformation
 import com.bangkit23.hidupsehat.presentation.screen.food_information_detail.component.CardFoodContent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailFoodInformationScreen(
-    name : String,
-    onNavigateUp : () -> Unit,
+    name: String,
+    onNavigateUp: () -> Unit,
     viewModel: DetailFoodInformationViewModel = hiltViewModel()
 ) {
 
-    LaunchedEffect(key1 = Unit){
+    LaunchedEffect(key1 = Unit) {
         viewModel.onEvent(DetailFoodInformationEvent.OnGetFoodById(name))
     }
 
@@ -72,7 +69,7 @@ fun DetailFoodInformationScreen(
                 }
             )
         },
-        content = {padding ->
+        content = { padding ->
             state.food?.let {
                 DetailFoodInformationContent(
                     modifier = Modifier.padding(padding),
@@ -85,7 +82,7 @@ fun DetailFoodInformationScreen(
 
 @Composable
 fun DetailFoodInformationContent(
-    food : Food,
+    food: Food,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
@@ -118,23 +115,56 @@ fun DetailFoodInformationContent(
         }
 
         CardFoodContent(
-            modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 20.dp)
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 20.dp),
+            karbohidrat = food.carbohydrate ?: 0.0,
+            lemak = food.fat ?: 0.0,
+            serat = food.fiber ?: 0.0,
+            protein = food.protein ?: 0.0
         )
 
         InformasiGizi(
-            modifier = Modifier.padding(top = 20.dp)
+            modifier = Modifier.padding(top = 20.dp),
+            energyKj = food.energyKj ?: 0.0,
+            energyKKal = food.energyKKal ?: 0.0,
+            fat = food.fat ?: 0.0,
+            saturatedFat = food.saturatedFat ?: 0.0,
+            polyunsaturatedFat = food.polyunsaturatedFat ?: 0.0,
+            monosaturatedFat = food.monounsaturatedFat ?: 0.0,
+            cholesterol = food.cholesterol ?: 0.0,
+            protein = food.protein ?: 0.0,
+            carbohydrate = food.carbohydrate ?: 0.0,
+            fiber = food.fiber ?: 0.0,
+            sugar = food.sugar ?: 0.0,
+            sodium = food.sodium ?: 0.0,
+            potassium = food.potassium ?: 0.0
         )
     }
 }
 
 @Composable
 fun InformasiGizi(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    energyKj: Double,
+    energyKKal: Double,
+    fat: Double,
+    saturatedFat: Double,
+    polyunsaturatedFat: Double,
+    monosaturatedFat: Double,
+    cholesterol: Double,
+    protein: Double,
+    carbohydrate: Double,
+    fiber: Double,
+    sugar: Double,
+    sodium: Double,
+    potassium: Double
 ) {
     Column(
         modifier = Modifier
             .padding(horizontal = 16.dp)
-            .background(Color.LightGray)
+            .padding(bottom = 20.dp)
+            .background(colorResource(id = R.color.light_gray))
             .padding(horizontal = 16.dp, vertical = 20.dp)
     ) {
         Text(
@@ -154,13 +184,13 @@ fun InformasiGizi(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = "Energi")
-            Text(text = "0 kJ")
+            Text(text = "${energyKj}kJ")
         }
         Text(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 6.dp),
-            text = "0 kkal", textAlign = TextAlign.End
+            text = "${energyKKal}kkal", textAlign = TextAlign.End
         )
         Divider(modifier = Modifier.padding(vertical = 6.dp))
         Row(
@@ -168,7 +198,7 @@ fun InformasiGizi(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = "Lemak")
-            Text(text = "0,0g")
+            Text(text = "${fat}g")
         }
         Row(
             modifier = Modifier
@@ -182,9 +212,9 @@ fun InformasiGizi(
                 Text(text = "Lemak tak Jenuh Tunggal")
             }
             Column() {
-                Text(text = "0,000g")
-                Text(text = "0,000g")
-                Text(text = "0,000g")
+                Text(text = "${saturatedFat}g")
+                Text(text = "${polyunsaturatedFat}g")
+                Text(text = "${monosaturatedFat}g")
             }
         }
         Divider(Modifier.padding(vertical = 6.dp))
@@ -193,7 +223,7 @@ fun InformasiGizi(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = "Kolesterol")
-            Text(text = "0mg")
+            Text(text = "${cholesterol}mg")
         }
         Divider(Modifier.padding(vertical = 6.dp))
         Row(
@@ -201,7 +231,7 @@ fun InformasiGizi(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = "Protein")
-            Text(text = "0,0g")
+            Text(text = "${protein}g")
         }
         Divider(Modifier.padding(vertical = 6.dp))
         Row(
@@ -209,7 +239,7 @@ fun InformasiGizi(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = "Karbohidrat")
-            Text(text = "0,00g")
+            Text(text = "${carbohydrate}g")
         }
         Row(
             modifier = Modifier
@@ -222,8 +252,8 @@ fun InformasiGizi(
                 Text(text = "Gula")
             }
             Column {
-                Text(text = "0,00g")
-                Text(text = "0,00g")
+                Text(text = "${fiber}g")
+                Text(text = "${sugar}g")
             }
         }
         Divider(Modifier.padding(vertical = 6.dp))
@@ -232,7 +262,7 @@ fun InformasiGizi(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = "Sodium")
-            Text(text = "0mg")
+            Text(text = "${sodium}mg")
         }
         Divider(Modifier.padding(vertical = 6.dp))
         Row(
@@ -240,7 +270,7 @@ fun InformasiGizi(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = "Kalium")
-            Text(text = "0,0mg")
+            Text(text = "${potassium}mg")
         }
         Divider(Modifier.padding(vertical = 6.dp), thickness = 4.dp)
     }

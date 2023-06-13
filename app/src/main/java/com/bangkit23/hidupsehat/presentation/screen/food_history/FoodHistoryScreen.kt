@@ -21,17 +21,21 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.bangkit23.hidupsehat.R
 import com.bangkit23.hidupsehat.domain.model.food.Food
 import com.bangkit23.hidupsehat.presentation.screen.food_history.component.ItemHistory
 import com.bangkit23.hidupsehat.presentation.screen.food_history.component.ProgressHistory
 import com.bangkit23.hidupsehat.presentation.screen.food_history.component.WidgetHistoryItem
 import com.bangkit23.hidupsehat.presentation.screen.food_information_detail.component.CardFoodContent
+import com.bangkit23.hidupsehat.presentation.screen.food_information_detail.component.DetailItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -127,10 +131,11 @@ fun FoodHistoryContent(
             )
         }
 
-        CardFoodContent(
+        CardFoodHistoryContent(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .padding(top = 20.dp)
+                .padding(top = 20.dp),
+
         )
 
         Text(
@@ -150,6 +155,57 @@ fun FoodHistoryContent(
             }
         }
 
+    }
+}
+
+@Composable
+fun CardFoodHistoryContent(
+    modifier: Modifier = Modifier
+) {
+    ConstraintLayout(
+        modifier = modifier.fillMaxWidth()
+    ) {
+        val (cv1, cv2, cv3, cv4) = createRefs()
+        DetailItem(
+            modifier = Modifier
+                .constrainAs(cv1) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(cv2.start, 10.dp)
+                    width = Dimension.fillToConstraints
+                },
+            title = "Karbohidrat",
+            data = "-",
+            color = colorResource(id = R.color.green_tile)
+        )
+
+        DetailItem(
+            modifier = Modifier.constrainAs(cv2) {
+                top.linkTo(parent.top)
+                end.linkTo(parent.end)
+                start.linkTo(cv1.end)
+                width = Dimension.fillToConstraints
+            },
+            title = "Lemak", data = "-", color = colorResource(id = R.color.blue_tile)
+        )
+        DetailItem(
+            modifier = Modifier.constrainAs(cv3) {
+                top.linkTo(cv1.bottom, 10.dp)
+                start.linkTo(parent.start)
+                end.linkTo(cv4.start, 10.dp)
+                width = Dimension.fillToConstraints
+            },
+            title = "Serat", data = "-", color = colorResource(id = R.color.yellow_tile)
+        )
+        DetailItem(
+            modifier = Modifier.constrainAs(cv4) {
+                top.linkTo(cv2.bottom, 10.dp)
+                start.linkTo(cv3.end)
+                end.linkTo(parent.end)
+                width = Dimension.fillToConstraints
+            },
+            title = "Protein", data = "-", color = colorResource(id = R.color.red_tile)
+        )
     }
 }
 

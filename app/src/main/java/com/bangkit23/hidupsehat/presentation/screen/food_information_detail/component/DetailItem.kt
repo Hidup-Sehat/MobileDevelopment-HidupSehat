@@ -15,7 +15,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -24,7 +23,11 @@ import com.bangkit23.hidupsehat.R
 
 @Composable
 fun CardFoodContent(
-    modifier : Modifier = Modifier
+    karbohidrat: Double,
+    lemak: Double,
+    serat: Double,
+    protein: Double,
+    modifier: Modifier = Modifier
 ) {
     ConstraintLayout(
         modifier = modifier.fillMaxWidth()
@@ -38,7 +41,9 @@ fun CardFoodContent(
                     end.linkTo(cv2.start, 10.dp)
                     width = Dimension.fillToConstraints
                 },
-            title = "Karbohidrat", data = "4,5g", color = colorResource(id = R.color.green_tile)
+            title = "Karbohidrat",
+            data = "${karbohidrat}g",
+            color = colorResource(id = R.color.green_tile)
         )
 
         DetailItem(
@@ -48,7 +53,7 @@ fun CardFoodContent(
                 start.linkTo(cv1.end)
                 width = Dimension.fillToConstraints
             },
-            title = "Lemak", data = "4,5g", color = colorResource(id = R.color.blue_tile)
+            title = "Lemak", data = "${lemak}g", color = colorResource(id = R.color.blue_tile)
         )
         DetailItem(
             modifier = Modifier.constrainAs(cv3) {
@@ -57,7 +62,7 @@ fun CardFoodContent(
                 end.linkTo(cv4.start, 10.dp)
                 width = Dimension.fillToConstraints
             },
-            title = "Serat", data = "4,5g", color = colorResource(id = R.color.yellow_tile)
+            title = "Serat", data = "${serat}g", color = colorResource(id = R.color.yellow_tile)
         )
         DetailItem(
             modifier = Modifier.constrainAs(cv4) {
@@ -66,7 +71,7 @@ fun CardFoodContent(
                 end.linkTo(parent.end)
                 width = Dimension.fillToConstraints
             },
-            title = "Protein", data = "4,5g", color = colorResource(id = R.color.red_tile)
+            title = "Protein", data = "${protein}g", color = colorResource(id = R.color.red_tile)
         )
     }
 }
@@ -105,11 +110,4 @@ fun DetailItem(
             )
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DetailItemPrev() {
-//    DetailItem(title = "Karbohidrat", data = "44.0g", color = Color.Blue)
-    CardFoodContent()
 }

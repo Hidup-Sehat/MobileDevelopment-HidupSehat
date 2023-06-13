@@ -119,6 +119,7 @@ fun DiaryScreen() {
                     .padding(it),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+                Text(text = "Kamu bakal dapet total 50 points dari pengisian diary ini!")
                 Text(
                     text = "Apa emosi yang kamu\n rasakan sekarang?",
                     style = MaterialTheme.typography.titleMedium.copy(

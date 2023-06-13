@@ -88,8 +88,7 @@ fun HomeScreen(
         onScanClicked = onScanClicked,
         onPoseMenuClicked = onPoseMenuClicked,
         onProfileClicked = onProfileClicked,
-        onFoodInformationClicked = onFoodInformationClicked
-        onProfileClicked = onProfileClicked,
+        onFoodInformationClicked = onFoodInformationClicked,
         onReminderMenuClicked = onReminderMenuClicked,
         onSeeAllMonitoringClick = onSeeAllMonitoringClick,
         onManualFoodsClick = onManualFoodsClick,
@@ -156,8 +155,7 @@ fun HomeContent(
             FeaturesMenu(
                 onPoseMenuClicked = onPoseMenuClicked,
                 onReminderMenuClicked = onReminderMenuClicked,
-                onMentalHealthClick = onMentalHealthClick
-                onPoseMenuClicked = onPoseMenuClicked,
+                onMentalHealthClick = onMentalHealthClick,
                 onFoodInformationClicked = onFoodInformationClicked
             )
             MonitoringSection(
@@ -306,15 +304,13 @@ fun FeaturesMenu(
         Row {
             CardFeatureMenu(
                 cardData = itemsCard[2],
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f).clickable { onFoodInformationClicked() }
             )
             CardFeatureMenu(
                 cardData = itemsCard[3],
                 modifier = Modifier.weight(1f)
                     .clickable { onReminderMenuClicked() }
             )
-            CardFeatureMenu(itemsCard[2], modifier = Modifier.weight(1f).clickable { onFoodInformationClicked() })
-            CardFeatureMenu(itemsCard[3], modifier = Modifier.weight(1f))
         }
     }
 }
@@ -428,7 +424,6 @@ fun HomeContentPreview() {
             onReminderMenuClicked = {},
             onSeeAllMonitoringClick = {},
             onMentalHealthClick = {},
-            onProfileClicked = {},
             onFoodInformationClicked = {}
         )
     }
