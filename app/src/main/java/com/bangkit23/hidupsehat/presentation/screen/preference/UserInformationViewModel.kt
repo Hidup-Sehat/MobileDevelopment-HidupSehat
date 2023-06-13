@@ -26,7 +26,6 @@ class UserInformationViewModel @Inject constructor(
                 val userDetailRequest = UserDetailRequestDto(
                     username = event.username,
                     name = event.name,
-                    contactNumber = event.contactNumber,
                     dateOfBirth = "2001-09-09",
                     age = event.age,
                     gender = event.gender,

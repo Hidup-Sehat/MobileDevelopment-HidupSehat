@@ -3,7 +3,7 @@ package com.bangkit23.hidupsehat.domain.model.user
 data class UserDetailRequestDto(
     val username: String = "",
     val name: String = "",
-    val contactNumber: String = "",
+    val contactNumber: String = "62",
     val dateOfBirth: String = "",
     val age: Int = 0,
     val gender: String = "",
