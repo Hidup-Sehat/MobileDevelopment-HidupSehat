@@ -202,7 +202,7 @@ class ScanFoodResultViewModel @Inject constructor(
     private fun saveAllFoods(foods: List<Food?>) = viewModelScope.launch {
         val request = foods.map {
             FoodRequestItem(
-                portionSize = "${it?.count} ${it?.portionSize}",
+                portionSize = "${it?.count} x/ ${it?.portionSize}",
                 id = "${it?.id}",
                 foodName = it?.name
             )

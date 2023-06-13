@@ -8,6 +8,8 @@ import com.bangkit23.hidupsehat.data.source.remote.response.AddFoodsData
 import com.bangkit23.hidupsehat.data.source.remote.response.AddFoodsItem
 import com.bangkit23.hidupsehat.data.source.remote.response.AddPointsResponseData
 import com.bangkit23.hidupsehat.data.source.remote.response.BodyAngleResponse
+import com.bangkit23.hidupsehat.data.source.remote.response.FoodHistoryDetailResponseItem
+import com.bangkit23.hidupsehat.data.source.remote.response.FoodsHistoryResponseItem
 import com.bangkit23.hidupsehat.data.source.remote.response.MovementResponseItem
 import com.bangkit23.hidupsehat.data.source.remote.response.UserDetailResult
 import com.bangkit23.hidupsehat.data.source.remote.response.UserNeedsResponse
@@ -16,7 +18,9 @@ import com.bangkit23.hidupsehat.domain.model.activity.BodyAngle
 import com.bangkit23.hidupsehat.domain.model.activity.MovementItem
 import com.bangkit23.hidupsehat.domain.model.food.AddFoods
 import com.bangkit23.hidupsehat.domain.model.food.Food
+import com.bangkit23.hidupsehat.domain.model.food.FoodHistoryDetailItem
 import com.bangkit23.hidupsehat.domain.model.food.FoodItem
+import com.bangkit23.hidupsehat.domain.model.food.FoodsHistoryItem
 import com.bangkit23.hidupsehat.domain.model.reminder.Reminder
 import com.bangkit23.hidupsehat.domain.model.user.AddPoints
 import com.bangkit23.hidupsehat.domain.model.user.UserDetail
@@ -169,4 +173,21 @@ fun AddFoodsData.toDomain() = AddFoods(
     id = id,
     totalFiber = totalFiber,
     foods = foods.map(AddFoodsItem::toDomain)
+)
+
+fun FoodsHistoryResponseItem.toDomain() = FoodsHistoryItem(
+    portionSize = portionSize,
+    id = id,
+    foodName = foodName
+)
+
+fun FoodHistoryDetailResponseItem.toDomain() = FoodHistoryDetailItem(
+    date = date,
+    lastUpdated = lastUpdated,
+    totalCarb = totalCarb,
+    totalProtein = totalProtein,
+    totalFat = totalFat,
+    id = id,
+    totalFiber = totalFiber,
+    foods = foods.map(FoodsHistoryResponseItem::toDomain)
 )

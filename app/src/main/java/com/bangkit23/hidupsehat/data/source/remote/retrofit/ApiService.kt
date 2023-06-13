@@ -6,6 +6,7 @@ import com.bangkit23.hidupsehat.data.source.remote.request.UserDetailRequest
 import com.bangkit23.hidupsehat.data.source.remote.response.ActivityResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.AddFoodsResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.AddPointsResponse
+import com.bangkit23.hidupsehat.data.source.remote.response.FoodsHistoryResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.LeaderboardResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.UserDetailResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.UserNeedsResponse
@@ -50,4 +51,9 @@ interface ApiService {
         @Path("user_id") userId: String,
         @Body requestBody: AddFoodsRequest
     ): AddFoodsResponse
+
+    @GET("user/{user_id}/food")
+    suspend fun getFoodsHistory(
+        @Path("user_id") userId: String,
+    ): FoodsHistoryResponse
 }

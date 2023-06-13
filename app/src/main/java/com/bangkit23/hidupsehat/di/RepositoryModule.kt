@@ -4,12 +4,14 @@ import com.bangkit23.hidupsehat.data.repository.ActivityRepositoryImpl
 import com.bangkit23.hidupsehat.data.repository.AuthRepositoryImpl
 import com.bangkit23.hidupsehat.data.repository.FoodRepositoryImpl
 import com.bangkit23.hidupsehat.data.repository.LeaderboardRepositoryImpl
+import com.bangkit23.hidupsehat.data.repository.MonitoringRepositoryImpl
 import com.bangkit23.hidupsehat.data.repository.ReminderRepositoryImpl
 import com.bangkit23.hidupsehat.data.repository.UserRepositoryImpl
 import com.bangkit23.hidupsehat.domain.reporitory.ActivityRepository
 import com.bangkit23.hidupsehat.domain.reporitory.AuthRepository
 import com.bangkit23.hidupsehat.domain.reporitory.FoodRepository
 import com.bangkit23.hidupsehat.domain.reporitory.LeaderboardRepository
+import com.bangkit23.hidupsehat.domain.reporitory.MonitoringRepository
 import com.bangkit23.hidupsehat.domain.reporitory.ReminderRepository
 import com.bangkit23.hidupsehat.domain.reporitory.UserRepository
 import dagger.Binds
@@ -45,4 +47,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun provideActivityRepository(activityRepositoryImpl: ActivityRepositoryImpl): ActivityRepository
+
+    @Binds
+    @Singleton
+    abstract fun provideMonitoringRepository(monitoringRepositoryImpl: MonitoringRepositoryImpl): MonitoringRepository
 }

@@ -2,8 +2,12 @@ package com.bangkit23.hidupsehat.presentation.screen.monitoring
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bangkit23.hidupsehat.domain.model.food.FoodsHistoryItem
 import com.bangkit23.hidupsehat.domain.usecase.food.FoodUseCase
+import com.bangkit23.hidupsehat.domain.usecase.monitoring.MonitoringUseCase
+import com.bangkit23.hidupsehat.presentation.screen.monitoring.common.toFood
 import com.bangkit23.hidupsehat.presentation.screen.monitoring.model.Nutrition
+import com.bangkit23.hidupsehat.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,6 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MonitoringViewModel @Inject constructor(
+    private val monitoringUseCase: MonitoringUseCase,
     private val foodUseCase: FoodUseCase,
 ) : ViewModel() {
 
@@ -29,11 +34,34 @@ class MonitoringViewModel @Inject constructor(
     }
 
     private fun getFoods() = viewModelScope.launch {
-        foodUseCase.searchFoods("Nasi").collect { foods ->
-            _state.update {
-                it.copy(
-                    historyFoods = foods.take(5)
-                )
+        monitoringUseCase.getFoodsHistory().collect { result ->
+            when (result) {
+                is Result.Error -> {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = result.message
+                        )
+                    }
+                }
+                is Result.Loading -> {
+                    _state.update {
+                        it.copy(
+                            isLoading = true
+                        )
+                    }
+                }
+                is Result.Success -> {
+                    val foods = result.data
+                        .flatMap { it.foods }
+                        .map(FoodsHistoryItem::toFood)
+
+                    _state.update {
+                        it.copy(
+                            historyFoods = foods
+                        )
+                    }
+                }
             }
         }
     }
