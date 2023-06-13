@@ -9,6 +9,6 @@ data class YogaState(
     val flexibilityExercises: List<Exercise> = emptyList(),
     val strengthExercises: List<Exercise> = emptyList(),
     val recoveryExercises: List<Exercise> = emptyList(),
-    val clickedExercise: Exercise = Exercise("", "", "", poses = emptyList()),
+    val clickedExercise: Exercise = Exercise(),
     val openBottomSheet: Boolean = false,
 )

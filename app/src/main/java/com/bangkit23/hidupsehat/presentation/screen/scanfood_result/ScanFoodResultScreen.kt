@@ -96,6 +96,9 @@ fun ScanFoodResultScreen(
                 viewModel.onEvent(ScanFoodResultEvent.OnSearchFoodQueryChange(it))
             },
             foods = state.foodSearched,
+            getInitialFoods = {
+                viewModel.onEvent(ScanFoodResultEvent.OnGetInitialAddFoods)
+            },
             onButtonAddClick = {
                 viewModel.onEvent(ScanFoodResultEvent.AddNewFood(it))
             }
@@ -162,7 +165,7 @@ fun ScanFoodResultContent(
                 .padding(contentPadding)
         ) {
             LazyColumn(
-                contentPadding = PaddingValues(bottom = 80.dp),
+                contentPadding = PaddingValues(bottom = 100.dp),
                 modifier = Modifier.align(Alignment.TopCenter)
             ) {
                 item {
@@ -216,7 +219,7 @@ fun ScanFoodResultContent(
                     .background(MaterialTheme.colorScheme.background)
             ) {
                 Divider()
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(8.dp))
                 Row {
                     Text(
                         text = "Total Kalori",
@@ -231,7 +234,7 @@ fun ScanFoodResultContent(
                             .padding(horizontal = 16.dp)
                     )
                 }
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(8.dp))
                 Row {
                     OutlinedButtonWithIcon(
                         text = "Tambah",

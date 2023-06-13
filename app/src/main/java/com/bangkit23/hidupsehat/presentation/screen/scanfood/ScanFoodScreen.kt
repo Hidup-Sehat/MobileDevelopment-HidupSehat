@@ -43,7 +43,9 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bangkit23.hidupsehat.R
+import com.bangkit23.hidupsehat.presentation.components.LoadingDialog
 import com.bangkit23.hidupsehat.presentation.screen.scanfood.common.runObjectDetection
 import com.bangkit23.hidupsehat.presentation.screen.scanfood.model.DetectionResult
 import com.bangkit23.hidupsehat.util.executor
@@ -63,27 +65,46 @@ fun ScanFoodScreen(
     viewModel: ScanFoodViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val imageFile by viewModel.photoFile
+    val scope = rememberCoroutineScope()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
     ScanFoodContent(
+        flashModeOn = state.isFlashModeOn,
         onImageFiled = { file, isFromCamera ->
-            viewModel.setPhotoFile(file)
-            context.runObjectDetection(
-                imageFile = imageFile,
-                isFromCamera = isFromCamera,
-                onDetectedImage = onDetectedImage
-            )
+            viewModel.onEvent(ScanFoodEvent.OnImageFiled(file))
+            scope.launch {
+                context.runObjectDetection(
+                    imageFile = state.imageFile,
+                    isFromCamera = isFromCamera,
+                    onDetectedImage = onDetectedImage
+                )
+                viewModel.onEvent(ScanFoodEvent.SetLoadingState(false))
+            }
         },
         onHelpClick = {},
+        onLoading = {
+            viewModel.onEvent(ScanFoodEvent.SetLoadingState(true))
+        },
+        onFlashModeChange = { flashModeOn ->
+            viewModel.onEvent(ScanFoodEvent.OnFlashModeChange(flashModeOn))
+        },
         onNavigateUp = onNavigateUp
     )
+
+    if (state.isLoading) {
+        LoadingDialog()
+    }
 }
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ScanFoodContent(
+    flashModeOn: Boolean,
     onImageFiled: (File, isFromCamera: Boolean) -> Unit,
     onHelpClick: () -> Unit,
     onNavigateUp: () -> Unit,
+    onLoading: () -> Unit,
+    onFlashModeChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA,
 ) {
@@ -97,6 +118,7 @@ fun ScanFoodContent(
         onResult = { uri ->
             if (uri != null) {
                 coroutineScope.launch {
+                    onLoading()
                     onImageFiled(uri.toFile(context), false)
                 }
             }
@@ -140,7 +162,6 @@ fun ScanFoodContent(
             ) {
                 val lifecycleOwner = LocalLifecycleOwner.current
                 var previewUseCase by remember { mutableStateOf<UseCase>(Preview.Builder().build()) }
-                var flashModeOn by remember { mutableStateOf(false) }
                 val imageCaptureUseCase by remember {
                     mutableStateOf(
                         ImageCapture.Builder()
@@ -158,6 +179,7 @@ fun ScanFoodContent(
                     IconButton(
                         onClick = {
                             coroutineScope.launch {
+                                onLoading()
                                 try {
                                     onImageFiled(imageCaptureUseCase.takePicture(context.executor), true)
                                 } catch (e: Exception) {
@@ -198,7 +220,7 @@ fun ScanFoodContent(
                     }
                     IconButton(
                         onClick = {
-                            flashModeOn = !flashModeOn
+                            onFlashModeChange(!flashModeOn)
                         },
                         colors = IconButtonDefaults.iconButtonColors(
                             containerColor = Color(0x51000000)

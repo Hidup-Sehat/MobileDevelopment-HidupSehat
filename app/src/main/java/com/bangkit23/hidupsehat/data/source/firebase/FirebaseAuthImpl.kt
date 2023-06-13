@@ -1,6 +1,7 @@
 package com.bangkit23.hidupsehat.data.source.firebase
 
 import android.content.Intent
+import android.util.Log
 import com.bangkit23.hidupsehat.presentation.screen.auth.model.SignInResult
 import com.bangkit23.hidupsehat.presentation.screen.auth.model.UserData
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -76,11 +77,14 @@ class FirebaseAuthImpl @Inject constructor(
         auth.signOut()
     }
 
-    override fun getSignedUser(): UserData? = auth.currentUser?.run {
+    override suspend fun getSignedUser(): UserData? = auth.currentUser?.run {
+        val s = isUserAlreadyExists(uid)
+        Log.d("USEREXIST", "getSignedUser: $s")
         UserData(
             userId = uid,
             username = displayName,
             profilePictureUrl = photoUrl?.toString(),
+            isNewUser = !isUserAlreadyExists(uid)
         )
     }
 

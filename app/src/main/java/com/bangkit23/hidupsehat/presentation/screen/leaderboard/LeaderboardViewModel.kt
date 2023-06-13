@@ -1,15 +1,22 @@
 package com.bangkit23.hidupsehat.presentation.screen.leaderboard
 
 import androidx.lifecycle.ViewModel
-import com.bangkit23.hidupsehat.presentation.screen.leaderboard.model.Leaderboard
+import androidx.lifecycle.viewModelScope
+import com.bangkit23.hidupsehat.domain.model.leaderboard.LeaderboardItem
+import com.bangkit23.hidupsehat.domain.model.leaderboard.LeaderboardType
+import com.bangkit23.hidupsehat.domain.usecase.leaderboard.LeaderboardUseCase
+import com.bangkit23.hidupsehat.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LeaderboardViewModel @Inject constructor() : ViewModel() {
+class LeaderboardViewModel @Inject constructor(
+    private val leaderboardUseCase: LeaderboardUseCase,
+) : ViewModel() {
 
     private val _state = MutableStateFlow(LeaderboardState())
     val state = _state.asStateFlow()
@@ -18,73 +25,44 @@ class LeaderboardViewModel @Inject constructor() : ViewModel() {
         when (event) {
             is LeaderboardEvent.OnLeaderboardTypeChanged -> {
                 when (event.position) {
-                    0 -> getDailyLeaderboard()
-                    1 -> getWeeklyLeaderboard()
-                    2 -> getMonthlyLeaderboard()
+                    0 -> getLeaderboard(LeaderboardType.DAILY)
+                    1 -> getLeaderboard(LeaderboardType.WEEKLY)
+                    2 -> getLeaderboard(LeaderboardType.MONTHLY)
                 }
             }
         }
     }
 
-    private fun getDailyLeaderboard() {
-        _state.update {
-            it.copy(
-                listLeaderboard = listLeaderboard
-            )
+    private fun getLeaderboard(type: LeaderboardType) = viewModelScope.launch {
+        leaderboardUseCase.getLeaderboard(type).collect { result ->
+            when (result) {
+                is Result.Loading -> {
+                    _state.update {
+                        it.copy(
+                            isLoading = true
+                        )
+                    }
+                }
+
+                is Result.Success -> {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            listLeaderboard = result.data.leaderboards,
+                            userPosition = result.data.userPosition ?: LeaderboardItem()
+                        )
+                    }
+                }
+
+                is Result.Error -> {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = result.message
+                        )
+                    }
+                }
+            }
         }
     }
-
-    private fun getWeeklyLeaderboard() {
-        _state.update {
-            it.copy(
-                listLeaderboard = listLeaderboard.shuffled()
-            )
-        }
-    }
-
-    private fun getMonthlyLeaderboard() {
-    }
-
-    private val listLeaderboard = listOf(
-        Leaderboard(
-            id = 0,
-            username = "@yusuf12",
-            name = "Yusuf",
-            photoUrl = "https://cdn-icons-png.flaticon.com/128/4140/4140061.png",
-            position = 1,
-            points = 89964
-        ),
-        Leaderboard(
-            id = 1,
-            username = "@fajar45",
-            name = "Fajarudin",
-            photoUrl = "https://cdn-icons-png.flaticon.com/128/4140/4140037.png",
-            position = 2,
-            points = 68578
-        ),
-        Leaderboard(
-            id = 2,
-            username = "@ja_ki",
-            name = "Jaki Anwar",
-            photoUrl = "https://cdn-icons-png.flaticon.com/128/706/706807.png",
-            position = 3,
-            points = 8733
-        ),
-        Leaderboard(
-            id = 3,
-            username = "@udin66",
-            name = "Kamaludin",
-            photoUrl = "https://cdn-icons-png.flaticon.com/128/4139/4139981.png",
-            position = 4,
-            points = 3455
-        ),
-        Leaderboard(
-            id = 4,
-            username = "@firmansyah_90",
-            name = "Firmansyah",
-            photoUrl = "https://cdn-icons-png.flaticon.com/128/219/219970.png",
-            position = 5,
-            points = 2564
-        ),
-    )
 }

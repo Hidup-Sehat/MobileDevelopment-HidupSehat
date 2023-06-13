@@ -9,5 +9,5 @@ interface FirebaseAuth {
     suspend fun signInWithEmail(email: String, password: String): SignInResult
     suspend fun registerWithEmail(name: String, email: String, password: String): SignInResult
     suspend fun signOut()
-    fun getSignedUser(): UserData?
+    suspend fun getSignedUser(): UserData?
 }

@@ -47,6 +47,13 @@ class LoginViewModel @Inject constructor(
                     LoginState()
                 }
             }
+            is LoginEvent.SetLoadingState -> {
+                _state.update {
+                    it.copy(
+                        loading = event.isLoading
+                    )
+                }
+            }
         }
     }
 

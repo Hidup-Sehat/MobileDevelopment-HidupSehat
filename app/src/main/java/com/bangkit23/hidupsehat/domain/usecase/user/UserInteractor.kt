@@ -12,4 +12,10 @@ class UserInteractor @Inject constructor(
 
     override fun createUserDetail(userDetailRequestDto: UserDetailRequestDto) =
         userRepository.createUserDetail(userDetailRequestDto)
+
+    override fun getUserNeeds() =
+        userRepository.getUserNeeds()
+
+    override fun addUserPoints(points: Int) =
+        userRepository.addUserPoints(points)
 }

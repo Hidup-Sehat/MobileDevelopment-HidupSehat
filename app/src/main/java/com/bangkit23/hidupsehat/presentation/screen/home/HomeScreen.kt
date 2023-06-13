@@ -15,9 +15,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -35,8 +32,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,58 +42,79 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import com.bangkit23.hidupsehat.R
-import com.bangkit23.hidupsehat.domain.model.food.Food
+import com.bangkit23.hidupsehat.domain.model.user.UserNeeds
 import com.bangkit23.hidupsehat.presentation.components.CardEmotionFeel
+import com.bangkit23.hidupsehat.presentation.components.DotsIndicator
+import com.bangkit23.hidupsehat.presentation.screen.auth.model.UserData
 import com.bangkit23.hidupsehat.presentation.screen.home.components.CardPersonalHealthInfo
-import com.bangkit23.hidupsehat.presentation.screen.home.components.HomeSection
-import com.bangkit23.hidupsehat.presentation.screen.home.components.SheetWriteFoodsManual
 import com.bangkit23.hidupsehat.presentation.screen.home.model.CardFeature
 import com.bangkit23.hidupsehat.presentation.screen.home.model.Feel
 import com.bangkit23.hidupsehat.presentation.screen.home.model.emotions
+import com.bangkit23.hidupsehat.presentation.screen.update_user_info.UpdateUserInfoScreen
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
+import com.himanshoe.charty.line.LineChart
+import com.himanshoe.charty.line.model.LineData
 
 @Composable
 fun HomeScreen(
     onScanClicked: () -> Unit,
     onPoseMenuClicked: () -> Unit,
     onProfileClicked: () -> Unit,
+    onReminderMenuClicked: () -> Unit,
+    onSeeAllMonitoringClick: () -> Unit,
+    onManualFoodsClick: () -> Unit,
+    onMentalHealthClick: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val chosenEmotion by viewModel.chosenEmotion
-    val foods = viewModel.foods
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
     HomeContent(
-        chosenEmotion = chosenEmotion,
-        onEmotionChosen = viewModel::setEmotion,
-        foods = foods,
+        chosenEmotion = state.chosenEmotion,
+        onEmotionChosen = {
+            viewModel.onEvent(HomeEvent.OnTodayEmotionChosen(it))
+        },
+        userNeeds = state.userNeeds,
+        userData = state.userData,
         onScanClicked = onScanClicked,
         onPoseMenuClicked = onPoseMenuClicked,
-        onProfileClicked = onProfileClicked
+        onProfileClicked = onProfileClicked,
+        onReminderMenuClicked = onReminderMenuClicked,
+        onSeeAllMonitoringClick = onSeeAllMonitoringClick,
+        onManualFoodsClick = onManualFoodsClick,
+        onMentalHealthClick = onMentalHealthClick
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContent(
     chosenEmotion: Feel?,
-    foods: List<Food>,
+    userNeeds: UserNeeds,
+    userData: UserData?,
     onEmotionChosen: (Feel?) -> Unit,
     onScanClicked: () -> Unit,
     onPoseMenuClicked: () -> Unit,
+    onReminderMenuClicked: () -> Unit,
     onProfileClicked: () -> Unit,
+    onSeeAllMonitoringClick: () -> Unit,
+    onManualFoodsClick: () -> Unit,
+    onMentalHealthClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
         topBar = {
             TopAppBarWithProfile(
-                name = "Rijal",
-                userAvatar = "",
+                name = "${userData?.username?.split(" ")?.getOrNull(0)}",
+                userAvatar = userData?.profilePictureUrl,
                 onNotificationClick = {},
                 onProfileClick = {
                     onProfileClicked()
@@ -109,45 +127,75 @@ fun HomeContent(
                 .verticalScroll(rememberScrollState())
             ,
         ) {
-            var openBottomSheet by rememberSaveable { mutableStateOf(false) }
-            val sheetState = rememberModalBottomSheetState(
-                skipPartiallyExpanded = true
-            )
+            var openUpdateInfoSheet by rememberSaveable { mutableStateOf(false) }
+
             CardEmotionFeel(
                 emotions = emotions,
                 onEmotionChosen = onEmotionChosen,
                 chosenEmotion = chosenEmotion
             )
             CardPersonalHealthInfo(
-                caloriesIntakeActual = 200.0,
-                waterDrunkActual = 3.4,
-                sleepTimeActual = 4.0,
-                caloriesBurnedActual = 400.0,
+                caloriesIntakeActual = userNeeds.actualCalorie ?: 0,
+                waterDrunkActual = userNeeds.actualWater ?: 0,
+                sleepTimeActual = userNeeds.actualSleep ?: 0,
+                caloriesBurnedActual = userNeeds.actualCalorie ?: 0,
+                caloriesIntakeExpected = userNeeds.calorieNeeds ?: 2400,
+                waterDrunkExpected = userNeeds.waterNeeds ?: 0.0,
+                sleepTimeExpected = userNeeds.sleepNeeds ?: 0,
+                caloriesBurnedExpected = userNeeds.calorieNeeds ?: 0,
                 onScanClicked = onScanClicked,
-                onWriteManualClicked = {
-                    openBottomSheet = !openBottomSheet
-                },
-                onCardClicked = {
-                    openBottomSheet = !openBottomSheet
+                onWriteManualClicked = onManualFoodsClick,
+                onUpdateClicked = {
+                    openUpdateInfoSheet = true
                 }
             )
             FeaturesMenu(
-                onPoseMenuClicked = onPoseMenuClicked
+                onPoseMenuClicked = onPoseMenuClicked,
+                onReminderMenuClicked = onReminderMenuClicked,
+                onMentalHealthClick = onMentalHealthClick
             )
-            HomeSection(
-                title = "Monitoring",
-                content = { MonitoringPager() }
+            MonitoringSection(
+                onSeeAllClick = onSeeAllMonitoringClick
             )
-            if (openBottomSheet) {
-                SheetWriteFoodsManual(
-                    foods = foods,
-                    sheetState = sheetState,
-                    onDismiss = { openBottomSheet = false },
-                    onSaveClick = {},
-                    onItemClick = {}
+
+            if (openUpdateInfoSheet) {
+                UpdateUserInfoScreen(
+                    initialCalorieBurned = "${userNeeds.calorieNeeds}",
+                    initialCalorieNeeds = "${userNeeds.calorieNeeds}",
+                    initialSleepNeeds = userNeeds.sleepNeeds ?: 8,
+                    initialWaterNeeds = userNeeds.actualWater ?: 1,
+                    onDismissRequest = { openUpdateInfoSheet = false }
                 )
             }
         }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun MonitoringSection(
+    onSeeAllClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Monitoring",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.weight(1f)
+                    .padding(horizontal = 16.dp)
+            )
+            TextButton(
+                onClick = onSeeAllClick,
+                modifier = Modifier
+                    .padding(end = 8.dp)
+            ) {
+                Text("Lihat Semua")
+            }
+        }
+        MonitoringPager()
     }
 }
 
@@ -155,7 +203,7 @@ fun HomeContent(
 @Composable
 fun TopAppBarWithProfile(
     name: String,
-    userAvatar: String,
+    userAvatar: String?,
     onNotificationClick: () -> Unit,
     onProfileClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -171,18 +219,28 @@ fun TopAppBarWithProfile(
             IconButton(
                 onClick = onProfileClick,
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            color = MaterialTheme.colorScheme.secondaryContainer,
-                            shape = CircleShape
-                        )
-                ) {
-                    Text(
-                        text = "${name.first()}",
-                        modifier = Modifier.align(Alignment.Center)
+                if (userAvatar != null) {
+                    AsyncImage(
+                        model = userAvatar,
+                        contentDescription = null,
+                        contentScale = ContentScale.Inside,
+                        modifier = Modifier.fillMaxSize()
+                            .clip(CircleShape)
                     )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                color = MaterialTheme.colorScheme.secondaryContainer,
+                                shape = CircleShape
+                            )
+                    ) {
+                        Text(
+                            text = "${name.first()}",
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
                 }
             }
             Spacer(Modifier.width(8.dp))
@@ -193,6 +251,8 @@ fun TopAppBarWithProfile(
 @Composable
 fun FeaturesMenu(
     onPoseMenuClicked: () -> Unit,
+    onReminderMenuClicked: () -> Unit,
+    onMentalHealthClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val itemsCard = listOf(
@@ -223,12 +283,29 @@ fun FeaturesMenu(
             .padding(12.dp)
     ) {
         Row {
-            CardFeatureMenu(itemsCard[0], modifier = Modifier.weight(1f).clickable { onPoseMenuClicked() })
-            CardFeatureMenu(itemsCard[1], modifier = Modifier.weight(1f))
+            CardFeatureMenu(
+                cardData = itemsCard[0],
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { onPoseMenuClicked() }
+            )
+            CardFeatureMenu(
+                cardData = itemsCard[1],
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { onMentalHealthClick() }
+            )
         }
         Row {
-            CardFeatureMenu(itemsCard[2], modifier = Modifier.weight(1f))
-            CardFeatureMenu(itemsCard[3], modifier = Modifier.weight(1f))
+            CardFeatureMenu(
+                cardData = itemsCard[2],
+                modifier = Modifier.weight(1f)
+            )
+            CardFeatureMenu(
+                cardData = itemsCard[3],
+                modifier = Modifier.weight(1f)
+                    .clickable { onReminderMenuClicked() }
+            )
         }
     }
 }
@@ -270,7 +347,7 @@ fun MonitoringPager(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.padding(top = 16.dp, bottom = 16.dp),
+        modifier = modifier.padding(top = 8.dp, bottom = 16.dp),
     ) {
         HorizontalPager(
             contentPadding = PaddingValues(horizontal = 16.dp),
@@ -282,10 +359,38 @@ fun MonitoringPager(
                 ElevatedCard(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp)
                         .clip(RoundedCornerShape(MaterialTheme.shapes.medium.topStart))
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = "Performa",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            text = "7 hari terakhir",
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                        Spacer(Modifier.height(16.dp))
+                        LineChart(
+                            lineData = listOf(
+                                LineData("3/6", 1.0f),
+                                LineData("4/6", 0.3f),
+                                LineData("5/6", 0.2f),
+                                LineData("6/6", 0.4f),
+                                LineData("7/6", 0.8f),
+                                LineData("8/6", 0.6f),
+                                LineData("9/6", 1.0f),
+                            ),
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(144.dp)
+                                .padding(16.dp)
+                        )
                     }
                 }
             }
@@ -298,54 +403,22 @@ fun MonitoringPager(
     }
 }
 
-@Composable
-fun DotsIndicator(
-    totalDots: Int,
-    selectedIndex: Int,
-    modifier: Modifier = Modifier,
-    selectedColor: Color = MaterialTheme.colorScheme.primary,
-    unselectedColor: Color = MaterialTheme.colorScheme.secondaryContainer,
-) {
-    LazyRow(
-        modifier = modifier
-            .wrapContentWidth()
-            .wrapContentHeight()
-    ) {
-        items(count = totalDots) { index ->
-            if (index == selectedIndex) {
-                Box(
-                    modifier = Modifier
-                        .width(12.dp)
-                        .height(8.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(selectedColor)
-                )
-            } else {
-                Box(
-                    modifier = Modifier
-                        .size(8.dp)
-                        .clip(CircleShape)
-                        .background(unselectedColor)
-                )
-            }
-            if (index != totalDots - 1) {
-                Spacer(modifier = Modifier.padding(horizontal = 2.dp))
-            }
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun HomeContentPreview() {
     HidupSehatTheme {
         HomeContent(
-            foods = emptyList(),
+            userNeeds = UserNeeds(),
+            userData = null,
             chosenEmotion = null,
+            onManualFoodsClick = {},
             onEmotionChosen = {},
             onScanClicked = {},
             onPoseMenuClicked = {},
-            onProfileClicked = {}
+            onProfileClicked = {},
+            onReminderMenuClicked = {},
+            onSeeAllMonitoringClick = {},
+            onMentalHealthClick = {},
         )
     }
 }

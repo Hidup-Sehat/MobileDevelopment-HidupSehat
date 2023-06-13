@@ -30,9 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.bangkit23.hidupsehat.domain.model.leaderboard.LeaderboardItem
 import com.bangkit23.hidupsehat.presentation.screen.leaderboard.components.ItemLeaderboard
-import com.bangkit23.hidupsehat.presentation.screen.leaderboard.model.Leaderboard
-
 @Composable
 fun LeaderboardScreen(
     viewModel: LeaderboardViewModel = hiltViewModel()
@@ -44,13 +43,15 @@ fun LeaderboardScreen(
         onLeaderboardTypeChanged = { position ->
             viewModel.onEvent(LeaderboardEvent.OnLeaderboardTypeChanged(position))
         },
+        userPosition = state.userPosition
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LeaderboardContent(
-    listLeaderboard: List<Leaderboard>,
+    listLeaderboard: List<LeaderboardItem>,
+    userPosition: LeaderboardItem,
     onLeaderboardTypeChanged: (position: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -92,7 +93,8 @@ fun LeaderboardContent(
             TypeLeaderboard(
                 position = state,
                 listLeaderboard = listLeaderboard,
-                onLeaderboardTypeChanged = onLeaderboardTypeChanged
+                userPosition = userPosition,
+                onLeaderboardTypeChanged = onLeaderboardTypeChanged,
             )
         }
     }
@@ -101,7 +103,8 @@ fun LeaderboardContent(
 @Composable
 fun TypeLeaderboard(
     position: Int,
-    listLeaderboard: List<Leaderboard>,
+    userPosition: LeaderboardItem,
+    listLeaderboard: List<LeaderboardItem>,
     onLeaderboardTypeChanged: (position: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -122,11 +125,11 @@ fun TypeLeaderboard(
                 )
                 Spacer(Modifier.height(16.dp))
                 ItemLeaderboard(
-                    username = "@rijalmyd",
-                    name = "Rijal Muhyidin",
-                    photoUrl = "https://cdn-icons-png.flaticon.com/128/4140/4140039.png",
-                    points = 350,
-                    position = 57,
+                    username = userPosition.username ?: "",
+                    name = userPosition.name ?: "",
+                    photoUrl = userPosition.avatar ?: "https://cdn-icons-png.flaticon.com/128/4140/4140039.png",
+                    points = userPosition.points?.toLong() ?: 0,
+                    position = userPosition.position ?: 0,
                 )
                 Spacer(Modifier.height(32.dp))
                 Text(
@@ -136,13 +139,13 @@ fun TypeLeaderboard(
                 Spacer(Modifier.height(8.dp))
             }
         }
-        items(items = listLeaderboard, key = { it.id }) {
+        items(items = listLeaderboard) {
             ItemLeaderboard(
-                username = it.username,
-                name = it.name,
-                photoUrl = it.photoUrl,
-                position = it.position,
-                points = it.points
+                username = it.username ?: "",
+                name = it.name ?: "",
+                photoUrl = it.avatar ?: "",
+                position = it.position ?: 0,
+                points = it.points?.toLong() ?: 0,
             )
         }
     }
