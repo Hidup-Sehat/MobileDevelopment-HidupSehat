@@ -6,6 +6,8 @@ import com.bangkit23.hidupsehat.domain.model.food.Food
 
 data class ManualFoodsState(
     val isLoading: Boolean = false,
+    val isSuccess: Boolean = false,
+    val errorMessage: String? = null,
     val isDialogAddFoodsShow: Boolean = false,
     val isDialogEditFoodShow: Boolean = false,
     val isPortionSizeDropDownShow: Boolean = false,

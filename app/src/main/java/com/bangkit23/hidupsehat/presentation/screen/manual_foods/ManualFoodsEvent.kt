@@ -5,7 +5,7 @@ import com.bangkit23.hidupsehat.domain.model.food.Food
 sealed class ManualFoodsEvent {
     data class AddNewFood(val food: Food) : ManualFoodsEvent()
     data class EditFood(val food: Food?) : ManualFoodsEvent()
-    data class SaveAllFoods(val foods: List<Food>) : ManualFoodsEvent()
+    data class SaveAllFoods(val foods: List<Food?>) : ManualFoodsEvent()
     data class OnSearchFoodQueryChange(val query: String) : ManualFoodsEvent()
     object ShowDialogAddFoods : ManualFoodsEvent()
     object HideDialogAddFoods : ManualFoodsEvent()

@@ -1,5 +1,6 @@
 package com.bangkit23.hidupsehat.data.source.remote
 
+import com.bangkit23.hidupsehat.data.source.remote.request.AddFoodsRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.AddPointsRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.UserDetailRequest
 import com.bangkit23.hidupsehat.data.source.remote.retrofit.ApiService
@@ -25,4 +26,7 @@ class RemoteDataSource @Inject constructor(
 
     suspend fun addUserPoints(userId: String, points: Int) =
         apiService.addUserPoints(userId, AddPointsRequest(points))
+
+    suspend fun saveFoods(userId: String, addFoodsRequest: AddFoodsRequest) =
+        apiService.saveFoods(userId, addFoodsRequest)
 }

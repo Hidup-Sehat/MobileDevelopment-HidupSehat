@@ -2,14 +2,19 @@ package com.bangkit23.hidupsehat.presentation.screen.manual_foods
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bangkit23.hidupsehat.data.source.remote.request.AddFoodsRequest
+import com.bangkit23.hidupsehat.data.source.remote.request.FoodRequestItem
 import com.bangkit23.hidupsehat.domain.model.food.Food
 import com.bangkit23.hidupsehat.domain.usecase.food.FoodUseCase
+import com.bangkit23.hidupsehat.util.DateConverter
+import com.bangkit23.hidupsehat.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.random.Random
 
 @HiltViewModel
 class ManualFoodsViewModel @Inject constructor(
@@ -84,7 +89,7 @@ class ManualFoodsViewModel @Inject constructor(
                 searchFoods(event.query)
             }
             is ManualFoodsEvent.SaveAllFoods -> {
-
+                saveAllFoods(event.foods)
             }
             is ManualFoodsEvent.SaveEditedFood -> {
                 _state.update {
@@ -166,6 +171,53 @@ class ManualFoodsViewModel @Inject constructor(
             it.copy(
                 foods = it.foods
             )
+        }
+    }
+
+    private fun saveAllFoods(foods: List<Food?>) = viewModelScope.launch {
+        val request = foods.map {
+            FoodRequestItem(
+                portionSize = "${it?.count} x ${it?.portionSize}",
+                id = "${it?.id}",
+                foodName = it?.name
+            )
+        }
+        val foodRequest = AddFoodsRequest(
+            date = DateConverter.getCurrentDate(),
+            lastUpdated = DateConverter.getCurrentDate(),
+            totalCarb = foods.sumOf { it?.carbohydrate?.toInt() ?: 0 },
+            totalProtein = foods.sumOf { it?.protein?.toInt() ?: 0 },
+            totalFat = foods.sumOf { it?.fat?.toInt() ?: 0 },
+            id = "${Random.nextInt(100)}",
+            totalFiber = foods.sumOf { it?.fiber?.toInt() ?: 0 },
+            foods = request
+        )
+        foodUseCase.saveFoods(foodRequest).collect { result ->
+            when (result) {
+                is Result.Loading -> {
+                    _state.update {
+                        it.copy(
+                            isLoading = true
+                        )
+                    }
+                }
+                is Result.Success -> {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            isSuccess = true,
+                        )
+                    }
+                }
+                is Result.Error -> {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = result.message
+                        )
+                    }
+                }
+            }
         }
     }
 }

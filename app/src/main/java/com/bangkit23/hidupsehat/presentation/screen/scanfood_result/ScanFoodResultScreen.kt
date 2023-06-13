@@ -1,6 +1,7 @@
 package com.bangkit23.hidupsehat.presentation.screen.scanfood_result
 
 import android.graphics.Bitmap
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -35,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,6 +45,7 @@ import coil.compose.AsyncImage
 import com.bangkit23.hidupsehat.R
 import com.bangkit23.hidupsehat.domain.model.food.Food
 import com.bangkit23.hidupsehat.presentation.components.ButtonWithIcon
+import com.bangkit23.hidupsehat.presentation.components.LoadingDialog
 import com.bangkit23.hidupsehat.presentation.components.OutlinedButtonWithIcon
 import com.bangkit23.hidupsehat.presentation.components.TableFoodHeader
 import com.bangkit23.hidupsehat.presentation.components.TableFoodItem
@@ -64,7 +67,14 @@ fun ScanFoodResultScreen(
         viewModel.onEvent(ScanFoodResultEvent.AddDetectedFoods(listDetection))
     }
 
+    val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(key1 = state.errorMessage) {
+        state.errorMessage?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     ScanFoodResultContent(
         imageResult = imageResult,
@@ -75,7 +85,9 @@ fun ScanFoodResultScreen(
         onAddButtonClick = {
             viewModel.onEvent(ScanFoodResultEvent.ShowDialogAddFoods)
         },
-        onSaveButtonClick = {},
+        onSaveButtonClick = {
+            viewModel.onEvent(ScanFoodResultEvent.SaveAllFoods(state.foods))
+        },
         onPortionSizeClick = {
             viewModel.onEvent(ScanFoodResultEvent.ShowDropDownPortionSize(it))
         },
@@ -123,6 +135,17 @@ fun ScanFoodResultScreen(
             },
             portionSizes = state.portionSizes,
         )
+    }
+
+    if (state.isLoading) {
+        LoadingDialog()
+    }
+
+    LaunchedEffect(state.isSuccess) {
+        if (state.isSuccess) {
+            Toast.makeText(context, "Berhasil Menyimpan Makanan", Toast.LENGTH_SHORT).show()
+            onNavigateUp()
+        }
     }
 }
 

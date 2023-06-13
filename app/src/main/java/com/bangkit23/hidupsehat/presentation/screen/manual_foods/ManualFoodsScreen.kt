@@ -1,5 +1,6 @@
 package com.bangkit23.hidupsehat.presentation.screen.manual_foods
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -28,15 +29,18 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bangkit23.hidupsehat.domain.model.food.Food
 import com.bangkit23.hidupsehat.presentation.components.ButtonWithIcon
+import com.bangkit23.hidupsehat.presentation.components.LoadingDialog
 import com.bangkit23.hidupsehat.presentation.components.OutlinedButtonWithIcon
 import com.bangkit23.hidupsehat.presentation.components.TableFoodHeader
 import com.bangkit23.hidupsehat.presentation.components.TableFoodItem
@@ -51,6 +55,13 @@ fun ManualFoodsScreen(
     sheetEditState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(state.errorMessage) {
+        state.errorMessage?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     ManualFoodsContent(
         totalCalories = state.foods.sumOf { it?.energyKKal ?: 0.0 },
@@ -66,6 +77,7 @@ fun ManualFoodsScreen(
             viewModel.onEvent(ManualFoodsEvent.ChangePortionSize(food, count))
         },
         onSaveButtonClick = {
+            viewModel.onEvent(ManualFoodsEvent.SaveAllFoods(state.foods))
         },
         onAddButtonClick = {
             viewModel.onEvent(ManualFoodsEvent.ShowDialogAddFoods)
@@ -108,6 +120,17 @@ fun ManualFoodsScreen(
             },
             portionSizes = state.portionSizes,
         )
+    }
+
+    if (state.isLoading) {
+        LoadingDialog()
+    }
+
+    LaunchedEffect(state.isSuccess) {
+        if (state.isSuccess) {
+            Toast.makeText(context, "Berhasil Menyimpan Makanan", Toast.LENGTH_SHORT).show()
+            navigateUp()
+        }
     }
 }
 
