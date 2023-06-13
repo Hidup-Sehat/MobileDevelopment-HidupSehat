@@ -40,13 +40,15 @@ import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 
 @Composable
 fun MonitoringScreen(
+    navigateUp: () -> Unit,
     viewModel: MonitoringViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     MonitoringContent(
         historyFoods = state.historyFoods,
-        historyNutrition = state.historyNutrition
+        historyNutrition = state.historyNutrition,
+        navigateUp = navigateUp
     )
 }
 
@@ -55,6 +57,7 @@ fun MonitoringScreen(
 fun MonitoringContent(
     historyFoods: List<Food>,
     historyNutrition: List<Nutrition>,
+    navigateUp: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -63,7 +66,7 @@ fun MonitoringContent(
                 title = { Text("Monitoring") },
                 navigationIcon = {
                     IconButton(
-                        onClick = {},
+                        onClick = navigateUp,
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.ArrowBack,
@@ -183,7 +186,8 @@ fun MonitoringContentPreview() {
     HidupSehatTheme {
         MonitoringContent(
             historyFoods = listOf(),
-            historyNutrition = listOf()
+            historyNutrition = listOf(),
+            navigateUp = {},
         )
     }
 }
