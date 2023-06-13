@@ -9,12 +9,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,10 +28,20 @@ import com.bangkit23.hidupsehat.presentation.screen.emotion_history.components.C
 import com.bangkit23.hidupsehat.presentation.screen.emotion_history.components.EmotionItem
 import com.bangkit23.hidupsehat.presentation.screen.emotion_history.model.EmotionHistory
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EmotionHistoryScreen() {
     Scaffold(
-        topBar = {},
+        topBar = {
+                 TopAppBar(
+                     title = { Text(text = "Emotion History")},
+                     navigationIcon = {
+                         IconButton(onClick = {}) {
+                             Icon(Icons.Default.ArrowBack, contentDescription = null)
+                         }
+                     }
+                 ) 
+        },
         content = {
             EmotionHistoryContent(modifier = Modifier.padding(it))
         }
@@ -40,7 +53,7 @@ fun EmotionHistoryContent(modifier: Modifier = Modifier) {
     val list = listOf<EmotionHistory>(
         EmotionHistory("Netral", "Rabu, 7 Juni 2023 19:52", "\uD83D\uDE10")
     )
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+    Column(modifier = modifier.padding(horizontal = 16.dp)) {
         WeekSection()
         Text(text = "Keseluruhan")
         CardEmotion()
