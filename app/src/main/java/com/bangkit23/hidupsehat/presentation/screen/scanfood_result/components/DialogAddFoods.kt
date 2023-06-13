@@ -22,16 +22,23 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.bangkit23.hidupsehat.domain.model.food.Food
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,65 +48,87 @@ fun DialogAddFoods(
     foods: List<Food>,
     onDismiss: () -> Unit,
     onButtonAddClick: (Food) -> Unit,
+    getInitialFoods: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    DisposableEffect(Unit) {
+        getInitialFoods()
+        onDispose {
+            onFoodQueryChange("")
+        }
+    }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
-        Column(
-            modifier = modifier.fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("Tambah Makanan") },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = onDismiss,
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Close,
+                                contentDescription = null
+                            )
+                        }
+                    },
+                    actions = {
+                        TextButton(
+                            onClick = {},
+                        ) {
+                            Text("Selesai")
+                        }
+                    }
+                )
+            },
+            snackbarHost = {
+                SnackbarHost(snackbarHostState)
+            }
         ) {
-            TopAppBar(
-                title = { Text("Tambah Makanan") },
-                navigationIcon = {
-                    IconButton(
-                        onClick = onDismiss,
-                    ) {
+            Column(
+                modifier = modifier.fillMaxSize()
+                    .padding(it)
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                Spacer(Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = foodQuery,
+                    onValueChange = onFoodQueryChange,
+                    placeholder = { Text("Cari nama makanan") },
+                    leadingIcon = {
                         Icon(
-                            imageVector = Icons.Rounded.Close,
+                            imageVector = Icons.Rounded.Search,
                             contentDescription = null
                         )
+                    },
+                    shape = MaterialTheme.shapes.medium,
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                )
+                Spacer(Modifier.height(8.dp))
+                LazyColumn(
+                    contentPadding = PaddingValues(vertical = 8.dp)
+                ) {
+                    items(items = foods, key = { it.id }) {
+                        ItemSearchFood(
+                            foodName = it.name,
+                            energyKKal = it.energyKKal,
+                            protein = it.protein,
+                            portionSize = it.portionSize,
+                            onButtonAddClick = {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar("Berhasil menambahkan ${it.name}")
+                                }
+                                onButtonAddClick(it)
+                            }
+                        )
                     }
-                },
-                actions = {
-                    TextButton(
-                        onClick = {},
-                    ) {
-                        Text("Selesai")
-                    }
-                }
-            )
-            Spacer(Modifier.height(8.dp))
-            OutlinedTextField(
-                value = foodQuery,
-                onValueChange = onFoodQueryChange,
-                placeholder = { Text("Cari nama makanan") },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Rounded.Search,
-                        contentDescription = null
-                    )
-                },
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            )
-            Spacer(Modifier.height(8.dp))
-            LazyColumn(
-                contentPadding = PaddingValues(vertical = 8.dp)
-            ) {
-                items(items = foods, key = { it.id }) {
-                    ItemSearchFood(
-                        foodName = it.name,
-                        energyKKal = it.energyKKal,
-                        protein = it.protein,
-                        portionSize = it.portionSize,
-                        onButtonAddClick = {
-                            onButtonAddClick(it)
-                        }
-                    )
                 }
             }
         }

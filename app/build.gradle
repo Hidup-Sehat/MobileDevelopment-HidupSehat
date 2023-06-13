@@ -36,6 +36,7 @@ android {
         }
     }
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -69,6 +70,7 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1" //ConstraintLayout
     implementation "androidx.compose.ui:ui-viewbinding:1.4.3" //AndroidViewBinding
     implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.1" //Lifecycle-compose
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
 
     //Firebase
     implementation 'com.google.firebase:firebase-auth-ktx:22.0.0'
@@ -138,4 +140,6 @@ dependencies {
 
     //System-Ui
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.23.1"
+
+    implementation("com.himanshoe:charty:1.0.1")
 }

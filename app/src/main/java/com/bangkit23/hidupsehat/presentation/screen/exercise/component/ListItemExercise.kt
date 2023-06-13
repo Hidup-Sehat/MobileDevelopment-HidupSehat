@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -15,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -45,7 +47,7 @@ fun ListItemExercise(
             items(data) {
                 CardExercise(
                     title = it.title,
-                    desc = it.description,
+                    desc = "${it.poses.size} Gerakan",
                     image = it.image,
                     onClicked = { onItemClicked(it) }
                 )
@@ -77,13 +79,15 @@ fun CardExercise(
             )
         )
         Text(
-            modifier = Modifier.padding(horizontal = 16.dp), text = desc, style = TextStyle(
-                fontSize = 10.sp,
-            )
+            modifier = Modifier.padding(horizontal = 16.dp),
+            text = desc,
+            style = MaterialTheme.typography.labelMedium
         )
+        Spacer(Modifier.height(8.dp))
         AsyncImage(
             modifier = Modifier.fillMaxSize(),
             model = image, contentDescription = null,
+            contentScale = ContentScale.Crop,
             placeholder = painterResource(id = R.drawable.place_holder)
         )
     }

@@ -46,13 +46,8 @@ class AuthRepositoryImpl @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     override fun getSignedUser() = flow {
-        emit(Result.Loading())
-        try {
-            val result = firebaseAuth.getSignedUser()
-            emit(Result.Success(result))
-        } catch (e: Exception) {
-            emit(Result.Error(e.message))
-        }
+        val user = firebaseAuth.getSignedUser()
+        emit(user)
     }.flowOn(Dispatchers.IO)
 
     override suspend fun signOut() {

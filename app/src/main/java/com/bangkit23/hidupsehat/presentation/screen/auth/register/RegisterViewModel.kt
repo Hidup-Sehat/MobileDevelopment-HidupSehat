@@ -61,6 +61,13 @@ class RegisterViewModel @Inject constructor(
                     RegisterState()
                 }
             }
+            is RegisterEvent.SetLoadingState -> {
+                _state.update {
+                    it.copy(
+                        loading = event.isLoading
+                    )
+                }
+            }
         }
     }
 

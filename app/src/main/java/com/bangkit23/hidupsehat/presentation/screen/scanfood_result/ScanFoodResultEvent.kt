@@ -17,4 +17,5 @@ sealed class ScanFoodResultEvent {
     object HideDropDownPortionSize : ScanFoodResultEvent()
     data class DeleteFood(val food: Food?) : ScanFoodResultEvent()
     data class SaveEditedFood(val food: Food?) : ScanFoodResultEvent()
+    object OnGetInitialAddFoods : ScanFoodResultEvent()
 }

@@ -33,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bangkit23.hidupsehat.R
 import com.bangkit23.hidupsehat.presentation.components.CustomTextField
+import com.bangkit23.hidupsehat.presentation.components.LoadingDialog
 import com.bangkit23.hidupsehat.presentation.components.OutlinedButtonWithIcon
 import com.bangkit23.hidupsehat.presentation.components.PasswordTextField
 import com.bangkit23.hidupsehat.presentation.components.TextWithSupport
@@ -47,6 +48,7 @@ import kotlinx.coroutines.launch
 fun RegisterScreen(
     navigateToHome: () -> Unit,
     moveToUserPreference: (userData: UserData?) -> Unit,
+    navigateUp: () -> Unit,
     viewModel: RegisterViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -93,8 +95,10 @@ fun RegisterScreen(
             viewModel.onEvent(RegisterEvent.RegisterWithEmailPassword(state.name, state.email, state.password))
         },
         signInWithGoogleClick = {
+            viewModel.onEvent(RegisterEvent.SetLoadingState(isLoading = true))
             scope.launch {
                 val intentSender = signInIntentSender(context)
+                viewModel.onEvent(RegisterEvent.SetLoadingState(isLoading = false))
                 launcher.launch(
                     IntentSenderRequest.Builder(
                         intentSender ?: return@launch
@@ -102,8 +106,12 @@ fun RegisterScreen(
                 )
             }
         },
-        onLoginClick = {},
+        onLoginClick = navigateUp,
     )
+
+    if (state.loading) {
+        LoadingDialog()
+    }
 }
 
 @Composable

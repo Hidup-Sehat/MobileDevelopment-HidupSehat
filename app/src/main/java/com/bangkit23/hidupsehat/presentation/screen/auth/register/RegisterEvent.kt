@@ -13,5 +13,6 @@ sealed class RegisterEvent {
         val password: String,
     ) : RegisterEvent()
     data class SignInGoogleWithIntent(val intent: Intent) : RegisterEvent()
+    data class SetLoadingState(val isLoading: Boolean) : RegisterEvent()
     object ResetState : RegisterEvent()
 }

@@ -6,5 +6,5 @@ data class Pose(
     val image: String = "",
     val title: String = "",
     val detail: String = "",
-    val personBodyAngle: PersonBodyAngle,
+    val personBodyAngle: PersonBodyAngle? = null,
 )

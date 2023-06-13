@@ -8,4 +8,5 @@ sealed class ExercisePlayEvent {
     data class SetScore(val actualAngle: PersonBodyAngle) : ExercisePlayEvent()
     object ResetScore : ExercisePlayEvent()
     data class OnPosePerfect(val currentPosePosition: Int) : ExercisePlayEvent()
+    data class OnShowHideExitDialog(val isExitDialogShow: Boolean) : ExercisePlayEvent()
 }
