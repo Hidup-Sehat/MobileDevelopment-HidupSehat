@@ -47,7 +47,7 @@ fun ListItemExercise(
             items(data) {
                 CardExercise(
                     title = it.title,
-                    desc = "${it.poses.size} Gerakan",
+                    desc = "${it.poses.size} Pose \u2022 ${it.caloriesBurned} kal",
                     image = it.image,
                     onClicked = { onItemClicked(it) }
                 )
@@ -81,7 +81,7 @@ fun CardExercise(
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = desc,
-            style = MaterialTheme.typography.labelMedium
+            style = MaterialTheme.typography.bodySmall
         )
         Spacer(Modifier.height(8.dp))
         AsyncImage(
