@@ -3,6 +3,9 @@ package com.bangkit23.hidupsehat.util
 import com.bangkit23.hidupsehat.data.source.local.entity.FoodEntity
 import com.bangkit23.hidupsehat.data.source.local.entity.ReminderEntity
 import com.bangkit23.hidupsehat.data.source.remote.request.UserDetailRequest
+import com.bangkit23.hidupsehat.data.source.remote.response.FeedDetailResponse
+import com.bangkit23.hidupsehat.data.source.remote.response.FeedResponse
+import com.bangkit23.hidupsehat.data.source.remote.response.FeedResult
 import com.bangkit23.hidupsehat.data.source.remote.response.ActivityResponseItem
 import com.bangkit23.hidupsehat.data.source.remote.response.AddFoodsData
 import com.bangkit23.hidupsehat.data.source.remote.response.AddFoodsItem
@@ -12,6 +15,8 @@ import com.bangkit23.hidupsehat.data.source.remote.response.FoodHistoryDetailRes
 import com.bangkit23.hidupsehat.data.source.remote.response.FoodsHistoryResponseItem
 import com.bangkit23.hidupsehat.data.source.remote.response.MovementResponseItem
 import com.bangkit23.hidupsehat.data.source.remote.response.UserDetailResult
+import com.bangkit23.hidupsehat.domain.model.feed.DetailFeed
+import com.bangkit23.hidupsehat.domain.model.feed.Feed
 import com.bangkit23.hidupsehat.data.source.remote.response.UserNeedsResponse
 import com.bangkit23.hidupsehat.domain.model.activity.ActivityItem
 import com.bangkit23.hidupsehat.domain.model.activity.BodyAngle
@@ -192,4 +197,23 @@ fun FoodHistoryDetailResponseItem.toDomain() = FoodHistoryDetailItem(
     id = id,
     totalFiber = totalFiber,
     foods = foods.map(FoodsHistoryResponseItem::toDomain)
+)
+
+fun List<FeedResult>.toDomainn(): List<Feed> {
+    return map { feedResult ->
+        Feed(
+            summary = feedResult.summary,
+            imgUrl = feedResult.imgUrl,
+            createdAt = feedResult.createdAt,
+            author = feedResult.author,
+            link = feedResult.link,
+            title = feedResult.title,
+            key = feedResult.key
+        )
+    }
+}
+
+fun FeedDetailResponse.toDomain() = DetailFeed(
+    link = link,
+    title = title
 )

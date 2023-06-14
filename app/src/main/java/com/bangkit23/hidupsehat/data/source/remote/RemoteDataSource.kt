@@ -2,6 +2,7 @@ package com.bangkit23.hidupsehat.data.source.remote
 
 import com.bangkit23.hidupsehat.data.source.remote.request.AddFoodsRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.AddPointsRequest
+import com.bangkit23.hidupsehat.data.source.remote.request.FeedRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.UserDetailRequest
 import com.bangkit23.hidupsehat.data.source.remote.retrofit.ApiService
 import javax.inject.Inject
@@ -32,4 +33,10 @@ class RemoteDataSource @Inject constructor(
 
     suspend fun getFoodsHistory(userId: String) =
         apiService.getFoodsHistory(userId)
+
+    suspend fun getFeeds(feedRequest: FeedRequest) =
+        apiService.getFeeds(feedRequest)
+
+    suspend fun getFeedDetailById(id: String) =
+        apiService.getFeedDetailById(id)
 }

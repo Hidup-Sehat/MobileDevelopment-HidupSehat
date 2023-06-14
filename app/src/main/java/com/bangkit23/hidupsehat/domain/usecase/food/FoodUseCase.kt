@@ -10,5 +10,6 @@ interface FoodUseCase {
     fun getFoodByName(foodName: String): Flow<Food>
     fun searchFoods(query: String): Flow<List<Food>>
     fun getFoodsPortionSize(foodName: String): Flow<List<Food>>
+    fun getAllFoods() : Flow<List<Food>>
     fun saveFoods(addFoodsRequest: AddFoodsRequest): Flow<Result<AddFoods>>
 }
