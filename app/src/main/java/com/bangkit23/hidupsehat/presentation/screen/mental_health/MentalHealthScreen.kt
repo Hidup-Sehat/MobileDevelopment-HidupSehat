@@ -33,11 +33,13 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.bangkit23.hidupsehat.domain.model.feed.Feed
 import com.bangkit23.hidupsehat.presentation.components.CardEmotionFeel
 import com.bangkit23.hidupsehat.presentation.screen.exercise.component.ListItemExercise
 import com.bangkit23.hidupsehat.presentation.screen.exercise.model.Exercise
 import com.bangkit23.hidupsehat.presentation.screen.home.model.emotions
 import com.bangkit23.hidupsehat.presentation.screen.mental_health.components.FilledEmotionCard
+import com.bangkit23.hidupsehat.presentation.screen.mental_health.components.ListItemFeed
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
@@ -55,7 +57,7 @@ fun MentalHealthScreen(
         hasFilledEmotion = true,
         musicName = "Nature - Lesfm",
         recommendedConsultations = emptyList(),
-        recommendedFeeds = emptyList(),
+        recommendedFeeds = state.recommendationFeeds,
         recommendedActivities = state.recommendationActivities,
         onItemFeedClick = {},
         onItemConsultationClick = {},
@@ -71,10 +73,10 @@ fun MentalHealthContent(
     hasFilledEmotion: Boolean,
     musicName: String,
     recommendedActivities: List<Exercise>,
-    recommendedFeeds: List<Exercise>,
+    recommendedFeeds: List<Feed>,
     recommendedConsultations: List<Exercise>,
     onItemActivityClick: (Exercise) -> Unit,
-    onItemFeedClick: () -> Unit,
+    onItemFeedClick: (Feed) -> Unit,
     onItemConsultationClick: () -> Unit,
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier,
@@ -141,10 +143,10 @@ fun MentalHealthContent(
                     modifier = Modifier
                         .padding(top = 32.dp)
                 )
-                ListItemExercise(
+                ListItemFeed(
                     headerText = "Rekomendasi Feeds",
-                    data = recommendedActivities,
-                    onItemClicked = onItemActivityClick,
+                    data = recommendedFeeds,
+                    onItemClicked = onItemFeedClick,
                     modifier = Modifier
                         .padding(top = 16.dp)
                 )
