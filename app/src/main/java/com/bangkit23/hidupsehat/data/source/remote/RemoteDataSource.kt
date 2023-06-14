@@ -31,8 +31,8 @@ class RemoteDataSource @Inject constructor(
     suspend fun saveFoods(userId: String, addFoodsRequest: AddFoodsRequest) =
         apiService.saveFoods(userId, addFoodsRequest)
 
-    suspend fun getFoodsHistory(userId: String) =
-        apiService.getFoodsHistory(userId)
+    suspend fun getFoodsHistory(userId: String, date: String) =
+        apiService.getFoodsHistory(userId, date)
 
     suspend fun getFeeds(feedRequest: FeedRequest) =
         apiService.getFeeds(feedRequest)

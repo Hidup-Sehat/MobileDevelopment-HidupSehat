@@ -66,8 +66,9 @@ interface ApiService {
         @Body requestBody: AddFoodsRequest
     ): AddFoodsResponse
 
-    @GET("user/{user_id}/food")
+    @GET("user/{user_id}/food/{date}")
     suspend fun getFoodsHistory(
         @Path("user_id") userId: String,
+        @Path("date") date: String,
     ): FoodsHistoryResponse
 }

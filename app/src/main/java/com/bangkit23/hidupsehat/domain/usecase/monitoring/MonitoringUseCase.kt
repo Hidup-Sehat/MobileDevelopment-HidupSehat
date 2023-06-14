@@ -5,5 +5,5 @@ import com.bangkit23.hidupsehat.util.Result
 import kotlinx.coroutines.flow.Flow
 
 interface MonitoringUseCase {
-    fun getFoodsHistory(): Flow<Result<List<FoodHistoryDetailItem>>>
+    fun getFoodsHistory(date: String): Flow<Result<FoodHistoryDetailItem>>
 }

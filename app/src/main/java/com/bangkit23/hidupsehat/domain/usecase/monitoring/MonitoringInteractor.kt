@@ -9,6 +9,6 @@ class MonitoringInteractor @Inject constructor(
     private val monitoringRepository: MonitoringRepository
 ) : MonitoringUseCase {
 
-    override fun getFoodsHistory() =
-        monitoringRepository.getFoodsHistory()
+    override fun getFoodsHistory(date: String) =
+        monitoringRepository.getFoodsHistory(date)
 }

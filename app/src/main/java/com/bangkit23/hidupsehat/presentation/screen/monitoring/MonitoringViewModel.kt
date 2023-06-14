@@ -7,6 +7,7 @@ import com.bangkit23.hidupsehat.domain.usecase.food.FoodUseCase
 import com.bangkit23.hidupsehat.domain.usecase.monitoring.MonitoringUseCase
 import com.bangkit23.hidupsehat.presentation.screen.monitoring.common.toFood
 import com.bangkit23.hidupsehat.presentation.screen.monitoring.model.Nutrition
+import com.bangkit23.hidupsehat.util.DateHelper
 import com.bangkit23.hidupsehat.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,7 +35,7 @@ class MonitoringViewModel @Inject constructor(
     }
 
     private fun getFoods() = viewModelScope.launch {
-        monitoringUseCase.getFoodsHistory().collect { result ->
+        monitoringUseCase.getFoodsHistory(DateHelper.getCurrentDate()).collect { result ->
             when (result) {
                 is Result.Error -> {
                     _state.update {
@@ -52,9 +53,7 @@ class MonitoringViewModel @Inject constructor(
                     }
                 }
                 is Result.Success -> {
-                    val foods = result.data
-                        .flatMap { it.foods }
-                        .map(FoodsHistoryItem::toFood)
+                    val foods = result.data.foods.map(FoodsHistoryItem::toFood)
 
                     _state.update {
                         it.copy(

@@ -20,7 +20,7 @@ data class UserDetailResult(
 	val currentWeight: Int? = null,
 
 	@field:SerializedName("gender")
-	val gender: Int? = null,
+	val gender: String? = null,
 
 	@field:SerializedName("name")
 	val name: String? = null,
