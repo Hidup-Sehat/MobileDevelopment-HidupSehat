@@ -1,11 +1,13 @@
 package com.bangkit23.hidupsehat.data.source.remote.retrofit
 
 import com.bangkit23.hidupsehat.data.source.remote.request.AddFoodsRequest
+import com.bangkit23.hidupsehat.data.source.remote.request.AddEmotionRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.AddPointsRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.FeedRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.UserDetailRequest
 import com.bangkit23.hidupsehat.data.source.remote.response.ActivityResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.AddFoodsResponse
+import com.bangkit23.hidupsehat.data.source.remote.response.AddEmotionResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.AddPointsResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.FoodsHistoryResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.LeaderboardResponse
@@ -70,4 +72,10 @@ interface ApiService {
     suspend fun getFoodsHistory(
         @Path("user_id") userId: String,
     ): FoodsHistoryResponse
+
+    @POST("user/{id}/emotion")
+    suspend fun addUserEmotions(
+        @Path("id") id : String,
+        @Body requestBody : AddEmotionRequest
+    ) : AddEmotionResponse
 }
