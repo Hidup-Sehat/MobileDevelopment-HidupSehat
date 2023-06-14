@@ -38,9 +38,10 @@ class FeedViewModel @Inject constructor(
 
                                 }
                                 is Result.Success -> {
+                                    val shuffledFeeds = result.data.shuffled()
                                     _state.update {
                                         it.copy(
-                                            feedResult = result.data
+                                            feedResult = shuffledFeeds
                                         )
                                     }
                                 }

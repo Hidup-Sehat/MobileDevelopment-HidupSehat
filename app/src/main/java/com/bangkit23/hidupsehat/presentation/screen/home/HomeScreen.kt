@@ -1,5 +1,6 @@
 package com.bangkit23.hidupsehat.presentation.screen.home
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -74,6 +75,7 @@ fun HomeScreen(
     onManualFoodsClick: () -> Unit,
     onMentalHealthClick: () -> Unit,
     onFoodInformationClicked: () -> Unit,
+    onCardEmotionChoosen: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -92,7 +94,8 @@ fun HomeScreen(
         onReminderMenuClicked = onReminderMenuClicked,
         onSeeAllMonitoringClick = onSeeAllMonitoringClick,
         onManualFoodsClick = onManualFoodsClick,
-        onMentalHealthClick = onMentalHealthClick
+        onMentalHealthClick = onMentalHealthClick,
+        onCardEmotionChoosen = onCardEmotionChoosen
     )
 }
 
@@ -111,6 +114,7 @@ fun HomeContent(
     onSeeAllMonitoringClick: () -> Unit,
     onManualFoodsClick: () -> Unit,
     onMentalHealthClick: () -> Unit,
+    onCardEmotionChoosen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -135,7 +139,8 @@ fun HomeContent(
             CardEmotionFeel(
                 emotions = emotions,
                 onEmotionChosen = onEmotionChosen,
-                chosenEmotion = chosenEmotion
+                chosenEmotion = chosenEmotion,
+                onCardEmotionChosen = onCardEmotionChoosen
             )
             CardPersonalHealthInfo(
                 caloriesIntakeActual = userNeeds.actualCalorie ?: 0,
@@ -424,7 +429,8 @@ fun HomeContentPreview() {
             onReminderMenuClicked = {},
             onSeeAllMonitoringClick = {},
             onMentalHealthClick = {},
-            onFoodInformationClicked = {}
+            onFoodInformationClicked = {},
+            onCardEmotionChoosen = {}
         )
     }
 }

@@ -4,6 +4,8 @@ import com.bangkit23.hidupsehat.domain.usecase.activity.ActivityInteractor
 import com.bangkit23.hidupsehat.domain.usecase.activity.ActivityUseCase
 import com.bangkit23.hidupsehat.domain.usecase.auth.AuthInteractor
 import com.bangkit23.hidupsehat.domain.usecase.auth.AuthUseCase
+import com.bangkit23.hidupsehat.domain.usecase.diary.DiaryInteractor
+import com.bangkit23.hidupsehat.domain.usecase.diary.DiaryUseCase
 import com.bangkit23.hidupsehat.domain.usecase.feed.FeedInteractor
 import com.bangkit23.hidupsehat.domain.usecase.feed.FeedUseCase
 import com.bangkit23.hidupsehat.domain.usecase.food.FoodInteractor
@@ -51,4 +53,8 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun provideActivityUseCase(activityInteractor: ActivityInteractor): ActivityUseCase
+
+    @Binds
+    @Singleton
+    abstract fun provideDiaryUseCase(diaryInteractor: DiaryInteractor) : DiaryUseCase
 }

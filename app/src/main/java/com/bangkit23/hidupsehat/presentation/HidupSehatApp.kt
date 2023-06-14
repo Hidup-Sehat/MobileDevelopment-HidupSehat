@@ -44,6 +44,7 @@ import com.bangkit23.hidupsehat.presentation.navigation.Screen
 import com.bangkit23.hidupsehat.presentation.screen.auth.login.LoginScreen
 import com.bangkit23.hidupsehat.presentation.screen.auth.register.RegisterScreen
 import com.bangkit23.hidupsehat.presentation.screen.consultation.ConsultationScreen
+import com.bangkit23.hidupsehat.presentation.screen.diary.DiaryScreen
 import com.bangkit23.hidupsehat.presentation.screen.exercise.ExerciseScreen
 import com.bangkit23.hidupsehat.presentation.screen.exercise_play.ExercisePlayScreen
 import com.bangkit23.hidupsehat.presentation.screen.feeds.FeedScreen
@@ -139,6 +140,9 @@ fun HidupSehatApp(
                     },
                     onFoodInformationClicked = {
                         navController.navigate("food-information-graph")
+                    },
+                    onCardEmotionChoosen = {
+                        navController.navigate("diary-graph")
                     }
                 )
             }
@@ -429,6 +433,21 @@ fun HidupSehatApp(
                             navController.navigateUp()
                         },
                         name = name
+                    )
+                }
+            }
+            navigation(
+                startDestination = Screen.Diary.route,
+                route = "diary-graph"
+            ){
+                composable(Screen.Diary.route){
+                    DiaryScreen(
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        },
+                        onPopBackStak = {
+                            navController.popBackStack()
+                        }
                     )
                 }
             }
