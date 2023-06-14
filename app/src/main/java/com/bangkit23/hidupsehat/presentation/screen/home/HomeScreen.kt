@@ -73,6 +73,7 @@ fun HomeScreen(
     onSeeAllMonitoringClick: () -> Unit,
     onManualFoodsClick: () -> Unit,
     onMentalHealthClick: () -> Unit,
+    onFoodInformationClicked: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -87,6 +88,7 @@ fun HomeScreen(
         onScanClicked = onScanClicked,
         onPoseMenuClicked = onPoseMenuClicked,
         onProfileClicked = onProfileClicked,
+        onFoodInformationClicked = onFoodInformationClicked,
         onReminderMenuClicked = onReminderMenuClicked,
         onSeeAllMonitoringClick = onSeeAllMonitoringClick,
         onManualFoodsClick = onManualFoodsClick,
@@ -105,6 +107,7 @@ fun HomeContent(
     onPoseMenuClicked: () -> Unit,
     onReminderMenuClicked: () -> Unit,
     onProfileClicked: () -> Unit,
+    onFoodInformationClicked: () -> Unit,
     onSeeAllMonitoringClick: () -> Unit,
     onManualFoodsClick: () -> Unit,
     onMentalHealthClick: () -> Unit,
@@ -152,7 +155,8 @@ fun HomeContent(
             FeaturesMenu(
                 onPoseMenuClicked = onPoseMenuClicked,
                 onReminderMenuClicked = onReminderMenuClicked,
-                onMentalHealthClick = onMentalHealthClick
+                onMentalHealthClick = onMentalHealthClick,
+                onFoodInformationClicked = onFoodInformationClicked
             )
             MonitoringSection(
                 onSeeAllClick = onSeeAllMonitoringClick
@@ -251,6 +255,7 @@ fun TopAppBarWithProfile(
 @Composable
 fun FeaturesMenu(
     onPoseMenuClicked: () -> Unit,
+    onFoodInformationClicked: () -> Unit,
     onReminderMenuClicked: () -> Unit,
     onMentalHealthClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -299,7 +304,7 @@ fun FeaturesMenu(
         Row {
             CardFeatureMenu(
                 cardData = itemsCard[2],
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f).clickable { onFoodInformationClicked() }
             )
             CardFeatureMenu(
                 cardData = itemsCard[3],
@@ -419,6 +424,7 @@ fun HomeContentPreview() {
             onReminderMenuClicked = {},
             onSeeAllMonitoringClick = {},
             onMentalHealthClick = {},
+            onFoodInformationClicked = {}
         )
     }
 }

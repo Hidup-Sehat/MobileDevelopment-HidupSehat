@@ -3,11 +3,16 @@ package com.bangkit23.hidupsehat.util
 import com.bangkit23.hidupsehat.data.source.local.entity.FoodEntity
 import com.bangkit23.hidupsehat.data.source.local.entity.ReminderEntity
 import com.bangkit23.hidupsehat.data.source.remote.request.UserDetailRequest
+import com.bangkit23.hidupsehat.data.source.remote.response.FeedDetailResponse
+import com.bangkit23.hidupsehat.data.source.remote.response.FeedResponse
+import com.bangkit23.hidupsehat.data.source.remote.response.FeedResult
 import com.bangkit23.hidupsehat.data.source.remote.response.ActivityResponseItem
 import com.bangkit23.hidupsehat.data.source.remote.response.AddPointsResponseData
 import com.bangkit23.hidupsehat.data.source.remote.response.BodyAngleResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.MovementResponseItem
 import com.bangkit23.hidupsehat.data.source.remote.response.UserDetailResult
+import com.bangkit23.hidupsehat.domain.model.feed.DetailFeed
+import com.bangkit23.hidupsehat.domain.model.feed.Feed
 import com.bangkit23.hidupsehat.data.source.remote.response.UserNeedsResponse
 import com.bangkit23.hidupsehat.domain.model.activity.ActivityItem
 import com.bangkit23.hidupsehat.domain.model.activity.BodyAngle
@@ -148,4 +153,23 @@ fun AddPointsResponseData.toDomain() = AddPoints(
     pointsAdded = pointsAdded,
     previousPoints = previousPoints,
     points = points
+)
+
+fun List<FeedResult>.toDomainn(): List<Feed> {
+    return map { feedResult ->
+        Feed(
+            summary = feedResult.summary,
+            imgUrl = feedResult.imgUrl,
+            createdAt = feedResult.createdAt,
+            author = feedResult.author,
+            link = feedResult.link,
+            title = feedResult.title,
+            key = feedResult.key
+        )
+    }
+}
+
+fun FeedDetailResponse.toDomain() = DetailFeed(
+    link = link,
+    title = title
 )

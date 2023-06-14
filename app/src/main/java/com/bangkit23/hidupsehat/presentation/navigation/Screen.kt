@@ -1,5 +1,8 @@
 package com.bangkit23.hidupsehat.presentation.navigation
 
+import com.bangkit23.hidupsehat.domain.model.feed.Feed
+import com.bangkit23.hidupsehat.domain.model.food.Food
+
 sealed class Screen(val route: String) {
     object OnBoarding : Screen("on-boarding")
     object Login : Screen("login")
@@ -15,4 +18,11 @@ sealed class Screen(val route: String) {
     object Scan : Screen("scan")
     object ScanResult : Screen("scan-result")
     object Profile : Screen("profile")
+    object FeedDetail : Screen("feed/{id}"){
+        fun createRoute(id : String) = "feed/$id"
+    }
+    object FoodInformation : Screen("food-information")
+    object FoodInformationDetail : Screen("food-information-detail/{name}"){
+        fun createRoute(name : String) = "food-information-detail/$name"
+    }
 }

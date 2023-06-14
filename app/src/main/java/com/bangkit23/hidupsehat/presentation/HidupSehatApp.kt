@@ -47,6 +47,11 @@ import com.bangkit23.hidupsehat.presentation.screen.consultation.ConsultationScr
 import com.bangkit23.hidupsehat.presentation.screen.exercise.ExerciseScreen
 import com.bangkit23.hidupsehat.presentation.screen.exercise_play.ExercisePlayScreen
 import com.bangkit23.hidupsehat.presentation.screen.feeds.FeedScreen
+import com.bangkit23.hidupsehat.presentation.screen.feeds.model.Feed
+import com.bangkit23.hidupsehat.presentation.screen.feeds_detail.FeedsDetailScreen
+import com.bangkit23.hidupsehat.presentation.screen.food_information_detail.DetailFoodInformationScreen
+import com.bangkit23.hidupsehat.presentation.screen.food_information.FoodInformationScreen
+import com.bangkit23.hidupsehat.presentation.screen.food_information.model.FoodInformation
 import com.bangkit23.hidupsehat.presentation.screen.home.HomeScreen
 import com.bangkit23.hidupsehat.presentation.screen.leaderboard.LeaderboardScreen
 import com.bangkit23.hidupsehat.presentation.screen.manual_foods.ManualFoodsScreen
@@ -131,6 +136,9 @@ fun HidupSehatApp(
                     },
                     onMentalHealthClick = {
                         navController.navigate("mental-health-graph")
+                    },
+                    onFoodInformationClicked = {
+                        navController.navigate("food-information-graph")
                     }
                 )
             }
@@ -138,7 +146,30 @@ fun HidupSehatApp(
                 ConsultationScreen()
             }
             composable(Screen.Feeds.route) {
-                FeedScreen()
+                val dummyList = listOf<Feed>(
+                    Feed(
+                        1,
+                        image = "",
+                        title = "Honey-Basted Grilled Peaches With Greek Yogurt",
+                        createdAt = "4 days ago",
+                        publishedBy = "MyFitnessPal Blog",
+                        description = "The grill is for more than steak and burgers, fire it up for this peachy dessert"
+                    )
+                )
+                FeedScreen(data = dummyList, navigateToDetail = {
+                    navController.navigate(Screen.FeedDetail.createRoute(it))
+                })
+            }
+            composable(
+                route = Screen.FeedDetail.route,
+                arguments = listOf(navArgument("id"){type = NavType.StringType})){
+                val id = it.arguments?.getString("id") ?: ""
+                FeedsDetailScreen(
+                    id = id,
+                    onNavigateUp = {
+                        navController.navigateUp()
+                    }
+                )
             }
             composable(Screen.Leaderboard.route) {
                 LeaderboardScreen()
@@ -368,6 +399,36 @@ fun HidupSehatApp(
                         navigateUp = {
                             navController.navigateUp()
                         }
+                    )
+                }
+            }
+            navigation(
+                startDestination = Screen.FoodInformation.route,
+                route = "food-information-graph"
+            ){
+                composable(Screen.FoodInformation.route){
+                    val list = listOf<FoodInformation>(
+                        FoodInformation(1,"Nasi Goreng","100g","168kal")
+                    )
+                    FoodInformationScreen(data = listOf(),
+                    navigateToDetail = {
+                        navController.navigate(Screen.FoodInformationDetail.createRoute(it))
+                    },
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        }
+                    )
+                }
+                composable(
+                    route = Screen.FoodInformationDetail.route,
+                    arguments = listOf(navArgument("name"){type = NavType.StringType})
+                    ){
+                    val name = it.arguments?.getString("name") ?: ""
+                    DetailFoodInformationScreen(
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        },
+                        name = name
                     )
                 }
             }

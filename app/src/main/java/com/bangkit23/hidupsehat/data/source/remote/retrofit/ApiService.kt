@@ -1,10 +1,13 @@
 package com.bangkit23.hidupsehat.data.source.remote.retrofit
 
 import com.bangkit23.hidupsehat.data.source.remote.request.AddPointsRequest
+import com.bangkit23.hidupsehat.data.source.remote.request.FeedRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.UserDetailRequest
 import com.bangkit23.hidupsehat.data.source.remote.response.ActivityResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.AddPointsResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.LeaderboardResponse
+import com.bangkit23.hidupsehat.data.source.remote.response.FeedDetailResponse
+import com.bangkit23.hidupsehat.data.source.remote.response.FeedResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.UserDetailResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.UserNeedsResponse
 import retrofit2.http.Body
@@ -42,4 +45,15 @@ interface ApiService {
 
     @GET("activity")
     suspend fun getActivities() : ActivityResponse
+
+    @POST("feeds?page=1&limit=20")
+    @Headers("Content-Type: application/json")
+    suspend fun getFeeds(
+        @Body requestBody : FeedRequest
+    ) : FeedResponse
+
+    @GET("feeds/{id}")
+    suspend fun getFeedDetailById(
+        @Path("id") id : String
+    ) : FeedDetailResponse
 }

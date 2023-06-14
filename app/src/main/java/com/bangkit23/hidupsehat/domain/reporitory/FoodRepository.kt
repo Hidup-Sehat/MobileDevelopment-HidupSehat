@@ -7,4 +7,5 @@ interface FoodRepository {
     fun getFoodByName(foodName: String): Flow<Food>
     fun searchFoods(query: String): Flow<List<Food>>
     fun getFoodsPortionSize(foodName: String): Flow<List<Food>>
+    fun getAllFoods() : Flow<List<Food>>
 }
