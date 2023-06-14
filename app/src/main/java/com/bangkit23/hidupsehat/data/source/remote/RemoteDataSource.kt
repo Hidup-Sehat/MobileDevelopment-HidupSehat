@@ -1,5 +1,6 @@
 package com.bangkit23.hidupsehat.data.source.remote
 
+import com.bangkit23.hidupsehat.data.source.remote.request.AddEmotionRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.AddFoodsRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.AddPointsRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.FeedRequest
@@ -39,4 +40,17 @@ class RemoteDataSource @Inject constructor(
 
     suspend fun getFeedDetailById(id: String) =
         apiService.getFeedDetailById(id)
+
+    suspend fun addUserDiary(
+        userId: String,
+        date: String,
+        lastUpdated: String,
+        note: String,
+        emotionSource: String,
+        emotionPositive: String,
+        emotionNegative: String
+    ) = apiService.addUserEmotions(
+        userId,
+        AddEmotionRequest(date, lastUpdated, note, emotionSource, emotionPositive, emotionNegative)
+    )
 }

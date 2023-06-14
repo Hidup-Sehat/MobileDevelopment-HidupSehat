@@ -3,24 +3,25 @@ package com.bangkit23.hidupsehat.util
 import com.bangkit23.hidupsehat.data.source.local.entity.FoodEntity
 import com.bangkit23.hidupsehat.data.source.local.entity.ReminderEntity
 import com.bangkit23.hidupsehat.data.source.remote.request.UserDetailRequest
-import com.bangkit23.hidupsehat.data.source.remote.response.FeedDetailResponse
-import com.bangkit23.hidupsehat.data.source.remote.response.FeedResponse
-import com.bangkit23.hidupsehat.data.source.remote.response.FeedResult
 import com.bangkit23.hidupsehat.data.source.remote.response.ActivityResponseItem
 import com.bangkit23.hidupsehat.data.source.remote.response.AddFoodsData
 import com.bangkit23.hidupsehat.data.source.remote.response.AddFoodsItem
+import com.bangkit23.hidupsehat.data.source.remote.response.AddEmotionDataResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.AddPointsResponseData
 import com.bangkit23.hidupsehat.data.source.remote.response.BodyAngleResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.FoodHistoryDetailResponseItem
 import com.bangkit23.hidupsehat.data.source.remote.response.FoodsHistoryResponseItem
+import com.bangkit23.hidupsehat.data.source.remote.response.FeedDetailResponse
+import com.bangkit23.hidupsehat.data.source.remote.response.FeedResult
 import com.bangkit23.hidupsehat.data.source.remote.response.MovementResponseItem
 import com.bangkit23.hidupsehat.data.source.remote.response.UserDetailResult
-import com.bangkit23.hidupsehat.domain.model.feed.DetailFeed
-import com.bangkit23.hidupsehat.domain.model.feed.Feed
 import com.bangkit23.hidupsehat.data.source.remote.response.UserNeedsResponse
 import com.bangkit23.hidupsehat.domain.model.activity.ActivityItem
 import com.bangkit23.hidupsehat.domain.model.activity.BodyAngle
 import com.bangkit23.hidupsehat.domain.model.activity.MovementItem
+import com.bangkit23.hidupsehat.domain.model.diary.Diary
+import com.bangkit23.hidupsehat.domain.model.feed.DetailFeed
+import com.bangkit23.hidupsehat.domain.model.feed.Feed
 import com.bangkit23.hidupsehat.domain.model.food.AddFoods
 import com.bangkit23.hidupsehat.domain.model.food.Food
 import com.bangkit23.hidupsehat.domain.model.food.FoodHistoryDetailItem
@@ -197,6 +198,16 @@ fun FoodHistoryDetailResponseItem.toDomain() = FoodHistoryDetailItem(
     id = id,
     totalFiber = totalFiber,
     foods = foods.map(FoodsHistoryResponseItem::toDomain)
+)
+
+fun AddEmotionDataResponse.toDomain() = Diary(
+    id = id,
+    date = date,
+    emotionPositive = emotionPositive,
+    emotionNegative = emotionNegative,
+    emotionSource = emotionSource,
+    lastUpdated = lastUpdated,
+    note = note
 )
 
 fun List<FeedResult>.toDomainn(): List<Feed> {

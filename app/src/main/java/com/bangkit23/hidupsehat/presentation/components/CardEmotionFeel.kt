@@ -25,11 +25,15 @@ import com.bangkit23.hidupsehat.presentation.screen.home.model.Feel
 fun CardEmotionFeel(
     emotions: List<Emotion>,
     onEmotionChosen: (Feel?) -> Unit,
+    onCardEmotionChosen: () -> Unit,
     modifier: Modifier = Modifier,
     chosenEmotion: Feel? = null,
 ) {
     ElevatedCard(
         modifier = Modifier
+            .clickable {
+                onCardEmotionChosen()
+            }
             .padding(16.dp)
             .fillMaxWidth()
     ) {

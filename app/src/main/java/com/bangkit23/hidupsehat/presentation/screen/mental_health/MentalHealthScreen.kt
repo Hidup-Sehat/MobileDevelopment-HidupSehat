@@ -134,6 +134,7 @@ fun MentalHealthContent(
                     CardEmotionFeel(
                         emotions = emotions,
                         onEmotionChosen = {},
+                        onCardEmotionChosen = {}
                     )
                 }
                 ListItemExercise(

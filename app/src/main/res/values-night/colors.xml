@@ -5,4 +5,7 @@
     <color name="foods">#3c4b37</color>
     <color name="reminder">#56404f</color>
     <color name="music_card_color">#FF050505</color>
+
+    <color name="light_gray">#FF121212</color>
+
 </resources>
