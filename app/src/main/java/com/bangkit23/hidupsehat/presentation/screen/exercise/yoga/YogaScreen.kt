@@ -128,7 +128,7 @@ fun YogaContent(
                         text = clickedExercise.title,
                         style = MaterialTheme.typography.titleLarge
                     )
-                    Text(text = "${clickedExercise.poses.size} Gerakan")
+                    Text(text = "${clickedExercise.poses.size} Pose \u2022 ${clickedExercise.caloriesBurned} kal")
                 }
                 Button(
                     onClick = {

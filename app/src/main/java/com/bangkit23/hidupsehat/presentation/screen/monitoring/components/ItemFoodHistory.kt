@@ -38,7 +38,7 @@ fun ItemFoodHistory(
                 style = MaterialTheme.typography.bodyLarge
             )
             Text(
-                text = "$count x $portionSize",
+                text = portionSize,
                 style = MaterialTheme.typography.bodyMedium
             )
         }

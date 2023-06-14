@@ -141,5 +141,10 @@ dependencies {
     //System-Ui
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.23.1"
 
+    //exoplayer
+    implementation "com.google.android.exoplayer:exoplayer-core:2.18.7"
+    implementation "com.google.android.exoplayer:exoplayer-ui:2.18.7"
+
+    //Chart
     implementation("com.himanshoe:charty:1.0.1")
 }

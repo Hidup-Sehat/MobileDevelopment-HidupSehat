@@ -7,7 +7,7 @@ sealed class ScanFoodResultEvent {
     data class AddDetectedFoods(val foods: List<DetectionResult>) : ScanFoodResultEvent()
     data class AddNewFood(val food: Food) : ScanFoodResultEvent()
     data class EditFood(val food: Food?) : ScanFoodResultEvent()
-    data class SaveAllFoods(val foods: List<Food>) : ScanFoodResultEvent()
+    data class SaveAllFoods(val foods: List<Food?>) : ScanFoodResultEvent()
     data class OnSearchFoodQueryChange(val query: String) : ScanFoodResultEvent()
     object ShowDialogAddFoods : ScanFoodResultEvent()
     object HideDialogAddFoods : ScanFoodResultEvent()

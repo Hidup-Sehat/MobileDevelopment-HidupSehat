@@ -383,7 +383,11 @@ fun HidupSehatApp(
                 route = "reminder-graph"
             ) {
                 composable( "reminder") {
-                    ReminderScreen()
+                    ReminderScreen(
+                        navigateUp = {
+                            navController.navigateUp()
+                        }
+                    )
                 }
             }
             navigation(
@@ -391,7 +395,11 @@ fun HidupSehatApp(
                 route = "monitoring-graph"
             ) {
                 composable("monitoring") {
-                    MonitoringScreen()
+                    MonitoringScreen(
+                        navigateUp = {
+                            navController.navigateUp()
+                        }
+                    )
                 }
             }
             navigation(

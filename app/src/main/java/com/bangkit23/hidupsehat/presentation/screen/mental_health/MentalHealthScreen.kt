@@ -1,46 +1,49 @@
 package com.bangkit23.hidupsehat.presentation.screen.mental_health
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Pause
-import androidx.compose.material.icons.outlined.PlayArrow
-import androidx.compose.material.icons.outlined.SkipNext
-import androidx.compose.material.icons.outlined.SkipPrevious
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.HelpOutline
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.bangkit23.hidupsehat.domain.model.feed.Feed
 import com.bangkit23.hidupsehat.presentation.components.CardEmotionFeel
 import com.bangkit23.hidupsehat.presentation.screen.exercise.component.ListItemExercise
 import com.bangkit23.hidupsehat.presentation.screen.exercise.model.Exercise
 import com.bangkit23.hidupsehat.presentation.screen.home.model.emotions
 import com.bangkit23.hidupsehat.presentation.screen.mental_health.components.FilledEmotionCard
+import com.bangkit23.hidupsehat.presentation.screen.mental_health.components.ListItemFeed
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.ui.PlayerControlView
 
 @Composable
 fun MentalHealthScreen(
@@ -50,21 +53,15 @@ fun MentalHealthScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     MentalHealthContent(
-        welcomeWords = "Good Evening, Rijal",
+        welcomeWords = state.greetingMessage,
         hasFilledEmotion = true,
-        musicName = "River Flows in You - Yiruma",
-        isMusicPlay = false,
-        musicProgress = 0.43f,
+        musicName = "Nature - Lesfm",
         recommendedConsultations = emptyList(),
-        recommendedFeeds = emptyList(),
+        recommendedFeeds = state.recommendationFeeds,
         recommendedActivities = state.recommendationActivities,
         onItemFeedClick = {},
         onItemConsultationClick = {},
         onItemActivityClick = {},
-        onMusicNext = {},
-        onMusicPrevious = {},
-        onMusicPause = {},
-        onMusicPlay = {},
         navigateUp = navigateUp
     )
 }
@@ -75,19 +72,13 @@ fun MentalHealthContent(
     welcomeWords: String,
     hasFilledEmotion: Boolean,
     musicName: String,
-    isMusicPlay: Boolean,
-    musicProgress: Float,
     recommendedActivities: List<Exercise>,
-    recommendedFeeds: List<Exercise>,
+    recommendedFeeds: List<Feed>,
     recommendedConsultations: List<Exercise>,
     onItemActivityClick: (Exercise) -> Unit,
-    onItemFeedClick: () -> Unit,
+    onItemFeedClick: (Feed) -> Unit,
     onItemConsultationClick: () -> Unit,
     navigateUp: () -> Unit,
-    onMusicPlay: () -> Unit,
-    onMusicPause: () -> Unit,
-    onMusicNext: () -> Unit,
-    onMusicPrevious: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -124,12 +115,12 @@ fun MentalHealthContent(
         ) {
             Column(
                 modifier = Modifier
-                    .verticalScroll(rememberScrollState())
                     .padding(bottom = 128.dp)
+                    .verticalScroll(rememberScrollState())
             ) {
                 Text(
                     text = welcomeWords,
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier
                         .padding(16.dp)
                 )
@@ -153,10 +144,10 @@ fun MentalHealthContent(
                     modifier = Modifier
                         .padding(top = 32.dp)
                 )
-                ListItemExercise(
+                ListItemFeed(
                     headerText = "Rekomendasi Feeds",
-                    data = recommendedActivities,
-                    onItemClicked = onItemActivityClick,
+                    data = recommendedFeeds,
+                    onItemClicked = onItemFeedClick,
                     modifier = Modifier
                         .padding(top = 16.dp)
                 )
@@ -170,12 +161,6 @@ fun MentalHealthContent(
             }
             MusicPlayer(
                 musicName = musicName,
-                isMusicPlay = isMusicPlay,
-                musicProgress = musicProgress,
-                onMusicPlay = onMusicPlay,
-                onMusicPause = onMusicPause,
-                onMusicNext = onMusicNext,
-                onMusicPrevious = onMusicPrevious,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
             )
@@ -186,63 +171,58 @@ fun MentalHealthContent(
 @Composable
 fun MusicPlayer(
     musicName: String,
-    isMusicPlay: Boolean,
-    musicProgress: Float,
-    onMusicPlay: () -> Unit,
-    onMusicPause: () -> Unit,
-    onMusicNext: () -> Unit,
-    onMusicPrevious: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ElevatedCard(
-        modifier = modifier
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
-                .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-        ) {
-            Text(
-                text = musicName,
-                style = MaterialTheme.typography.titleMedium
-            )
-            Spacer(Modifier.height(16.dp))
-            LinearProgressIndicator(
-                progress = musicProgress,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(Modifier.height(8.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                IconButton(
-                    onClick = onMusicPrevious
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.SkipPrevious,
-                        contentDescription = "Previous"
-                    )
-                }
-                IconButton(
-                    onClick = if (isMusicPlay) onMusicPause else onMusicPlay
-                ) {
-                    Icon(
-                        imageVector = if (isMusicPlay) Icons.Outlined.Pause else Icons.Outlined.PlayArrow,
-                        contentDescription = if (isMusicPlay) "Pause Music" else "Play Music"
-                    )
-                }
-                IconButton(
-                    onClick = onMusicNext
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.SkipNext,
-                        contentDescription = "Next"
-                    )
-                }
-            }
+    val context = LocalContext.current
+
+    val player = remember {
+        ExoPlayer.Builder(context)
+            .build()
+    }
+
+    DisposableEffect(Unit) {
+        val mediaItem =
+            MediaItem.fromUri("https://github.com/Hidup-Sehat/MobileDevelopment-HidupSehat/raw/development-rijal/assets/nature-99499.mp3")
+        player.setMediaItem(mediaItem)
+        player.prepare()
+        onDispose {
+            player.release()
         }
+    }
+
+    ConstraintLayout(
+        modifier = modifier.fillMaxWidth()
+    ) {
+        val (musicTitleText, playerControl) = createRefs()
+        Text(
+            text = musicName,
+            color = Color.White,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color(0xCC000000))
+                .padding(top = 16.dp)
+                .constrainAs(musicTitleText) {
+                    bottom.linkTo(playerControl.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+        )
+        AndroidView(
+            factory = {
+                PlayerControlView(it).apply {
+                    this.showTimeoutMs = 0
+                    this.player = player
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+                .constrainAs(playerControl) {
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+        )
     }
 }
 
@@ -251,13 +231,7 @@ fun MusicPlayer(
 fun MusicPlayerPreview() {
     HidupSehatTheme {
         MusicPlayer(
-            musicName = "Muse - Hysteria",
-            isMusicPlay = false,
-            musicProgress = 0.3f,
-            onMusicPlay = {},
-            onMusicPause = {},
-            onMusicPrevious = {},
-            onMusicNext = {},
+            musicName = "Nature",
         )
     }
 }
@@ -269,12 +243,6 @@ fun MentalHealthContentPreview() {
         MentalHealthContent(
             welcomeWords = "Good evening, Rijal",
             musicName = "Muse - Hysteria",
-            isMusicPlay = false,
-            musicProgress = 0.3f,
-            onMusicPlay = {},
-            onMusicPause = {},
-            onMusicPrevious = {},
-            onMusicNext = {},
             hasFilledEmotion = false,
             recommendedActivities = emptyList(),
             recommendedConsultations = emptyList(),

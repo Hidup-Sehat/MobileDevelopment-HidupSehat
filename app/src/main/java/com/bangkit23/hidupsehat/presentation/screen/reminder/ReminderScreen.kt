@@ -43,7 +43,7 @@ import com.bangkit23.hidupsehat.infrastructure.reminder.ReminderAlarm
 import com.bangkit23.hidupsehat.presentation.components.TimePickerDialog
 import com.bangkit23.hidupsehat.presentation.screen.reminder.components.ItemReminder
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
-import com.bangkit23.hidupsehat.util.DateConverter
+import com.bangkit23.hidupsehat.util.DateHelper
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -52,6 +52,7 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReminderScreen(
+    navigateUp: () -> Unit,
     viewModel: ReminderViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -72,7 +73,8 @@ fun ReminderScreen(
         onSwitchChange = { isActive, reminder ->
             ReminderAlarm.setAlarmActiveStatus(context, reminder, isActive)
             viewModel.onEvent(ReminderEvent.OnSwitchCheckedChanged(isActive, reminder))
-        }
+        },
+        navigateUp = navigateUp
     )
     SnackbarHost(
         hostState = snackState,
@@ -108,6 +110,7 @@ fun ReminderContent(
     activityReminders: List<Reminder>,
     onItemClick: (Reminder) -> Unit,
     onSwitchChange: (Boolean, Reminder) -> Unit,
+    navigateUp: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -116,7 +119,7 @@ fun ReminderContent(
                 title = { Text("Reminder") },
                 navigationIcon = {
                     IconButton(
-                        onClick = {}
+                        onClick = navigateUp
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.ArrowBack,
@@ -196,7 +199,7 @@ fun CardReminder(
             items(items = reminders, key = { it.id } ) {
                 ItemReminder(
                     title = it.title,
-                    time = DateConverter.convertMillisToString(it.time),
+                    time = DateHelper.convertMillisToString(it.time),
                     isActive = it.isActive,
                     onItemClicked = {
                         onItemClick(it)
@@ -226,6 +229,7 @@ fun ReminderContentPreview() {
             ),
             onItemClick = {},
             onSwitchChange = {_, _ ->},
+            navigateUp = {},
         )
     }
 }

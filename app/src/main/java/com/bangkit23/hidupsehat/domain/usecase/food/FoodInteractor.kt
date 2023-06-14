@@ -1,5 +1,6 @@
 package com.bangkit23.hidupsehat.domain.usecase.food
 
+import com.bangkit23.hidupsehat.data.source.remote.request.AddFoodsRequest
 import com.bangkit23.hidupsehat.domain.model.food.Food
 import com.bangkit23.hidupsehat.domain.reporitory.FoodRepository
 import kotlinx.coroutines.flow.Flow
@@ -19,6 +20,9 @@ class FoodInteractor @Inject constructor(
 
     override fun getFoodsPortionSize(foodName: String) =
         foodRepository.getFoodsPortionSize(foodName)
+
+    override fun saveFoods(addFoodsRequest: AddFoodsRequest) =
+        foodRepository.saveFoods(addFoodsRequest)
 
     override fun getAllFoods(): Flow<List<Food>> =
         foodRepository.getAllFoods()

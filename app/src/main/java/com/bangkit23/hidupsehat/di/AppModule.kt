@@ -12,6 +12,8 @@ import com.bangkit23.hidupsehat.domain.usecase.food.FoodInteractor
 import com.bangkit23.hidupsehat.domain.usecase.food.FoodUseCase
 import com.bangkit23.hidupsehat.domain.usecase.leaderboard.LeaderboardInteractor
 import com.bangkit23.hidupsehat.domain.usecase.leaderboard.LeaderboardUseCase
+import com.bangkit23.hidupsehat.domain.usecase.monitoring.MonitoringInteractor
+import com.bangkit23.hidupsehat.domain.usecase.monitoring.MonitoringUseCase
 import com.bangkit23.hidupsehat.domain.usecase.reminder.ReminderInteractor
 import com.bangkit23.hidupsehat.domain.usecase.reminder.ReminderUseCase
 import com.bangkit23.hidupsehat.domain.usecase.user.UserInteractor
@@ -53,6 +55,10 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun provideActivityUseCase(activityInteractor: ActivityInteractor): ActivityUseCase
+
+    @Binds
+    @Singleton
+    abstract fun provideMonitoringUseCase(monitoringInteractor: MonitoringInteractor): MonitoringUseCase
 
     @Binds
     @Singleton

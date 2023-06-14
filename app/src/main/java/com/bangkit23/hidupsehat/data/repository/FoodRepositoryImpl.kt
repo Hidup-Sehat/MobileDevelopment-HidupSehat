@@ -1,8 +1,12 @@
 package com.bangkit23.hidupsehat.data.repository
 
+import com.bangkit23.hidupsehat.data.source.firebase.FirebaseAuth
 import com.bangkit23.hidupsehat.data.source.local.room.FoodDao
+import com.bangkit23.hidupsehat.data.source.remote.RemoteDataSource
+import com.bangkit23.hidupsehat.data.source.remote.request.AddFoodsRequest
 import com.bangkit23.hidupsehat.domain.model.food.Food
 import com.bangkit23.hidupsehat.domain.reporitory.FoodRepository
+import com.bangkit23.hidupsehat.util.Result
 import com.bangkit23.hidupsehat.util.toDomain
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -15,6 +19,8 @@ import javax.inject.Singleton
 
 @Singleton
 class FoodRepositoryImpl @Inject constructor(
+    private val firebaseAuth: FirebaseAuth,
+    private val remoteDataSource: RemoteDataSource,
     private val foodDao: FoodDao,
 ) : FoodRepository {
 
@@ -58,4 +64,15 @@ class FoodRepositoryImpl @Inject constructor(
         }
     }.flowOn(Dispatchers.IO)
 
+
+    override fun saveFoods(addFoodsRequest: AddFoodsRequest) = flow {
+        emit(Result.Loading())
+        try {
+            val userId = firebaseAuth.getSignedUser()?.userId
+            val response = remoteDataSource.saveFoods(userId.toString(), addFoodsRequest)
+            emit(Result.Success(response.data.toDomain()))
+        } catch (e: Exception) {
+            emit(Result.Error(e.message))
+        }
+    }.flowOn(Dispatchers.IO)
 }

@@ -22,5 +22,6 @@
     <color name="card_green">#ff85F0C3</color>
     <color name="card_red">#ffFF9D9D</color>
     <color name="card_blue">#ffB4EDFF</color>
+    <color name="music_card_color">#FF333333</color>
     <color name="light_gray">#FFEDEDED</color>
 </resources>

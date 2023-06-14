@@ -1,4 +1,4 @@
-package com.bangkit23.hidupsehat.presentation.screen.exercise.component
+package com.bangkit23.hidupsehat.presentation.screen.mental_health.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,18 +20,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.bangkit23.hidupsehat.R
-import com.bangkit23.hidupsehat.presentation.screen.exercise.model.Exercise
+import com.bangkit23.hidupsehat.domain.model.feed.Feed
 
 @Composable
-fun ListItemExercise(
+fun ListItemFeed(
     headerText: String,
-    data: List<Exercise>,
-    onItemClicked: (Exercise) -> Unit,
+    data: List<Feed>,
+    onItemClicked: (Feed) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -45,10 +44,9 @@ fun ListItemExercise(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(data) {
-                CardExercise(
-                    title = it.title,
-                    desc = "${it.poses.size} Pose \u2022 ${it.caloriesBurned} kal",
-                    image = it.image,
+                CardFeed(
+                    title = it.title ?: "",
+                    image = it.imgUrl ?: "",
                     onClicked = { onItemClicked(it) }
                 )
             }
@@ -57,9 +55,8 @@ fun ListItemExercise(
 }
 
 @Composable
-fun CardExercise(
+fun CardFeed(
     title: String,
-    desc: String,
     image: String,
     onClicked: () -> Unit,
     modifier: Modifier = Modifier,
@@ -78,11 +75,6 @@ fun CardExercise(
                 fontSize = 14.sp, fontWeight = FontWeight.Medium
             )
         )
-        Text(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            text = desc,
-            style = MaterialTheme.typography.bodySmall
-        )
         Spacer(Modifier.height(8.dp))
         AsyncImage(
             modifier = Modifier.fillMaxSize(),
@@ -91,25 +83,4 @@ fun CardExercise(
             placeholder = painterResource(id = R.drawable.place_holder)
         )
     }
-}
-
-@Preview
-@Composable
-fun ListItemExercisePreview() {
-    ListItemExercise(
-        headerText = "Aktivitas Terbaru",
-        data = emptyList(),
-        onItemClicked = {},
-    )
-}
-
-@Preview
-@Composable
-fun CardExercisePrev() {
-    CardExercise(
-        title = "Pemula",
-        desc = "6 Gerakan",
-        image = "",
-        onClicked = {}
-    )
 }
