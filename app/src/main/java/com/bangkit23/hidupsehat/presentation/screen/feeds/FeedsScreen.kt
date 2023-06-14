@@ -2,6 +2,7 @@ package com.bangkit23.hidupsehat.presentation.screen.feeds
 
 import android.util.Log
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -55,7 +56,10 @@ fun FeedContent(
     navigateToDetail: (String) -> Unit,
     data: List<com.bangkit23.hidupsehat.domain.model.feed.Feed>
 ) {
-    LazyColumn(modifier = modifier) {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier
+    ) {
         items(data) { feed ->
 //            Log.d("testtest",feed.key!!)
             FeedItem(
