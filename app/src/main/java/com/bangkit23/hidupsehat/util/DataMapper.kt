@@ -162,6 +162,7 @@ fun AddFoodsItem.toDomain() = FoodItem(
     portionSize = portionSize,
     id = id,
     foodName = foodName,
+    calorie = calorie,
 )
 
 fun AddFoodsData.toDomain() = AddFoods(
@@ -178,7 +179,8 @@ fun AddFoodsData.toDomain() = AddFoods(
 fun FoodsHistoryResponseItem.toDomain() = FoodsHistoryItem(
     portionSize = portionSize,
     id = id,
-    foodName = foodName
+    foodName = foodName,
+    calorie = calorie
 )
 
 fun FoodHistoryDetailResponseItem.toDomain() = FoodHistoryDetailItem(

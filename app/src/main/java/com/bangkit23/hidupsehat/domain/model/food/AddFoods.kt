@@ -13,6 +13,7 @@ data class AddFoods(
 
 data class FoodItem(
     val portionSize: String? = null,
-    val id: String? = null,
-    val foodName: String? = null
+    val id: Int? = null,
+    val foodName: String? = null,
+    val calorie: Int? = null,
 )

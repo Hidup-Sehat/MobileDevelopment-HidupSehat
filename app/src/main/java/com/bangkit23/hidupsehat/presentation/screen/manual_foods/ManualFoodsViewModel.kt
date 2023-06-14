@@ -178,13 +178,13 @@ class ManualFoodsViewModel @Inject constructor(
         val request = foods.map {
             FoodRequestItem(
                 portionSize = "${it?.count} x ${it?.portionSize}",
-                id = "${it?.id}",
+                id = it?.id,
                 foodName = it?.name
             )
         }
         val foodRequest = AddFoodsRequest(
             date = DateHelper.getCurrentDate(),
-            lastUpdated = DateHelper.getCurrentDate(),
+            lastUpdated = DateHelper.getCurrentDate(format = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
             totalCarb = foods.sumOf { it?.carbohydrate?.toInt() ?: 0 },
             totalProtein = foods.sumOf { it?.protein?.toInt() ?: 0 },
             totalFat = foods.sumOf { it?.fat?.toInt() ?: 0 },

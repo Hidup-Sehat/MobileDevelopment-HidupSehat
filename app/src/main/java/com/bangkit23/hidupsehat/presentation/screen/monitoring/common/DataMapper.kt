@@ -6,9 +6,10 @@ import com.bangkit23.hidupsehat.domain.model.food.FoodsHistoryItem
 import com.bangkit23.hidupsehat.presentation.screen.monitoring.model.Nutrition
 
 fun FoodsHistoryItem.toFood() = Food(
-    id = id?.toIntOrNull() ?: 0,
+    id = id ?: 0,
     name = foodName,
-    portionSize = portionSize
+    portionSize = portionSize,
+    energyKKal = calorie?.toDouble() ?: 0.0
 )
 
 fun List<FoodHistoryDetailItem>.toNutritionProtein() = map {

@@ -35,9 +35,12 @@ data class FoodsHistoryItem(
     val portionSize: String? = null,
 
     @field:SerializedName("id")
-    val id: String? = null,
+    val id: Int? = null,
 
     @field:SerializedName("namaMakanan")
-    val foodName: String? = null
+    val foodName: String? = null,
+
+    @field:SerializedName("kal")
+    val calorie: Int? = null,
 )
 

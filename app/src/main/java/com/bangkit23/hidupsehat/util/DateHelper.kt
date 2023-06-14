@@ -1,5 +1,6 @@
 package com.bangkit23.hidupsehat.util
 
+import okhttp3.internal.format
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -13,8 +14,8 @@ object DateHelper {
         return sdf.format(calendar.time)
     }
 
-    fun getCurrentDate(): String {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    fun getCurrentDate(format: String = "yyyy-MM-dd"): String {
+        val dateFormat = SimpleDateFormat(format, Locale.getDefault())
         val currentDate = Date(System.currentTimeMillis())
         return dateFormat.format(currentDate)
     }
