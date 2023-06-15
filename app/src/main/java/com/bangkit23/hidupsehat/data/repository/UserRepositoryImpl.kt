@@ -2,6 +2,7 @@ package com.bangkit23.hidupsehat.data.repository
 
 import com.bangkit23.hidupsehat.data.source.firebase.FirebaseAuth
 import com.bangkit23.hidupsehat.data.source.remote.RemoteDataSource
+import com.bangkit23.hidupsehat.data.source.remote.request.UpdateStatisticRequest
 import com.bangkit23.hidupsehat.domain.model.user.UserDetailRequestDto
 import com.bangkit23.hidupsehat.domain.reporitory.UserRepository
 import com.bangkit23.hidupsehat.util.Result
@@ -53,6 +54,17 @@ class UserRepositoryImpl @Inject constructor(
             val userId = firebaseAuth.getSignedUser()?.userId
             val response = remoteDataSource.addUserPoints(userId.toString(), points)
             emit(Result.Success(response.data.toDomain()))
+        } catch (e: Exception) {
+            emit(Result.Error(e.message))
+        }
+    }.flowOn(Dispatchers.IO)
+
+    override fun updateUserStatistic(updateStatisticRequest: UpdateStatisticRequest) = flow {
+        emit(Result.Loading())
+        try {
+            val userId = firebaseAuth.getSignedUser()?.userId
+            remoteDataSource.updateUserStatistic(userId.toString(), updateStatisticRequest)
+            emit(Result.Success(true))
         } catch (e: Exception) {
             emit(Result.Error(e.message))
         }

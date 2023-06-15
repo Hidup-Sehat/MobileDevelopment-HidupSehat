@@ -95,6 +95,9 @@ fun HomeScreen(
         onSeeAllMonitoringClick = onSeeAllMonitoringClick,
         onManualFoodsClick = onManualFoodsClick,
         onMentalHealthClick = onMentalHealthClick,
+        onUpdateSuccess = {
+            viewModel.onEvent(HomeEvent.OnRefresh)
+        }
     )
 }
 
@@ -113,6 +116,7 @@ fun HomeContent(
     onSeeAllMonitoringClick: () -> Unit,
     onManualFoodsClick: () -> Unit,
     onMentalHealthClick: () -> Unit,
+    onUpdateSuccess: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -166,9 +170,13 @@ fun HomeContent(
 
             if (openUpdateInfoSheet) {
                 UpdateUserInfoScreen(
-                    initialSleepNeeds = userNeeds.sleepNeeds ?: 0,
+                    initialSleepNeeds = userNeeds.actualSleep ?: 0,
                     initialWaterNeeds = userNeeds.actualWater ?: 0,
-                    onDismissRequest = { openUpdateInfoSheet = false }
+                    onDismissRequest = { openUpdateInfoSheet = false },
+                    onUpdateSuccess = {
+                        onUpdateSuccess()
+                        openUpdateInfoSheet = false
+                    }
                 )
             }
         }
@@ -425,6 +433,7 @@ fun HomeContentPreview() {
             onSeeAllMonitoringClick = {},
             onMentalHealthClick = {},
             onFoodInformationClicked = {},
+            onUpdateSuccess = {},
         )
     }
 }

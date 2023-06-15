@@ -4,6 +4,7 @@ import com.bangkit23.hidupsehat.data.source.remote.request.AddFoodsRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.AddEmotionRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.AddPointsRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.FeedRequest
+import com.bangkit23.hidupsehat.data.source.remote.request.UpdateStatisticRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.UserDetailRequest
 import com.bangkit23.hidupsehat.data.source.remote.response.ActivityResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.AddFoodsResponse
@@ -13,6 +14,7 @@ import com.bangkit23.hidupsehat.data.source.remote.response.FoodsHistoryResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.LeaderboardResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.FeedDetailResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.FeedResponse
+import com.bangkit23.hidupsehat.data.source.remote.response.UpdateStatisticResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.UserDetailResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.UserNeedsResponse
 import retrofit2.http.Body
@@ -79,4 +81,10 @@ interface ApiService {
         @Path("id") id : String,
         @Body requestBody : AddEmotionRequest
     ) : AddEmotionResponse
+
+    @PUT("user/{user_id}/statistics")
+    suspend fun updateUserStatistic(
+        @Path("user_id") userId: String,
+        @Body requestBody: UpdateStatisticRequest,
+    ): UpdateStatisticResponse
 }

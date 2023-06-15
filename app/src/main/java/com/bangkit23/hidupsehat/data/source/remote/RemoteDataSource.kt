@@ -4,6 +4,7 @@ import com.bangkit23.hidupsehat.data.source.remote.request.AddEmotionRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.AddFoodsRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.AddPointsRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.FeedRequest
+import com.bangkit23.hidupsehat.data.source.remote.request.UpdateStatisticRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.UserDetailRequest
 import com.bangkit23.hidupsehat.data.source.remote.retrofit.ApiService
 import javax.inject.Inject
@@ -53,4 +54,7 @@ class RemoteDataSource @Inject constructor(
         userId,
         AddEmotionRequest(date, lastUpdated, note, emotionSource, emotionPositive, emotionNegative)
     )
+
+    suspend fun updateUserStatistic(userId: String, updateStatisticRequest: UpdateStatisticRequest) =
+        apiService.updateUserStatistic(userId, updateStatisticRequest)
 }

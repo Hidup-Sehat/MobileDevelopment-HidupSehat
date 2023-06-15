@@ -29,6 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bangkit23.hidupsehat.R
 import com.bangkit23.hidupsehat.presentation.components.ButtonWithIcon
+import com.bangkit23.hidupsehat.presentation.components.LoadingDialog
 import com.bangkit23.hidupsehat.presentation.components.SheetWithHeader
 import com.bangkit23.hidupsehat.presentation.screen.update_user_info.components.UserNeedsCounter
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
@@ -39,6 +40,7 @@ fun UpdateUserInfoScreen(
     initialSleepNeeds: Int,
     initialWaterNeeds: Int,
     onDismissRequest: () -> Unit,
+    onUpdateSuccess: () -> Unit,
     viewModel: UpdateUserInfoViewModel = hiltViewModel(),
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
 ) {
@@ -52,6 +54,13 @@ fun UpdateUserInfoScreen(
     }
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(state.isSuccess) {
+        if (state.isSuccess) {
+            onUpdateSuccess()
+            viewModel.onEvent(UpdateUserInfoEvent.ResetState)
+        }
+    }
 
     SheetWithHeader(
         onDismiss = {
@@ -72,12 +81,16 @@ fun UpdateUserInfoScreen(
                     viewModel.onEvent(UpdateUserInfoEvent.OnWaterNeedsChanged(it))
                 },
                 onSaveClick = {
-
+                    viewModel.onEvent(UpdateUserInfoEvent.SaveUpdatedInfo(state.sleepNeeds, state.waterNeeds))
                 }
             )
         },
         modifier = Modifier
     )
+
+    if (state.isLoading) {
+        LoadingDialog()
+    }
 }
 
 @Composable
