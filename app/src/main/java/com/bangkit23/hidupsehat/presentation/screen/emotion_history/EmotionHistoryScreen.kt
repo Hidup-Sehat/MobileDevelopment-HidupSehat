@@ -60,32 +60,20 @@ fun EmotionHistoryScreen(
 
 @Composable
 fun EmotionHistoryContent(modifier: Modifier = Modifier, data : Diary) {
-    val list = listOf<EmotionHistory>(
-        EmotionHistory("Netral", "Rabu, 7 Juni 2023 19:52", "\uD83D\uDE10")
-    )
     Column(modifier = modifier.padding(horizontal = 16.dp)) {
         WeekSection()
         LabelHistory(
             modifier = Modifier.padding(bottom = 10.dp, top = 20.dp),
             text = "Keseluruhan")
-        CardEmotion(positive = data.emotionPositive)
+        CardEmotion(positive = data.emotionPositive, negative = data.emotionNegative, source = data.emotionSource)
         LabelHistory(
             modifier = Modifier.padding(bottom = 10.dp, top = 20.dp),
             text = "Catatan Emosi")
-        LazyColumn() {
-            items(list) { item ->
-                EmotionItem(
-                    title = item.title,
-                    dateTime = item.dateTime,
-                    emotionIcon = item.unicode
-                )
-                EmotionItem(
-                    title = item.title,
-                    dateTime = item.dateTime,
-                    emotionIcon = item.unicode
-                )
-            }
-        }
+        EmotionItem(
+            title = data.note,
+            dateTime = data.lastUpdated,
+            emotionIcon = ""
+        )
     }
 }
 
