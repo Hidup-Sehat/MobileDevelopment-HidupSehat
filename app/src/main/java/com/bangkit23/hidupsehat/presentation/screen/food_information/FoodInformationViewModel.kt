@@ -12,34 +12,49 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FoodInformationViewModel @Inject constructor(
-    private val foodUseCase: FoodUseCase
+    private val foodUseCase: FoodUseCase,
 ) : ViewModel() {
     private val _state = MutableStateFlow(FoodInformationState())
     val state = _state.asStateFlow()
 
+    init {
+        getAllFoods()
+    }
+
     fun onEvent(event: FoodInformationEvent) {
         when (event) {
-            is FoodInformationEvent.OnGetAllFeed -> {
-                getAllFoods()
+            is FoodInformationEvent.OnQueryFoodChange -> {
+                _state.update {
+                    it.copy(
+                        searchQuery = event.query
+                    )
+                }
+                searchFoods(event.query)
             }
         }
     }
 
     private fun getAllFoods() {
         viewModelScope.launch {
-            foodUseCase.getAllFoods()
-                .collect { foods ->
-                    val shuffledFoods = foods.shuffled()
-                    val selectedFoods = shuffledFoods.take(20)
-                    _state.update {
-                        it.copy(
-                            foods = selectedFoods
-                        )
-                    }
+            foodUseCase.getAllFoods().collect { foods ->
+                val shuffledFoods = foods.shuffled()
+                val selectedFoods = shuffledFoods.take(20)
+                _state.update {
+                    it.copy(
+                        foods = selectedFoods
+                    )
                 }
+            }
         }
     }
 
-
-
+    private fun searchFoods(query: String) = viewModelScope.launch {
+        foodUseCase.searchFoods(query).collect { foods ->
+            _state.update {
+                it.copy(
+                    foods = foods
+                )
+            }
+        }
+    }
 }

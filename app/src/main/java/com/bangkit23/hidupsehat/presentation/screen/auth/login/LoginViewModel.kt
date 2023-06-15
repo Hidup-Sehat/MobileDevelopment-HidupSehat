@@ -23,7 +23,7 @@ class LoginViewModel @Inject constructor(
     fun onEvent(event: LoginEvent) {
         when (event) {
             is LoginEvent.LoginWithEmailPassword -> {
-
+                loginWithEmailPassword(event.email, event.password)
             }
             is LoginEvent.OnEmailChanged -> {
                 _state.update {
@@ -52,6 +52,37 @@ class LoginViewModel @Inject constructor(
                     it.copy(
                         loading = event.isLoading
                     )
+                }
+            }
+        }
+    }
+
+    private fun loginWithEmailPassword(email: String, password: String) = viewModelScope.launch {
+        authUseCase.signInWithEmail(email, password).collect { result ->
+            when (result) {
+                is Result.Error -> {
+                    _state.update {
+                        it.copy(
+                            loading = false,
+                            signInError = result.message
+                        )
+                    }
+                }
+                is Result.Loading -> {
+                    _state.update {
+                        it.copy(
+                            loading = true
+                        )
+                    }
+                }
+                is Result.Success -> {
+                    _state.update {
+                        it.copy(
+                            loading = false,
+                            signInSuccessful = true,
+                            signInResult = result.data
+                        )
+                    }
                 }
             }
         }

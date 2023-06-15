@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.bangkit23.hidupsehat.R
+import com.bangkit23.hidupsehat.util.get3DigitsOnly
 
 
 @Composable
@@ -27,7 +28,7 @@ fun CardFoodContent(
     lemak: Double,
     serat: Double,
     protein: Double,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     ConstraintLayout(
         modifier = modifier.fillMaxWidth()
@@ -42,7 +43,7 @@ fun CardFoodContent(
                     width = Dimension.fillToConstraints
                 },
             title = "Karbohidrat",
-            data = "${karbohidrat}g",
+            data = "${karbohidrat.get3DigitsOnly()}g",
             color = colorResource(id = R.color.green_tile)
         )
 
@@ -53,7 +54,9 @@ fun CardFoodContent(
                 start.linkTo(cv1.end)
                 width = Dimension.fillToConstraints
             },
-            title = "Lemak", data = "${lemak}g", color = colorResource(id = R.color.blue_tile)
+            title = "Lemak",
+            data = "${lemak.get3DigitsOnly()}g",
+            color = colorResource(id = R.color.blue_tile)
         )
         DetailItem(
             modifier = Modifier.constrainAs(cv3) {
@@ -62,7 +65,7 @@ fun CardFoodContent(
                 end.linkTo(cv4.start, 10.dp)
                 width = Dimension.fillToConstraints
             },
-            title = "Serat", data = "${serat}g", color = colorResource(id = R.color.yellow_tile)
+            title = "Serat", data = "${serat.get3DigitsOnly()}g", color = colorResource(id = R.color.yellow_tile)
         )
         DetailItem(
             modifier = Modifier.constrainAs(cv4) {
@@ -71,7 +74,7 @@ fun CardFoodContent(
                 end.linkTo(parent.end)
                 width = Dimension.fillToConstraints
             },
-            title = "Protein", data = "${protein}g", color = colorResource(id = R.color.red_tile)
+            title = "Protein", data = "${protein.get3DigitsOnly()}g", color = colorResource(id = R.color.red_tile)
         )
     }
 }
@@ -81,7 +84,7 @@ fun DetailItem(
     modifier: Modifier = Modifier,
     title: String,
     data: String,
-    color: Color
+    color: Color,
 ) {
     Box(
         modifier = modifier

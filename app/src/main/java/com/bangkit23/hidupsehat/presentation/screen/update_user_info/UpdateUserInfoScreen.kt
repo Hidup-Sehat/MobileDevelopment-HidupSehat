@@ -29,27 +29,24 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bangkit23.hidupsehat.R
 import com.bangkit23.hidupsehat.presentation.components.ButtonWithIcon
+import com.bangkit23.hidupsehat.presentation.components.LoadingDialog
 import com.bangkit23.hidupsehat.presentation.components.SheetWithHeader
-import com.bangkit23.hidupsehat.presentation.screen.update_user_info.components.TextFieldWithIcon
-import com.bangkit23.hidupsehat.presentation.screen.update_user_info.components.WaterCount
+import com.bangkit23.hidupsehat.presentation.screen.update_user_info.components.UserNeedsCounter
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdateUserInfoScreen(
-    initialCalorieNeeds: String,
-    initialCalorieBurned: String,
     initialSleepNeeds: Int,
     initialWaterNeeds: Int,
     onDismissRequest: () -> Unit,
+    onUpdateSuccess: () -> Unit,
     viewModel: UpdateUserInfoViewModel = hiltViewModel(),
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
 ) {
     LaunchedEffect(key1 = Unit) {
         viewModel.onEvent(
             UpdateUserInfoEvent.SaveInitialInfo(
-                calorieBurned = initialCalorieBurned,
-                calorieNeeds = initialCalorieNeeds,
                 sleepNeeds = initialSleepNeeds,
                 waterNeeds = initialWaterNeeds,
             )
@@ -57,6 +54,13 @@ fun UpdateUserInfoScreen(
     }
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(state.isSuccess) {
+        if (state.isSuccess) {
+            onUpdateSuccess()
+            viewModel.onEvent(UpdateUserInfoEvent.ResetState)
+        }
+    }
 
     SheetWithHeader(
         onDismiss = {
@@ -68,29 +72,25 @@ fun UpdateUserInfoScreen(
         },
         contentBody = {
             BodySheetUserInfo(
-                calorieNeeds = state.calorieNeeds,
-                calorieBurned = state.calorieBurned,
                 waterNeeds = state.waterNeeds,
-                sleepNeeds = state.sleepNeeds.toString(),
+                sleepNeeds = state.sleepNeeds,
                 onSleepNeedsChanged = {
-
-                },
-                onCalorieNeedsChanged = {
-                    viewModel.onEvent(UpdateUserInfoEvent.OnCalorieNeedsChanged(it))
-                },
-                onCalorieBurnedChanged = {
-                    viewModel.onEvent(UpdateUserInfoEvent.OnCalorieBurnedChanged(it))
+                    viewModel.onEvent(UpdateUserInfoEvent.OnSleepNeedsChanged(it))
                 },
                 onWaterNeedsChanged = {
                     viewModel.onEvent(UpdateUserInfoEvent.OnWaterNeedsChanged(it))
                 },
                 onSaveClick = {
-
+                    viewModel.onEvent(UpdateUserInfoEvent.SaveUpdatedInfo(state.sleepNeeds, state.waterNeeds))
                 }
             )
         },
         modifier = Modifier
     )
+
+    if (state.isLoading) {
+        LoadingDialog()
+    }
 }
 
 @Composable
@@ -112,12 +112,8 @@ fun HeaderSheetUserInfo(
 
 @Composable
 fun BodySheetUserInfo(
-    calorieNeeds: String,
-    onCalorieNeedsChanged: (String) -> Unit,
-    calorieBurned: String,
-    onCalorieBurnedChanged: (String) -> Unit,
-    sleepNeeds: String,
-    onSleepNeedsChanged: (String) -> Unit,
+    sleepNeeds: Int,
+    onSleepNeedsChanged: (Int) -> Unit,
     waterNeeds: Int,
     onWaterNeedsChanged: (Int) -> Unit,
     onSaveClick: () -> Unit,
@@ -129,52 +125,25 @@ fun BodySheetUserInfo(
             .fillMaxHeight()
     ) {
         Spacer(Modifier.height(16.dp))
-        TextFieldWithIcon(
-            value = calorieNeeds,
-            onValueChanged = onCalorieNeedsChanged,
-            label = "Kilo kalori (kkal)",
-            startIcon = {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_burger),
-                    contentDescription = "Kalori",
-                    tint = Color.Unspecified
-                )
-            },
-            title = {
-                Text("Kebutuhan kalori")
-            }
-        )
-        Spacer(Modifier.height(24.dp))
-        TextFieldWithIcon(
-            value = calorieBurned,
-            onValueChanged = onCalorieBurnedChanged,
-            label = "Kalori (kal)",
-            startIcon = {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_fire),
-                    contentDescription = "Kalori",
-                    tint = Color.Unspecified
-                )
-            },
-            title = {
-                Text("Pembakaran kalori")
-            }
-        )
-        Spacer(Modifier.height(24.dp))
-        TextFieldWithIcon(
-            value = sleepNeeds,
-            onValueChanged = onSleepNeedsChanged,
-            label = "jam",
-            startIcon = {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_sleep),
-                    contentDescription = "Sleep",
-                    tint = Color.Unspecified
-                )
-            },
-            title = {
-                Text("Kebutuhan tidur")
-            }
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_sleep),
+                contentDescription = null,
+                tint = Color.Unspecified
+            )
+            Spacer(Modifier.width(8.dp))
+            Text("Waktu tidur")
+        }
+        Spacer(Modifier.height(16.dp))
+        UserNeedsCounter(
+            count = sleepNeeds,
+            image = ImageVector.vectorResource(R.drawable.ic_sleep),
+            needName = "jam",
+            onDecreaseClick = onSleepNeedsChanged,
+            onIncreaseClick = onSleepNeedsChanged,
         )
         Spacer(Modifier.height(24.dp))
         Row(
@@ -187,13 +156,15 @@ fun BodySheetUserInfo(
                 tint = Color.Unspecified
             )
             Spacer(Modifier.width(8.dp))
-            Text("Kebutuhan air minum")
+            Text("Air minum")
         }
         Spacer(Modifier.height(16.dp))
-        WaterCount(
+        UserNeedsCounter(
             count = waterNeeds,
             onDecreaseClick = onWaterNeedsChanged,
             onIncreaseClick = onWaterNeedsChanged,
+            image = ImageVector.vectorResource(R.drawable.ic_glass_water),
+            needName = "gelas"
         )
         Spacer(Modifier.height(32.dp))
         ButtonWithIcon(
@@ -211,12 +182,8 @@ fun BodySheetUserInfo(
 fun UpdateUserInfoScreenPreview() {
     HidupSehatTheme {
         BodySheetUserInfo(
-            calorieNeeds = "90",
-            onCalorieBurnedChanged = {},
             onSaveClick = {},
-            onCalorieNeedsChanged = {},
-            calorieBurned = "90",
-            sleepNeeds = "6",
+            sleepNeeds = 6,
             onSleepNeedsChanged = {},
             waterNeeds = 3,
             onWaterNeedsChanged = {},

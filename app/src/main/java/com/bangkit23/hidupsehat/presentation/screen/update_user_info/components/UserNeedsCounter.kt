@@ -30,8 +30,10 @@ import com.bangkit23.hidupsehat.R
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 
 @Composable
-fun WaterCount(
+fun UserNeedsCounter(
     count: Int,
+    image: ImageVector,
+    needName: String,
     onDecreaseClick: (Int) -> Unit,
     onIncreaseClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -56,7 +58,7 @@ fun WaterCount(
             }
             Spacer(Modifier.width(8.dp))
             Image(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_glass_water),
+                imageVector = image,
                 contentDescription = null,
                 modifier = Modifier
                     .size(80.dp)
@@ -79,7 +81,7 @@ fun WaterCount(
                 withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
                     append("$count")
                 }
-                append(" gelas")
+                append(" $needName")
             },
         )
     }
@@ -89,8 +91,10 @@ fun WaterCount(
 @Composable
 fun WaterCounterPreview() {
     HidupSehatTheme {
-        WaterCount(
+        UserNeedsCounter(
             count = 4,
+            needName = "gelas",
+            image = ImageVector.vectorResource(R.drawable.ic_glass_water),
             onDecreaseClick = {},
             onIncreaseClick = {},
         )

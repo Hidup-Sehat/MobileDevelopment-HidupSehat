@@ -31,6 +31,7 @@ fun DropDownEditFood(
         label = { Text("Takaran") },
         onValueChange = {},
         readOnly = true,
+        maxLines = 1,
         colors = TextFieldDefaults.colors(
             disabledTextColor = LocalContentColor.current,
             disabledLabelColor = LocalContentColor.current,

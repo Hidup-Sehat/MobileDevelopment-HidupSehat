@@ -126,15 +126,14 @@ fun MentalHealthContent(
                 )
                 if (hasFilledEmotion) {
                     FilledEmotionCard(
-                        emoji = "\uD83D\uDE2D",
-                        emotionType = "Sangat Sedih",
+                        emoji = "\uD83D\uDE01",
+                        emotionType = "Sangat Senang",
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 } else {
                     CardEmotionFeel(
                         emotions = emotions,
                         onEmotionChosen = {},
-                        onCardEmotionChosen = {}
                     )
                 }
                 ListItemExercise(

@@ -76,7 +76,7 @@ fun LeaderboardContent(
         }
     ) {
         var state by remember { mutableStateOf(0) }
-        val titles = listOf("Harian", "Mingguan", "Bulanan")
+        val titles = listOf("Weekly", "Monthly", "All Time")
 
         Column(modifier = Modifier.padding(it)) {
             TabRow(

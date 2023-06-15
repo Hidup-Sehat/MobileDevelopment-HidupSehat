@@ -16,7 +16,6 @@ import androidx.compose.ui.tooling.preview.Preview
 fun FoodInformationItem(
     modifier: Modifier = Modifier,
     name: String,
-    unit: String,
     calories: String,
     onItemClick : (String) -> Unit
 ) {

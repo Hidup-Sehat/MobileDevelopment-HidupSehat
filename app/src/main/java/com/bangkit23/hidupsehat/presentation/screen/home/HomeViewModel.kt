@@ -28,8 +28,8 @@ class HomeViewModel @Inject constructor(
 
     fun onEvent(event: HomeEvent) {
         when (event) {
-            is HomeEvent.OnManualFoodAdded -> {
-
+            is HomeEvent.OnRefresh -> {
+                getUserNeeds()
             }
             is HomeEvent.OnTodayEmotionChosen -> {
                 _state.update {
