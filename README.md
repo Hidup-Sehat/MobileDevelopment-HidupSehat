@@ -74,7 +74,7 @@ The Hidup Sehat Android application offers the following key features:
 - Seamless image loading and caching with Coil Compose, ensuring fast and efficient image rendering within the app.
 - Dependency injection with Dagger Hilt, promoting modularity and testability of the codebase.
 - Camera functionality using Camera X, enabling users to capture and work with photos within the app.
-- Integration of TensorFlow Lite for incorporating machine learning models, providing advanced health analysis or personalized recommendations.
+- Integration of TensorFlow Lite for incorporating machine learning models, providing advanced food detection and human pose estimation.
 - Data storage and retrieval with Room, offering a reliable and efficient database solution for managing app data.
 - Network requests and API interactions facilitated by Retrofit, ensuring seamless communication with backend services.
 - Asynchronous data handling with Kotlin Flow, allowing for responsive and reactive programming.
