@@ -50,4 +50,19 @@ class DiaryRepositoryImpl @Inject constructor(
             emit(Result.Error(e.localizedMessage))
         }
     }.flowOn(Dispatchers.IO)
+
+    override fun getDiaryByDate(date: String): Flow<Result<Diary>> = flow {
+        emit(Result.Loading())
+        try {
+            val userId = firebaseAuth.getSignedUser()?.userId
+            val response = remoteDataSource.getDiaryByDate(userId.toString(), date)
+            val data = response.data.toDomain()
+            if (data.id.isNotEmpty()){
+                emit(Result.Success(data))
+            }
+        }catch (e : Exception){
+            e.printStackTrace()
+            emit(Result.Error(e.message))
+        }
+    }.flowOn(Dispatchers.IO)
 }

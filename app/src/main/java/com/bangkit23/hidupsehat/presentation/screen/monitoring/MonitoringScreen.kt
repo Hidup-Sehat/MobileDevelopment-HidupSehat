@@ -1,5 +1,6 @@
 package com.bangkit23.hidupsehat.presentation.screen.monitoring
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -41,6 +42,7 @@ import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 @Composable
 fun MonitoringScreen(
     navigateUp: () -> Unit,
+    onEmotionClicked: () -> Unit,
     viewModel: MonitoringViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -48,7 +50,8 @@ fun MonitoringScreen(
     MonitoringContent(
         historyFoods = state.historyFoods,
         historyNutrition = state.historyNutrition,
-        navigateUp = navigateUp
+        navigateUp = navigateUp,
+        onEmotionClicked = onEmotionClicked
     )
 }
 
@@ -58,6 +61,7 @@ fun MonitoringContent(
     historyFoods: List<Food>,
     historyNutrition: List<Nutrition>,
     navigateUp: () -> Unit,
+    onEmotionClicked : () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -110,6 +114,9 @@ fun MonitoringContent(
                         positiveEmotion = "Sangat Senang",
                         modifier = Modifier.weight(1f)
                             .height(96.dp)
+                            .clickable {
+                                onEmotionClicked()
+                            }
                     )
                     Spacer(Modifier.width(8.dp))
                     SleepCard(
@@ -187,6 +194,7 @@ fun MonitoringContentPreview() {
             historyFoods = listOf(),
             historyNutrition = listOf(),
             navigateUp = {},
+            onEmotionClicked = {}
         )
     }
 }

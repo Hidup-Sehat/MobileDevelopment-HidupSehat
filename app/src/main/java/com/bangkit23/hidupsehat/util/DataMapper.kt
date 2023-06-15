@@ -9,6 +9,8 @@ import com.bangkit23.hidupsehat.data.source.remote.response.AddFoodsItem
 import com.bangkit23.hidupsehat.data.source.remote.response.AddEmotionDataResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.AddPointsResponseData
 import com.bangkit23.hidupsehat.data.source.remote.response.BodyAngleResponse
+import com.bangkit23.hidupsehat.data.source.remote.response.DataDiary
+import com.bangkit23.hidupsehat.data.source.remote.response.DiaryResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.FoodHistoryDetailResponseItem
 import com.bangkit23.hidupsehat.data.source.remote.response.FoodsHistoryResponseItem
 import com.bangkit23.hidupsehat.data.source.remote.response.FeedDetailResponse
@@ -208,6 +210,16 @@ fun AddEmotionDataResponse.toDomain() = Diary(
     emotionSource = emotionSource,
     lastUpdated = lastUpdated,
     note = note
+)
+
+fun DataDiary.toDomain() = Diary(
+    date = date,
+    lastUpdated = lastUpdated,
+    note = note ,
+    emotionSource =emotionSource,
+    id = id,
+    emotionPositive = emotionPositive,
+    emotionNegative = emotionNegative
 )
 
 fun List<FeedResult>.toDomainn(): List<Feed> {

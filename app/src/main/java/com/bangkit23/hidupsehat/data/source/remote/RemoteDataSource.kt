@@ -57,4 +57,9 @@ class RemoteDataSource @Inject constructor(
 
     suspend fun updateUserStatistic(userId: String, updateStatisticRequest: UpdateStatisticRequest) =
         apiService.updateUserStatistic(userId, updateStatisticRequest)
+
+    suspend fun getDiaryByDate(
+        userId: String,
+        date: String,
+    ) = apiService.getDiaryByDate(id = userId, date = date)
 }
