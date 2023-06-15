@@ -53,4 +53,9 @@ class RemoteDataSource @Inject constructor(
         userId,
         AddEmotionRequest(date, lastUpdated, note, emotionSource, emotionPositive, emotionNegative)
     )
+
+    suspend fun getDiaryByDate(
+        userId: String,
+        date: String,
+    ) = apiService.getDiaryByDate(id = userId, date = date)
 }

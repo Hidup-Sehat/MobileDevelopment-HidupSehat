@@ -9,6 +9,7 @@ import com.bangkit23.hidupsehat.data.source.remote.response.ActivityResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.AddFoodsResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.AddEmotionResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.AddPointsResponse
+import com.bangkit23.hidupsehat.data.source.remote.response.DiaryResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.FoodsHistoryResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.LeaderboardResponse
 import com.bangkit23.hidupsehat.data.source.remote.response.FeedDetailResponse
@@ -78,4 +79,10 @@ interface ApiService {
         @Path("id") id : String,
         @Body requestBody : AddEmotionRequest
     ) : AddEmotionResponse
+
+    @GET("user/{user_id}/emotion/{date}")
+    suspend fun getDiaryByDate(
+        @Path("user_id") id : String,
+        @Path("date") date : String
+    ) : DiaryResponse
 }

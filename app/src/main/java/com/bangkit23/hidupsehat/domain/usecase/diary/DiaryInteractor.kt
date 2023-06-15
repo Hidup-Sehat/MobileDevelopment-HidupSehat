@@ -27,4 +27,8 @@ class DiaryInteractor @Inject constructor(private val diaryRepository: DiaryRepo
             emotionNegative = emotionNegative
         )
     }
+
+    override fun getDiaryByDate(date: String): Flow<Result<Diary>> {
+        return diaryRepository.getDiaryByDate(date)
+    }
 }

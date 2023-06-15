@@ -12,7 +12,8 @@ import com.bangkit23.hidupsehat.presentation.screen.food_information_detail.comp
 
 @Composable
 fun CardEmotion(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    positive : String
 ) {
     ConstraintLayout(
         modifier = modifier.fillMaxWidth()
@@ -39,7 +40,7 @@ fun CardEmotion(
                 width = Dimension.fillToConstraints
             },
             title = "Emosi Positif",
-            data = "-",
+            data = "$positive",
             color = colorResource(id = R.color.blue_tile)
         )
         DetailItem(
