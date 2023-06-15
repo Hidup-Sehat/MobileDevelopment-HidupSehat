@@ -15,4 +15,8 @@ interface DiaryRepository {
         emotionNegative: String
     ): Flow<Result<Diary>>
 
+    fun getDiaryByDate(
+        date: String
+    ) : Flow<Result<Diary>>
+
 }

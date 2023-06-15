@@ -45,6 +45,7 @@ import com.bangkit23.hidupsehat.presentation.screen.auth.login.LoginScreen
 import com.bangkit23.hidupsehat.presentation.screen.auth.register.RegisterScreen
 import com.bangkit23.hidupsehat.presentation.screen.consultation.ConsultationScreen
 import com.bangkit23.hidupsehat.presentation.screen.diary.DiaryScreen
+import com.bangkit23.hidupsehat.presentation.screen.emotion_history.EmotionHistoryScreen
 import com.bangkit23.hidupsehat.presentation.screen.exercise.ExerciseScreen
 import com.bangkit23.hidupsehat.presentation.screen.exercise_play.ExercisePlayScreen
 import com.bangkit23.hidupsehat.presentation.screen.feeds.FeedScreen
@@ -398,8 +399,14 @@ fun HidupSehatApp(
                     MonitoringScreen(
                         navigateUp = {
                             navController.navigateUp()
+                        },
+                        onEmotionClicked = {
+                            navController.navigate("diary-history")
                         }
                     )
+                }
+                composable("diary-history"){
+                    EmotionHistoryScreen()
                 }
             }
             navigation(
