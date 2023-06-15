@@ -6,6 +6,7 @@ import com.bangkit23.hidupsehat.presentation.screen.auth.model.UserData
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
@@ -42,7 +43,6 @@ class FirebaseAuthImpl @Inject constructor(
     override suspend fun signInWithEmail(email: String, password: String): SignInResult {
         val signInTask = auth.signInWithEmailAndPassword(email, password).await()
         val user = signInTask.user
-        user?.reload()
         return SignInResult(
             data = user?.run {
                 UserData(
@@ -59,7 +59,10 @@ class FirebaseAuthImpl @Inject constructor(
     override suspend fun registerWithEmail(name: String, email: String, password: String): SignInResult {
         val registerTask = auth.createUserWithEmailAndPassword(email, password).await()
         val user = registerTask.user
-        user?.reload()
+        val profileUpdate = userProfileChangeRequest {
+            displayName = name
+        }
+        auth.currentUser?.updateProfile(profileUpdate)?.await()
         return SignInResult(
             data = user?.run {
                 UserData(

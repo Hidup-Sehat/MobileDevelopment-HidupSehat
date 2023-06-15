@@ -249,7 +249,7 @@ fun TopAppBarWithProfile(
                             )
                     ) {
                         Text(
-                            text = "${name.first()}",
+                            text = "${name.firstOrNull()}",
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }
