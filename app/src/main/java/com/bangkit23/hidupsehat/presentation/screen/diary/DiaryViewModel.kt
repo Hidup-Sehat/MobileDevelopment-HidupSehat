@@ -63,11 +63,18 @@ class DiaryViewModel @Inject constructor(
             emotionNegative = negative
         ).collect { result ->
             when (result) {
-                is Result.Loading -> {}
+                is Result.Loading -> {
+                    _state.update {
+                        it.copy(
+                            isLoading = true
+                        )
+                    }
+                }
                 is Result.Success -> addPoints()
                 is Result.Error -> {
                     _state.update {
                         it.copy(
+                            isLoading = false,
                             diaryError = result.message
                         )
                     }
@@ -79,11 +86,18 @@ class DiaryViewModel @Inject constructor(
     private fun addPoints() = viewModelScope.launch {
         userUseCase.addUserPoints(points = 50).collect { result ->
             when (result) {
-                is Result.Error -> {}
+                is Result.Error -> {
+                    _state.update {
+                        it.copy(
+                            isLoading = false
+                        )
+                    }
+                }
                 is Result.Loading -> {}
                 is Result.Success -> {
                     _state.update {
                         it.copy(
+                            isLoading = false,
                             isDiaryDone = true
                         )
                     }

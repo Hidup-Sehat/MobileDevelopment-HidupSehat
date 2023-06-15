@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.bangkit23.hidupsehat.presentation.components.LoadingDialog
 import com.bangkit23.hidupsehat.presentation.screen.diary.component.Chip
 import com.bangkit23.hidupsehat.presentation.screen.point_popup.PointPopupDialog
 import com.bangkit23.hidupsehat.util.ListConverter
@@ -238,6 +239,9 @@ fun DiaryScreen(
         Toast.makeText(context, "Hari ini kamu telah mengisi diary!", Toast.LENGTH_SHORT).show()
     }
 
+    if (state.isLoading) {
+        LoadingDialog()
+    }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
