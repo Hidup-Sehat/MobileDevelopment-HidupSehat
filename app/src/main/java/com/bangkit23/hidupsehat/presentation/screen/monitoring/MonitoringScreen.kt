@@ -106,18 +106,17 @@ fun MonitoringContent(
                         .wrapContentHeight()
                 ) {
                     MoodCard(
-                        icon = "\uD83D\uDE42",
-                        positiveEmotion = "Senang",
-                        negativeEmotion = "Cemas",
+                        icon = "\uD83D\uDE01",
+                        positiveEmotion = "Sangat Senang",
                         modifier = Modifier.weight(1f)
-                            .height(112.dp)
+                            .height(96.dp)
                     )
                     Spacer(Modifier.width(8.dp))
                     SleepCard(
                         sleepActual = 3,
                         sleepNeeds = 7,
                         modifier = Modifier.weight(1f)
-                            .height(112.dp)
+                            .height(96.dp)
                     )
                 }
                 Row(

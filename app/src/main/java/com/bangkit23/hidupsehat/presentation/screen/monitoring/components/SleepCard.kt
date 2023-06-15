@@ -27,12 +27,7 @@ fun SleepCard(
         modifier = modifier
             .background(
                 shape = MaterialTheme.shapes.medium,
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        Color(0xFFA363C0),
-                        Color(0xFF8CC8FF)
-                    )
-                )
+                color = Color(0xFF4FB6D7)
             )
     ) {
         Column(
@@ -49,7 +44,7 @@ fun SleepCard(
             Spacer(Modifier.height(8.dp))
             Text(
                 text = "$sleepActual dari $sleepNeeds jam",
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.bodyLarge,
                 color = Color.White
             )
         }

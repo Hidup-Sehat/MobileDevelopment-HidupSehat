@@ -1,6 +1,5 @@
 package com.bangkit23.hidupsehat.presentation.screen.home
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -75,7 +74,7 @@ fun HomeScreen(
     onManualFoodsClick: () -> Unit,
     onMentalHealthClick: () -> Unit,
     onFoodInformationClicked: () -> Unit,
-    onCardEmotionChoosen: () -> Unit,
+    onEmotionChosen: (feelName: String) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -83,6 +82,7 @@ fun HomeScreen(
     HomeContent(
         chosenEmotion = state.chosenEmotion,
         onEmotionChosen = {
+            onEmotionChosen("${it?.name}")
             viewModel.onEvent(HomeEvent.OnTodayEmotionChosen(it))
         },
         userNeeds = state.userNeeds,
@@ -95,7 +95,6 @@ fun HomeScreen(
         onSeeAllMonitoringClick = onSeeAllMonitoringClick,
         onManualFoodsClick = onManualFoodsClick,
         onMentalHealthClick = onMentalHealthClick,
-        onCardEmotionChoosen = onCardEmotionChoosen
     )
 }
 
@@ -114,7 +113,6 @@ fun HomeContent(
     onSeeAllMonitoringClick: () -> Unit,
     onManualFoodsClick: () -> Unit,
     onMentalHealthClick: () -> Unit,
-    onCardEmotionChoosen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -140,7 +138,6 @@ fun HomeContent(
                 emotions = emotions,
                 onEmotionChosen = onEmotionChosen,
                 chosenEmotion = chosenEmotion,
-                onCardEmotionChosen = onCardEmotionChoosen
             )
             CardPersonalHealthInfo(
                 caloriesIntakeActual = userNeeds.actualCalorie ?: 0,
@@ -169,10 +166,8 @@ fun HomeContent(
 
             if (openUpdateInfoSheet) {
                 UpdateUserInfoScreen(
-                    initialCalorieBurned = "${userNeeds.calorieNeeds}",
-                    initialCalorieNeeds = "${userNeeds.calorieNeeds}",
-                    initialSleepNeeds = userNeeds.sleepNeeds ?: 8,
-                    initialWaterNeeds = userNeeds.actualWater ?: 1,
+                    initialSleepNeeds = userNeeds.sleepNeeds ?: 0,
+                    initialWaterNeeds = userNeeds.actualWater ?: 0,
                     onDismissRequest = { openUpdateInfoSheet = false }
                 )
             }
@@ -430,7 +425,6 @@ fun HomeContentPreview() {
             onSeeAllMonitoringClick = {},
             onMentalHealthClick = {},
             onFoodInformationClicked = {},
-            onCardEmotionChoosen = {}
         )
     }
 }

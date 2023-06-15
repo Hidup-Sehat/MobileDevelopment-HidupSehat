@@ -18,22 +18,8 @@ class UpdateUserInfoViewModel @Inject constructor() : ViewModel() {
             is UpdateUserInfoEvent.SaveInitialInfo -> {
                 _state.update {
                     it.copy(
-                        calorieNeeds = event.calorieNeeds,
-                        calorieBurned = event.calorieBurned
-                    )
-                }
-            }
-            is UpdateUserInfoEvent.OnCalorieNeedsChanged -> {
-                _state.update {
-                    it.copy(
-                        calorieNeeds = event.calorieNeeds
-                    )
-                }
-            }
-            is UpdateUserInfoEvent.OnCalorieBurnedChanged -> {
-                _state.update {
-                    it.copy(
-                        calorieBurned = event.calorieBurned
+                        sleepNeeds = event.sleepNeeds,
+                        waterNeeds = event.waterNeeds
                     )
                 }
             }

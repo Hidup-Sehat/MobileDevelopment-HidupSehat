@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -41,14 +43,14 @@ import com.bangkit23.hidupsehat.presentation.screen.diary.component.Chip
 import com.bangkit23.hidupsehat.presentation.screen.point_popup.PointPopupDialog
 import com.bangkit23.hidupsehat.util.ListConverter
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiaryScreen(
-    onNavigateUp : () -> Unit,
-    onPopBackStak : ()-> Unit,
-    viewModel: DiaryViewModel = hiltViewModel()
+    onNavigateUp: () -> Unit,
+    onPopBackStak: () -> Unit,
+    viewModel: DiaryViewModel = hiltViewModel(),
 ) {
-    val listPositive = listOf<String>(
+    val listPositive = listOf(
         "Antusias",
         "Bangga",
         "Takjub",
@@ -62,7 +64,7 @@ fun DiaryScreen(
         "Penuh Cinta"
     )
 
-    val listNegative = listOf<String>(
+    val listNegative = listOf(
         "Kecewa",
         "Marah",
         "Stress",
@@ -81,7 +83,7 @@ fun DiaryScreen(
         "Pusing"
     )
 
-    val listAsalEmosi = listOf<String>(
+    val listAsalEmosi = listOf(
         "Keluarga",
         "Pekerjaan",
         "Teman",
@@ -128,17 +130,20 @@ fun DiaryScreen(
                     .padding(it),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = "Kamu bakal dapet total 50 points dari pengisian diary ini!")
+                Text(
+                    text = "* Kamu bakal dapet total 50 points dari pengisian diary ini!",
+                    style = MaterialTheme.typography.labelMedium,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(Modifier.height(8.dp))
                 Text(
                     text = "Apa emosi yang kamu\n rasakan sekarang?",
-                    style = MaterialTheme.typography.titleMedium.copy(
+                    style = MaterialTheme.typography.titleLarge.copy(
                         color = MaterialTheme.colorScheme.primary,
-                        fontSize = 16.sp,
                         textAlign = TextAlign.Center
                     )
                 )
-
-//emosi positive
+                Spacer(Modifier.height(16.dp))
                 PositiveEmotionsInput(
                     positiveEmotions = listPositive,
                     selectedPositiveEmotions = selectedPositiveEmotions,
@@ -150,10 +155,8 @@ fun DiaryScreen(
 
                     }
                 )
-
                 Divider()
-
-//emosi negatif
+                Spacer(Modifier.height(8.dp))
                 NegativeEmotionsInput(
                     negativeEmotions = listNegative,
                     selectedNegativeEmotions = selectedNegativeEmotions,
@@ -166,6 +169,7 @@ fun DiaryScreen(
                 )
 
                 Divider()
+                Spacer(Modifier.height(8.dp))
 
                 AsalEmotionsInput(
                     asalEmotions = listAsalEmosi,
@@ -179,26 +183,27 @@ fun DiaryScreen(
                     }
                 )
                 Divider()
-
+                Spacer(Modifier.height(8.dp))
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = "Ceritakan Yuk", style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold, fontSize = 16.sp, textAlign = TextAlign.Center
                     )
                 )
-
+                Spacer(Modifier.height(8.dp))
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(70.dp)
+                        .defaultMinSize(minHeight = 80.dp)
                         .padding(horizontal = 16.dp),
-                    value = state.note.toString(), onValueChange = {
+                    value = state.note.toString(),
+                    onValueChange = {
                         viewModel.onEvent(DiaryEvent.OnNoteChanged(it))
 
                     },
-                    placeholder = { Text(text = "Ketik ceritamu disini...") }
+                    placeholder = { Text(text = "Ketik ceritamu di sini untuk mendapatkan rekomendasi dari AI secara gratis...") }
                 )
-
+                Spacer(Modifier.height(8.dp))
                 Button(
                     onClick = {
                         viewModel.onEvent(
@@ -229,7 +234,7 @@ fun DiaryScreen(
         })
     }
 
-    if (state.diaryError?.isNotEmpty() == true){
+    if (state.diaryError?.isNotEmpty() == true) {
         Toast.makeText(context, "Hari ini kamu telah mengisi diary!", Toast.LENGTH_SHORT).show()
     }
 
@@ -242,8 +247,9 @@ fun PositiveEmotionsInput(
     selectedPositiveEmotions: List<String>,
     onPositiveSelected: (String) -> Unit,
     onPositiveDeselected: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Column() {
+    Column(modifier) {
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = "Emosi Positif", style = MaterialTheme.typography.titleMedium.copy(
@@ -282,8 +288,9 @@ fun NegativeEmotionsInput(
     selectedNegativeEmotions: List<String>,
     onNegativeSelected: (String) -> Unit,
     onNegativeDeselected: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Column() {
+    Column(modifier) {
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = "Emosi Negatif", style = MaterialTheme.typography.titleMedium.copy(
@@ -322,11 +329,12 @@ fun AsalEmotionsInput(
     selectedAsalEmotions: List<String>,
     onAsalSelected: (String) -> Unit,
     onAsalDeselected: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Column() {
+    Column(modifier) {
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = "Emosi Negatif", style = MaterialTheme.typography.titleMedium.copy(
+            text = "Asal Emosi Kamu", style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.Bold, fontSize = 16.sp, textAlign = TextAlign.Center
             )
         )
@@ -358,5 +366,5 @@ fun AsalEmotionsInput(
 @Preview
 @Composable
 fun DiaryScreenPrev() {
-    DiaryScreen({},{})
+    DiaryScreen({}, {})
 }

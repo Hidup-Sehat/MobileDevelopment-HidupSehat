@@ -25,9 +25,9 @@ class LeaderboardViewModel @Inject constructor(
         when (event) {
             is LeaderboardEvent.OnLeaderboardTypeChanged -> {
                 when (event.position) {
-                    0 -> getLeaderboard(LeaderboardType.DAILY)
-                    1 -> getLeaderboard(LeaderboardType.WEEKLY)
-                    2 -> getLeaderboard(LeaderboardType.MONTHLY)
+                    0 -> getLeaderboard(LeaderboardType.WEEKLY)
+                    1 -> getLeaderboard(LeaderboardType.MONTHLY)
+                    2 -> getLeaderboard(LeaderboardType.OVERALL)
                 }
             }
         }
@@ -43,7 +43,6 @@ class LeaderboardViewModel @Inject constructor(
                         )
                     }
                 }
-
                 is Result.Success -> {
                     _state.update {
                         it.copy(
@@ -53,7 +52,6 @@ class LeaderboardViewModel @Inject constructor(
                         )
                     }
                 }
-
                 is Result.Error -> {
                     _state.update {
                         it.copy(
