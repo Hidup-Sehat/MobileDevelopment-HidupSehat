@@ -61,8 +61,9 @@ To build and run the project locally, follow these steps:
 1. Clone the repository: `git clone https://github.com/Hidup-Sehat/MobileDevelopment-HidupSehat.git`
 2. Open the project in Android Studio.
 3. Ensure that the required SDK versions and dependencies are installed.
-4. Add your own google-services.json file to the project. This file is required for Firebase integration. You can obtain this file by creating a new Firebase project and enabling Firebase Authentication.
-5. Build and run the app on an emulator or physical device.
+4. Add your own `google-services.json` file to the project. This file is required for Firebase integration. You can obtain this file by creating a new Firebase project and enabling Firebase Authentication.
+5. Add `BASE_URL=https://hidup-sehat-api-production.up.railway.app/v1/` to `local.properties` file.
+6. Build and run the app on an emulator or physical device.
 
 Feel free to explore the codebase and make any contributions or improvements as needed. We appreciate your contributions to Hidup Sehat!
 
