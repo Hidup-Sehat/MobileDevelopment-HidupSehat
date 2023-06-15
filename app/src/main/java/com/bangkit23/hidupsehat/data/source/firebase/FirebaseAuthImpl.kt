@@ -1,7 +1,6 @@
 package com.bangkit23.hidupsehat.data.source.firebase
 
 import android.content.Intent
-import android.util.Log
 import com.bangkit23.hidupsehat.presentation.screen.auth.model.SignInResult
 import com.bangkit23.hidupsehat.presentation.screen.auth.model.UserData
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -43,6 +42,7 @@ class FirebaseAuthImpl @Inject constructor(
     override suspend fun signInWithEmail(email: String, password: String): SignInResult {
         val signInTask = auth.signInWithEmailAndPassword(email, password).await()
         val user = signInTask.user
+        user?.reload()
         return SignInResult(
             data = user?.run {
                 UserData(
@@ -59,6 +59,7 @@ class FirebaseAuthImpl @Inject constructor(
     override suspend fun registerWithEmail(name: String, email: String, password: String): SignInResult {
         val registerTask = auth.createUserWithEmailAndPassword(email, password).await()
         val user = registerTask.user
+        user?.reload()
         return SignInResult(
             data = user?.run {
                 UserData(
@@ -78,8 +79,6 @@ class FirebaseAuthImpl @Inject constructor(
     }
 
     override suspend fun getSignedUser(): UserData? = auth.currentUser?.run {
-        val s = isUserAlreadyExists(uid)
-        Log.d("USEREXIST", "getSignedUser: $s")
         UserData(
             userId = uid,
             username = displayName,
