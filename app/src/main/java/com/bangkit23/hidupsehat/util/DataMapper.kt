@@ -103,6 +103,7 @@ fun Reminder.toEntity() = ReminderEntity(
 
 fun UserNeedsResponse.toDomain() = UserNeeds(
     gender = gender,
+    burnedCalorie = burnedCalorie,
     sleepNeeds = sleepNeeds,
     registeredAt = registeredAt,
     weight = weight,

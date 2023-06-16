@@ -159,11 +159,11 @@ fun HomeContent(
                     caloriesIntakeActual = userNeeds.actualCalorie ?: 0,
                     waterDrunkActual = userNeeds.actualWater ?: 0,
                     sleepTimeActual = userNeeds.actualSleep ?: 0,
-                    caloriesBurnedActual = userNeeds.actualCalorie ?: 0,
+                    caloriesBurnedActual = userNeeds.burnedCalorie ?: 0,
                     caloriesIntakeExpected = userNeeds.calorieNeeds ?: 2400,
                     waterDrunkExpected = userNeeds.waterNeeds ?: 0.0,
                     sleepTimeExpected = userNeeds.sleepNeeds ?: 0,
-                    caloriesBurnedExpected = userNeeds.calorieNeeds ?: 0,
+                    caloriesBurnedExpected = userNeeds.burnedCalorie ?: 0,
                     onScanClicked = onScanClicked,
                     onWriteManualClicked = onManualFoodsClick,
                     onUpdateClicked = {

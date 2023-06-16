@@ -366,7 +366,7 @@ fun HidupSehatApp(
                     )
                 }
                 composable("faq") {
-                    val dummyList = listOf<Faq>(
+                    val dummyList = listOf(
                         Faq("Apa itu aplikasi HidupSehat","" +
                                 "Aplikasi gaya hidup sehat all-in-one pertama di Indonesia yang dapat membantu & memperkenalkan gaya hidup sehat yang dibutuhkan masyarakat Indonesia"),
                         Faq("Apakah aplikasi HidupSehat gratis?","Aplikasi HidupSehat sepenuhnya gratis, namun apabila anda ingin fitur yang lebih bisa menggunakan premium"),
@@ -429,6 +429,9 @@ fun HidupSehatApp(
                     MentalHealthScreen(
                         navigateUp = {
                             navController.navigateUp()
+                        },
+                        navigateToFeedDetail = {
+                            navController.navigate(Screen.FeedDetail.createRoute(it))
                         }
                     )
                 }

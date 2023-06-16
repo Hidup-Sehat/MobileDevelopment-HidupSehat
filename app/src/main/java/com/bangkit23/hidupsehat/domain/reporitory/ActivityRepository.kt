@@ -7,4 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface ActivityRepository {
     fun getYogaActivities(): Flow<Result<List<ActivityItem>>>
     fun getWorkoutActivities(): Flow<Result<List<ActivityItem>>>
+    fun updateBurnedCalorie(calorie: Int): Flow<Result<Boolean>>
 }

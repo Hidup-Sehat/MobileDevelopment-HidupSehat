@@ -50,6 +50,7 @@ import com.google.android.exoplayer2.ui.PlayerControlView
 @Composable
 fun MentalHealthScreen(
     navigateUp: () -> Unit,
+    navigateToFeedDetail: (String) -> Unit,
     viewModel: MentalHealthViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -61,7 +62,9 @@ fun MentalHealthScreen(
         recommendedConsultations = state.recommendationConsultation,
         recommendedFeeds = state.recommendationFeeds,
         recommendedActivities = state.recommendationActivities,
-        onItemFeedClick = {},
+        onItemFeedClick = {
+            navigateToFeedDetail(it.key ?: "")
+        },
         onItemConsultationClick = {},
         onItemActivityClick = {},
         navigateUp = navigateUp
