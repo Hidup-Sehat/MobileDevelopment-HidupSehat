@@ -1,4 +1,6 @@
-# Hidup Sehat - Android Mobile Development
+<p align="center"><img align="center" src="https://raw.githubusercontent.com/Hidup-Sehat/.github/main/profile/Horizontal%20Logo-whitebg.png" alt="HidupSehat Logo"/></p>
+
+# HidupSehat Mobile Development
 
 This repository contains the source code for the Hidup Sehat Android application, which promotes healthy living and provides various features to support users in maintaining a healthy lifestyle.
 
