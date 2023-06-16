@@ -215,12 +215,12 @@ fun InformasiGizi(
             modifier = Modifier.fillMaxWidth().padding(start = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column() {
+            Column {
                 Text(text = "Lemak Jenuh")
                 Text(text = "Lemak tak Jenuh Ganda")
                 Text(text = "Lemak tak Jenuh Tunggal")
             }
-            Column() {
+            Column {
                 Text(text = "${saturatedFat}g")
                 Text(text = "${polyunsaturatedFat}g")
                 Text(text = "${monosaturatedFat}g")
@@ -251,7 +251,7 @@ fun InformasiGizi(
             modifier = Modifier.fillMaxWidth().padding(start = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column() {
+            Column {
                 Text(text = "Serat")
                 Text(text = "Gula")
             }

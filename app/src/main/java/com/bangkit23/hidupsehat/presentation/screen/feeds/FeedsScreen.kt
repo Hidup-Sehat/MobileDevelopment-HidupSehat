@@ -1,7 +1,5 @@
 package com.bangkit23.hidupsehat.presentation.screen.feeds
 
-import android.util.Log
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -73,7 +71,7 @@ fun FeedContent(
                 onClick = {navigateToDetail(feed.key)}
             )
         }
-        item(){
+        item {
             Spacer(modifier = Modifier.height(4.dp))
         }
     }
@@ -82,7 +80,7 @@ fun FeedContent(
 @Preview
 @Composable
 fun FeeScreenPrev() {
-    val dummyList = listOf<Feed>(
+    val dummyList = listOf(
         Feed(
             1,
             image = "",

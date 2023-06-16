@@ -1,7 +1,7 @@
 package com.bangkit23.hidupsehat.presentation.screen.diary
 
 sealed class DiaryEvent {
-    data class onSaveDiary(
+    data class OnSaveDiary(
         val positive : String,
         val negative : String,
         val source : String,

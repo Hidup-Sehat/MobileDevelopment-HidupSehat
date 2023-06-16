@@ -51,9 +51,8 @@ import com.bangkit23.hidupsehat.presentation.screen.exercise_play.ExercisePlaySc
 import com.bangkit23.hidupsehat.presentation.screen.feeds.FeedScreen
 import com.bangkit23.hidupsehat.presentation.screen.feeds.model.Feed
 import com.bangkit23.hidupsehat.presentation.screen.feeds_detail.FeedsDetailScreen
-import com.bangkit23.hidupsehat.presentation.screen.food_information_detail.DetailFoodInformationScreen
 import com.bangkit23.hidupsehat.presentation.screen.food_information.FoodInformationScreen
-import com.bangkit23.hidupsehat.presentation.screen.food_information.model.FoodInformation
+import com.bangkit23.hidupsehat.presentation.screen.food_information_detail.DetailFoodInformationScreen
 import com.bangkit23.hidupsehat.presentation.screen.home.HomeScreen
 import com.bangkit23.hidupsehat.presentation.screen.leaderboard.LeaderboardScreen
 import com.bangkit23.hidupsehat.presentation.screen.manual_foods.ManualFoodsScreen

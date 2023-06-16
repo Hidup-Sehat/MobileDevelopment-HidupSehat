@@ -13,7 +13,7 @@ import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.task.vision.detector.ObjectDetector
 import java.io.File
 
-suspend fun Context.runObjectDetection(
+fun Context.runObjectDetection(
     imageFile: File?,
     isFromCamera: Boolean,
     onDetectedImage: (Bitmap, List<DetectionResult>) -> Unit,
