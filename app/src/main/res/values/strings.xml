@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">HidupSehat</string>
+    <string name="masuk_akun">Masuk Akun</string>
+    <string name="support_masuk">Halo! Senang Bertemu denganmu Kembali</string>
+    <string name="lupa_password">Lupa Password?</string>
+    <string name="atau">atau</string>
+    <string name="belum_punya_akun">"Belum punya akun? "</string>
+    <string name="daftar">Daftar</string>
+    <string name="login">Login</string>
+    <string name="masuk_dengan_google">Masuk dengan Google</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="sudah_memiliki_akun">"Sudah memiliki akun? "</string>
+    <string name="konfirmasi_password">Konfirmasi Password</string>
+    <string name="masukkan_nama">Masukkan Nama</string>
+    <string name="daftar_akun">Daftar Akun</string>
+    <string name="halo_senang_kamu_hadir_di_sini">Halo! Senang Kamu Hadir Di Sini</string>
+    <string name="web_client_id">1066502000503-spu4t12ij6tu7hqacp3itv8k4o6gj0o4.apps.googleusercontent.com</string>
 </resources>

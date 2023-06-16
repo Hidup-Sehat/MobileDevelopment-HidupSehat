@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "title": "Sarapan",
+    "time": 1685750451183,
+    "type": 0,
+    "isActive": false
+  },
+  {
+    "id": 2,
+    "title": "Makan Siang",
+    "time": 1685768423114,
+    "type": 0,
+    "isActive": false
+  },
+  {
+    "id": 3,
+    "title": "Makan Malam",
+    "time": 1685793657078,
+    "type": 0,
+    "isActive": false
+  },
+  {
+    "id": 4,
+    "title": "Harian",
+    "time": 1685754048103,
+    "type": 1,
+    "isActive": false
+  },
+  {
+    "id": 5,
+    "title": "Mingguan",
+    "time": 1685750434107,
+    "type": 1,
+    "isActive": false
+  }
+]
