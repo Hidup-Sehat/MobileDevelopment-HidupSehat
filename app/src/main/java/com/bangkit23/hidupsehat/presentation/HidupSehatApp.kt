@@ -371,10 +371,10 @@ fun HidupSehatApp(
                                 "Aplikasi gaya hidup sehat all-in-one pertama di Indonesia yang dapat membantu & memperkenalkan gaya hidup sehat yang dibutuhkan masyarakat Indonesia"),
                         Faq("Apakah aplikasi HidupSehat gratis?","Aplikasi HidupSehat sepenuhnya gratis, namun apabila anda ingin fitur yang lebih bisa menggunakan premium"),
                         Faq("Siapa yang menciptakan aplikasi HidupSehat?","" +
-                                "Aplikasi HidupSehat diciptakan oleh Fazri, Ravie, Natura, Rijal & Hafid"),
+                                "Aplikasi HidupSehat diciptakan oleh C23-PS301 dari Bangkit Academy 2023 Batch 1. Tim kami terdiri dari 2 Machine Learning Engineer (Al’Ravie Mutiar Mahesa & Fazri Rahmad Nor Gading), 2 Cloud Engineer (Edy Setiawan & I Wayan Natura Adnyana), dan 2 Android Developer (Rijal Muhyidin dan Hafid Ali Mustaqim)."),
                         Faq("Mengapa beberapa fitur belum tersedia?","" +
-                                "Karena rentang waktu pengerjaan ini dibatasi sampai 16 Juni, sehingga beberapa fitur belum tersedia"),
-                        Faq("Fitur apa saja yang berada dalam pengembangan?","Beberapa fitur yang dalam pengembangan antara lain : konsultasi, widget feature, upgrade pose suggestion")
+                                "Karena rentang waktu pengerjaan aplikasi ini dibatasi sampai 16 Juni, sehingga beberapa fitur belum tersedia. Setelah masa penilaian selesai, kami akan kembali lanjutkan proyek ini hingga 6 bulan kedepan."),
+                        Faq("Fitur apa saja yang berada dalam pengembangan?","Beberapa fitur yang dalam pengembangan antara lain: Konsultasi, Fitur Olahraga Fisik seperti Berlari, dan Asisten Fokus untuk membantu pengguna dalam fokus bekerja tanpa memegang smartphone.")
                     )
                     FaqScreen(
                         onNavigateUp = {

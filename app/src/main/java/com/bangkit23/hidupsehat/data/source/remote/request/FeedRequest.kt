@@ -4,6 +4,6 @@ import com.google.gson.annotations.SerializedName
 
 data class FeedRequest(
 
-	@field:SerializedName("user_current_mood")
-	val userCurrentMood: String
+	@field:SerializedName("user_uid")
+	val userUid: String
 )

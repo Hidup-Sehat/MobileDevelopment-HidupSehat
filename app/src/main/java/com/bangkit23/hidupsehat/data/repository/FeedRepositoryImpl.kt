@@ -1,5 +1,6 @@
 package com.bangkit23.hidupsehat.data.repository
 
+import com.bangkit23.hidupsehat.data.source.firebase.FirebaseAuth
 import com.bangkit23.hidupsehat.data.source.remote.RemoteDataSource
 import com.bangkit23.hidupsehat.data.source.remote.request.FeedRequest
 import com.bangkit23.hidupsehat.domain.model.feed.DetailFeed
@@ -18,14 +19,14 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FeedRepositoryImpl @Inject constructor(private val remoteDataSource: RemoteDataSource) :
+class FeedRepositoryImpl @Inject constructor(private val remoteDataSource: RemoteDataSource,
+private val firebaseAuth : FirebaseAuth) :
     FeedRepository {
     override fun getFeeds(): Flow<Result<List<Feed>>> = flow {
         emit(Result.Loading())
         try {
-            val request =
-                FeedRequest("hari ini aku {emosi postif, emosi negatif} yang berasal dari {asal emosi}, {cerita}")
-            val response = remoteDataSource.getFeeds(request)
+            val request = firebaseAuth.getSignedUser()?.userId
+            val response = remoteDataSource.getFeeds(FeedRequest(userUid = request.toString()))
             val data = response.data.toDomainn()
             if (data.isNotEmpty()) {
                 emit(Result.Success(data))
