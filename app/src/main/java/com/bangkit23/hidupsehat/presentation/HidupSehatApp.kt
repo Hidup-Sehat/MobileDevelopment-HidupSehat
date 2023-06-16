@@ -460,7 +460,9 @@ fun HidupSehatApp(
                             navController.navigateUp()
                         },
                         onPopBackStak = {
-                            navController.popBackStack()
+                            navController.navigate("mental-health-graph") {
+                                popUpTo("home")
+                            }
                         }
                     )
                 }
