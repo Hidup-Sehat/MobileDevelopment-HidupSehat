@@ -39,7 +39,9 @@ import com.bangkit23.hidupsehat.presentation.screen.exercise.component.ListItemE
 import com.bangkit23.hidupsehat.presentation.screen.exercise.model.Exercise
 import com.bangkit23.hidupsehat.presentation.screen.home.model.emotions
 import com.bangkit23.hidupsehat.presentation.screen.mental_health.components.FilledEmotionCard
+import com.bangkit23.hidupsehat.presentation.screen.mental_health.components.ListItemConsultation
 import com.bangkit23.hidupsehat.presentation.screen.mental_health.components.ListItemFeed
+import com.bangkit23.hidupsehat.presentation.screen.mental_health.model.Consultation
 import com.bangkit23.hidupsehat.presentation.ui.theme.HidupSehatTheme
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
@@ -48,6 +50,7 @@ import com.google.android.exoplayer2.ui.PlayerControlView
 @Composable
 fun MentalHealthScreen(
     navigateUp: () -> Unit,
+    navigateToFeedDetail: (String) -> Unit,
     viewModel: MentalHealthViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -56,10 +59,12 @@ fun MentalHealthScreen(
         welcomeWords = state.greetingMessage,
         hasFilledEmotion = true,
         musicName = "Nature - Lesfm",
-        recommendedConsultations = emptyList(),
+        recommendedConsultations = state.recommendationConsultation,
         recommendedFeeds = state.recommendationFeeds,
         recommendedActivities = state.recommendationActivities,
-        onItemFeedClick = {},
+        onItemFeedClick = {
+            navigateToFeedDetail(it.key ?: "")
+        },
         onItemConsultationClick = {},
         onItemActivityClick = {},
         navigateUp = navigateUp
@@ -74,10 +79,10 @@ fun MentalHealthContent(
     musicName: String,
     recommendedActivities: List<Exercise>,
     recommendedFeeds: List<Feed>,
-    recommendedConsultations: List<Exercise>,
+    recommendedConsultations: List<Consultation>,
     onItemActivityClick: (Exercise) -> Unit,
     onItemFeedClick: (Feed) -> Unit,
-    onItemConsultationClick: () -> Unit,
+    onItemConsultationClick: (Consultation) -> Unit,
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -150,10 +155,10 @@ fun MentalHealthContent(
                     modifier = Modifier
                         .padding(top = 16.dp)
                 )
-                ListItemExercise(
+                ListItemConsultation(
                     headerText = "Konsultasikan Masalahmu",
-                    data = recommendedActivities,
-                    onItemClicked = onItemActivityClick,
+                    data = recommendedConsultations,
+                    onItemClicked = onItemConsultationClick,
                     modifier = Modifier
                         .padding(top = 16.dp)
                 )

@@ -102,7 +102,7 @@ fun ItemFaq(question: String, answer: String) {
 @Preview(showBackground = true)
 @Composable
 fun FaqScreenPrev() {
-    val dummyList = listOf<Faq>(
+    val dummyList = listOf(
         Faq("Apa itu aplikasi HidupSehat", ""),
         Faq("Apakah aplikasi HidupSehat gratis?", ""),
         Faq("Siapa yang menciptakan aplikasi HidupSehat?", ""),

@@ -7,6 +7,9 @@ data class UserNeedsResponse(
 	@field:SerializedName("gender")
 	val gender: String? = null,
 
+	@field:SerializedName("calorieBurned")
+	val burnedCalorie: Int? = null,
+
 	@field:SerializedName("sleepNeeds")
 	val sleepNeeds: Int? = null,
 

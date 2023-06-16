@@ -214,6 +214,7 @@ class ScanFoodResultViewModel @Inject constructor(
             totalCarb = foods.sumOf { it?.carbohydrate?.toInt() ?: 0 },
             totalProtein = foods.sumOf { it?.protein?.toInt() ?: 0 },
             totalFat = foods.sumOf { it?.fat?.toInt() ?: 0 },
+            totalCalorie = foods.sumOf { it?.energyKKal?.toInt() ?: 0 },
             id = "${Random.nextInt(100)}",
             totalFiber = foods.sumOf { it?.fiber?.toInt() ?: 0 },
             foods = request

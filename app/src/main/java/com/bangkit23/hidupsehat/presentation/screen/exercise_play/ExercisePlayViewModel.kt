@@ -2,6 +2,7 @@ package com.bangkit23.hidupsehat.presentation.screen.exercise_play
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bangkit23.hidupsehat.domain.usecase.activity.ActivityUseCase
 import com.bangkit23.hidupsehat.domain.usecase.user.UserUseCase
 import com.bangkit23.hidupsehat.presentation.screen.exercise_play.model.PersonBodyAngle
 import com.bangkit23.hidupsehat.util.Result
@@ -10,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,6 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ExercisePlayViewModel @Inject constructor(
     private val userUseCase: UserUseCase,
+    private val activityUseCase: ActivityUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ExercisePlayState())
@@ -31,11 +34,13 @@ class ExercisePlayViewModel @Inject constructor(
                     )
                 }
             }
+
             is ExercisePlayEvent.OnPosePerfect -> {
                 countDownTimer(
                     currentPosePosition = event.currentPosePosition
                 ).start()
             }
+
             is ExercisePlayEvent.ResetScore -> {
                 _state.update {
                     it.copy(
@@ -43,6 +48,7 @@ class ExercisePlayViewModel @Inject constructor(
                     )
                 }
             }
+
             is ExercisePlayEvent.SetScore -> {
                 _state.update {
                     it.copy(
@@ -52,6 +58,7 @@ class ExercisePlayViewModel @Inject constructor(
                     )
                 }
             }
+
             is ExercisePlayEvent.OnShowHideExitDialog -> {
                 _state.update {
                     it.copy(
@@ -81,7 +88,9 @@ class ExercisePlayViewModel @Inject constructor(
         _state.update {
             val posesSize = it.exercise.poses.size
             val isExerciseDone = currentPosePosition == posesSize - 1
-            if (isExerciseDone) addUserPoints()
+            if (isExerciseDone) {
+                markActivityAsDone(it.exercise.caloriesBurned)
+            }
             it.copy(
                 currentPosePosition = if (currentPosePosition != posesSize - 1)
                     currentPosePosition + 1 else posesSize - 1,
@@ -92,7 +101,8 @@ class ExercisePlayViewModel @Inject constructor(
         }
     }
 
-    private fun addUserPoints() = viewModelScope.launch {
+    private fun markActivityAsDone(burnedCalorie: Int) = viewModelScope.launch {
+        activityUseCase.updateBurnedCalorie(burnedCalorie).collect()
         userUseCase.addUserPoints(25).collect { result ->
             when (result) {
                 is Result.Loading -> {}
@@ -104,6 +114,7 @@ class ExercisePlayViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is Result.Error -> {
                     _state.update {
                         it.copy(

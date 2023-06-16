@@ -1,6 +1,7 @@
 package com.bangkit23.hidupsehat.presentation.screen.auth.register
 
 import android.app.Activity
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -111,6 +112,12 @@ fun RegisterScreen(
 
     if (state.loading) {
         LoadingDialog()
+    }
+
+    LaunchedEffect(state.signInError) {
+        state.signInError?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+        }
     }
 }
 
