@@ -25,6 +25,9 @@ data class AddFoodsRequest(
 	@field:SerializedName("totalSerat")
 	val totalFiber: Int? = null,
 
+	@field:SerializedName("actualCalorie")
+	val totalCalorie: Int? = null,
+
 	@field:SerializedName("makanan")
 	val foods: List<FoodRequestItem>
 )

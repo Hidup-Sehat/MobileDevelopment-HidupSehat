@@ -80,7 +80,7 @@ fun DialogAddFoods(
                     },
                     actions = {
                         TextButton(
-                            onClick = {},
+                            onClick = onDismiss,
                         ) {
                             Text("Selesai")
                         }
