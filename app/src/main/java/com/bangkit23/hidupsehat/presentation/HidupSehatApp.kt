@@ -371,7 +371,7 @@ fun HidupSehatApp(
                                 "Aplikasi gaya hidup sehat all-in-one pertama di Indonesia yang dapat membantu & memperkenalkan gaya hidup sehat yang dibutuhkan masyarakat Indonesia"),
                         Faq("Apakah aplikasi HidupSehat gratis?","Aplikasi HidupSehat sepenuhnya gratis, namun apabila anda ingin fitur yang lebih bisa menggunakan premium"),
                         Faq("Siapa yang menciptakan aplikasi HidupSehat?","" +
-                                "Aplikasi HidupSehat diciptakan oleh Fazri, Ravie, Natura, Rijal & Hafid"),
+                                "Aplikasi HidupSehat diciptakan oleh Fazri, Ravie, Natura, Edi, Rijal & Hafid"),
                         Faq("Mengapa beberapa fitur belum tersedia?","" +
                                 "Karena rentang waktu pengerjaan ini dibatasi sampai 16 Juni, sehingga beberapa fitur belum tersedia"),
                         Faq("Fitur apa saja yang berada dalam pengembangan?","Beberapa fitur yang dalam pengembangan antara lain : konsultasi, widget feature, upgrade pose suggestion")
