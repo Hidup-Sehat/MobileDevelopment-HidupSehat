@@ -18,7 +18,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -26,7 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,13 +34,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bangkit23.hidupsehat.R
 import com.bangkit23.hidupsehat.domain.model.food.Food
 import com.bangkit23.hidupsehat.presentation.screen.food_information_detail.component.CardFoodContent
+import com.bangkit23.hidupsehat.presentation.screen.scanfood_edit.components.CustomTextFieldLabel
+import com.bangkit23.hidupsehat.presentation.screen.scanfood_edit.components.DropDownEditFood
+import com.bangkit23.hidupsehat.util.get3DigitsOnly
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailFoodInformationScreen(
     name: String,
     onNavigateUp: () -> Unit,
-    viewModel: DetailFoodInformationViewModel = hiltViewModel()
+    viewModel: DetailFoodInformationViewModel = hiltViewModel(),
 ) {
 
     LaunchedEffect(key1 = Unit) {
@@ -51,73 +52,88 @@ fun DetailFoodInformationScreen(
 
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("") },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        onNavigateUp()
-                    }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = null)
-                    }
+    Scaffold(topBar = {
+        TopAppBar(title = { Text("") }, navigationIcon = {
+            IconButton(onClick = {
+                onNavigateUp()
+            }) {
+                Icon(Icons.Default.ArrowBack, contentDescription = null)
+            }
+        }, actions = {
+            IconButton(onClick = {}) {
+                Icon(Icons.Default.MoreVert, contentDescription = null)
+            }
+        })
+    }, content = { padding ->
+        state.food?.let {
+            DetailFoodInformationContent(
+                modifier = Modifier.padding(padding),
+                food = it,
+                count = state.count,
+                portionSizes = state.portionSize,
+                onDropDownItemClick = { food, count ->
+                    viewModel.onEvent(DetailFoodInformationEvent.OnDropDownItemClick(food, count))
                 },
-                actions = {
-                    IconButton(onClick = {}) {
-                        Icon(Icons.Default.MoreVert, contentDescription = null)
-                    }
+                onCountChange = { count ->
+                    viewModel.onEvent(DetailFoodInformationEvent.OnCountChange(count))
+                },
+                onPortionSizeClick = {
+                    viewModel.onEvent(DetailFoodInformationEvent.OnPortionSizeClick(it))
                 }
             )
-        },
-        content = { padding ->
-            state.food?.let {
-                DetailFoodInformationContent(
-                    modifier = Modifier.padding(padding),
-                    food = it
-                )
-            }
         }
-    )
+    })
 }
 
 @Composable
 fun DetailFoodInformationContent(
     food: Food,
-    modifier: Modifier = Modifier
+    count: Int,
+    portionSizes: List<Food>,
+    onPortionSizeClick: () -> Unit,
+    onDropDownItemClick: (Food, Int) -> Unit,
+    onCountChange: (Int) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
         Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            text = food.name!!, maxLines = 3, style = MaterialTheme.typography.headlineMedium
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            text = food.name ?: "",
+            maxLines = 3,
+            style = MaterialTheme.typography.headlineMedium
         )
         Divider(
             modifier = Modifier.padding(vertical = 8.dp)
         )
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            OutlinedTextField(
+            CustomTextFieldLabel(
                 modifier = Modifier.weight(1 / 4f),
-                value = "",
-                onValueChange = {},
-                label = { Text("Qty") })
+                label = "Jumlah",
+                onValueChange = {
+                    onCountChange(it.toIntOrNull() ?: 1)
+                },
+                value = "$count"
+            )
             Spacer(modifier = Modifier.width(10.dp))
-            OutlinedTextField(
+            DropDownEditFood(
+                value = "${food.portionSize}",
+                portionSizes = portionSizes,
+                onDropDownItemClick = {
+                    it?.let {
+                        onDropDownItemClick(it, count)
+                    }
+                },
+                onPortionSizeClick = onPortionSizeClick,
                 modifier = Modifier.weight(3 / 4f),
-                value = "",
-                onValueChange = {},
-                label = { Text("Ukuran Porsi") })
+            )
         }
-
         CardFoodContent(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 20.dp),
+                .padding(top = 8.dp, bottom = 16.dp)
+                .padding(horizontal = 16.dp),
             karbohidrat = food.carbohydrate ?: 0.0,
             lemak = food.fat ?: 0.0,
             serat = food.fiber ?: 0.0,
@@ -158,12 +174,10 @@ fun InformasiGizi(
     fiber: Double,
     sugar: Double,
     sodium: Double,
-    potassium: Double
+    potassium: Double,
 ) {
     Column(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 20.dp)
+        modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 20.dp)
             .background(colorResource(id = R.color.light_gray))
             .padding(horizontal = 16.dp, vertical = 20.dp)
     ) {
@@ -180,38 +194,33 @@ fun InformasiGizi(
         )
         Divider(modifier = Modifier.padding(vertical = 6.dp), thickness = 4.dp)
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = "Energi")
-            Text(text = "${energyKj}kJ")
+            Text(text = "${energyKj.get3DigitsOnly()}kJ")
         }
         Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 6.dp),
-            text = "${energyKKal}kkal", textAlign = TextAlign.End
+            modifier = Modifier.fillMaxWidth().padding(top = 6.dp),
+            text = "${energyKKal}kkal",
+            textAlign = TextAlign.End
         )
         Divider(modifier = Modifier.padding(vertical = 6.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = "Lemak")
             Text(text = "${fat}g")
         }
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 8.dp),
+            modifier = Modifier.fillMaxWidth().padding(start = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column() {
+            Column {
                 Text(text = "Lemak Jenuh")
                 Text(text = "Lemak tak Jenuh Ganda")
                 Text(text = "Lemak tak Jenuh Tunggal")
             }
-            Column() {
+            Column {
                 Text(text = "${saturatedFat}g")
                 Text(text = "${polyunsaturatedFat}g")
                 Text(text = "${monosaturatedFat}g")
@@ -219,35 +228,30 @@ fun InformasiGizi(
         }
         Divider(Modifier.padding(vertical = 6.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = "Kolesterol")
             Text(text = "${cholesterol}mg")
         }
         Divider(Modifier.padding(vertical = 6.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = "Protein")
             Text(text = "${protein}g")
         }
         Divider(Modifier.padding(vertical = 6.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = "Karbohidrat")
             Text(text = "${carbohydrate}g")
         }
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 8.dp),
+            modifier = Modifier.fillMaxWidth().padding(start = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column() {
+            Column {
                 Text(text = "Serat")
                 Text(text = "Gula")
             }
@@ -258,16 +262,14 @@ fun InformasiGizi(
         }
         Divider(Modifier.padding(vertical = 6.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = "Sodium")
             Text(text = "${sodium}mg")
         }
         Divider(Modifier.padding(vertical = 6.dp))
         Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = "Kalium")
             Text(text = "${potassium}mg")

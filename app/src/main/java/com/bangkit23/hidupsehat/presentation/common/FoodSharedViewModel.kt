@@ -10,7 +10,7 @@ import javax.inject.Inject
 @HiltViewModel
 class FoodSharedViewModel @Inject constructor() : ViewModel(){
     private val _food = MutableStateFlow(
-        Food(1,)
+        Food(1)
     )
     val food = _food.asStateFlow()
 

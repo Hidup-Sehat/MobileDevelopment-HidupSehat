@@ -1,12 +1,12 @@
 package com.bangkit23.hidupsehat.data.source.firebase
 
 import android.content.Intent
-import android.util.Log
 import com.bangkit23.hidupsehat.presentation.screen.auth.model.SignInResult
 import com.bangkit23.hidupsehat.presentation.screen.auth.model.UserData
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
@@ -59,6 +59,10 @@ class FirebaseAuthImpl @Inject constructor(
     override suspend fun registerWithEmail(name: String, email: String, password: String): SignInResult {
         val registerTask = auth.createUserWithEmailAndPassword(email, password).await()
         val user = registerTask.user
+        val profileUpdate = userProfileChangeRequest {
+            displayName = name
+        }
+        auth.currentUser?.updateProfile(profileUpdate)?.await()
         return SignInResult(
             data = user?.run {
                 UserData(
@@ -78,8 +82,6 @@ class FirebaseAuthImpl @Inject constructor(
     }
 
     override suspend fun getSignedUser(): UserData? = auth.currentUser?.run {
-        val s = isUserAlreadyExists(uid)
-        Log.d("USEREXIST", "getSignedUser: $s")
         UserData(
             userId = uid,
             username = displayName,

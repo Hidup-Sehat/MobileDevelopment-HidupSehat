@@ -94,6 +94,7 @@ class RegisterViewModel @Inject constructor(
                         _state.update {
                             it.copy(
                                 signInSuccessful = true,
+                                signInResult = result.data,
                                 loading = false
                             )
                         }

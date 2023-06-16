@@ -34,7 +34,7 @@ object NetworkModule {
     @Singleton
     fun provideApiService(okHttpClient: OkHttpClient): ApiService {
         return Retrofit.Builder()
-            .baseUrl("https://hidup-sehat-api-production.up.railway.app/v1/")
+            .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()

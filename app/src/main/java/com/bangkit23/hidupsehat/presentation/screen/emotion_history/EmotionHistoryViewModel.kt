@@ -3,6 +3,7 @@ package com.bangkit23.hidupsehat.presentation.screen.emotion_history
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bangkit23.hidupsehat.domain.usecase.diary.DiaryUseCase
+import com.bangkit23.hidupsehat.util.DateHelper
 import com.bangkit23.hidupsehat.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +22,7 @@ class EmotionHistoryViewModel @Inject constructor(
         get() = _state.asStateFlow()
 
     init {
-        onEvent(EmotionHistoryEvent.OnGetDiaryByDate("2023-06-14"))
+        onEvent(EmotionHistoryEvent.OnGetDiaryByDate(DateHelper.getCurrentDate()))
     }
 
     private fun onEvent(event : EmotionHistoryEvent){

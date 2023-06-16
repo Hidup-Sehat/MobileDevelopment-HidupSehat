@@ -7,10 +7,13 @@ sealed class DetailFoodInformationEvent {
         val name : String
     ) : DetailFoodInformationEvent()
     data class OnPortionSizeClick(
-        val food : Food?
+        val food : Food
     ) : DetailFoodInformationEvent()
-
     data class OnDropDownItemClick(
-        val food : Food?
+        val food : Food,
+        val count: Int,
+    ) : DetailFoodInformationEvent()
+    data class OnCountChange(
+        val count: Int
     ) : DetailFoodInformationEvent()
 }

@@ -6,5 +6,6 @@ data class DiaryState(
     val source : String? = null,
     val note : String? = "",
     val isDiaryDone : Boolean = false,
-    val diaryError : String? = null
+    val diaryError : String? = null,
+    val isLoading: Boolean = false,
 )

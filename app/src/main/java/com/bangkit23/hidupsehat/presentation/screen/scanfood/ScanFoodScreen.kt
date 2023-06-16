@@ -12,6 +12,7 @@ import androidx.camera.core.Preview
 import androidx.camera.core.UseCase
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -24,8 +25,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.RichTooltipBox
+import androidx.compose.material3.RichTooltipState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -62,7 +66,7 @@ import java.io.File
 fun ScanFoodScreen(
     onDetectedImage: (Bitmap, List<DetectionResult>) -> Unit,
     onNavigateUp: () -> Unit,
-    viewModel: ScanFoodViewModel = hiltViewModel()
+    viewModel: ScanFoodViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -113,6 +117,7 @@ fun ScanFoodContent(
     val permissionState = rememberPermissionState(
         android.Manifest.permission.CAMERA
     )
+    val tooltipState = remember { RichTooltipState() }
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
@@ -143,7 +148,12 @@ fun ScanFoodContent(
                 },
                 actions = {
                     IconButton(
-                        onClick = onHelpClick
+                        onClick = {
+                            onHelpClick()
+                            coroutineScope.launch {
+                                tooltipState.show()
+                            }
+                        }
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.HelpOutline,
@@ -155,13 +165,38 @@ fun ScanFoodContent(
         }
     ) {
         Box(modifier = modifier.padding(it)) {
+            RichTooltipBox(
+                text = {
+                    Text("Fitur ini bisa mendeteksi 36 jenis makanan: Ayam, Tahu Goreng, Tomat, Donat Dilapisi Gula, Donat Dilapisi Coklat, Strawberry Frosted Donut (Dunkin Donuts), Chocolate, Frosted Donut (Dunkin Donuts), Mentimun, Telur Dadar, Nasi Putih, Tempe Goreng, Telur Asin, Telur Balado, Telur Ceplok, Mie, Roti, Es Krim, Es Loli, Roti Bagel, Pretzel Cinnamon Sugar, Cheeseburger, Hotdog, Kentang Tumbuk, Kubis, Brokoli, Kembang Kol, Paprika Merah, Stroberi, Jeruk, Lemon, Nanas, Pisang, Nangka, Spaghetti Carbonara, Pizza dengan Daging dan Sayuran, Jagung.")
+                },
+                title = {
+                    Text("Scan Makanan")
+                },
+                tooltipState = tooltipState,
+                action = {
+                    TextButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                tooltipState.dismiss()
+                            }
+                        }
+                    ) { Text("Ok") }
+                },
+                modifier = Modifier.fillMaxWidth()
+                    .padding(16.dp)
+                    .align(Alignment.TopCenter)
+            ) {}
             PermissionRequired(
                 permissionState = permissionState,
                 permissionNotGrantedContent = {},
                 permissionNotAvailableContent = {}
             ) {
                 val lifecycleOwner = LocalLifecycleOwner.current
-                var previewUseCase by remember { mutableStateOf<UseCase>(Preview.Builder().build()) }
+                var previewUseCase by remember {
+                    mutableStateOf<UseCase>(
+                        Preview.Builder().build()
+                    )
+                }
                 val imageCaptureUseCase by remember {
                     mutableStateOf(
                         ImageCapture.Builder()
@@ -181,7 +216,10 @@ fun ScanFoodContent(
                             coroutineScope.launch {
                                 onLoading()
                                 try {
-                                    onImageFiled(imageCaptureUseCase.takePicture(context.executor), true)
+                                    onImageFiled(
+                                        imageCaptureUseCase.takePicture(context.executor),
+                                        true
+                                    )
                                 } catch (e: Exception) {
                                     e.printStackTrace()
                                 }

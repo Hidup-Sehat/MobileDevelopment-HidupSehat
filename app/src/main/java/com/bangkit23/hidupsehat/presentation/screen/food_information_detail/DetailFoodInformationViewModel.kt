@@ -14,10 +14,9 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailFoodInformationViewModel @Inject constructor(
     private val foodUseCase: FoodUseCase
-) : ViewModel(){
-    private val _state = MutableStateFlow(DetailFoodInformationState(
+) : ViewModel() {
 
-    ))
+    private val _state = MutableStateFlow(DetailFoodInformationState())
     val state = _state.asStateFlow()
 
     fun onEvent(event : DetailFoodInformationEvent){
@@ -25,32 +24,43 @@ class DetailFoodInformationViewModel @Inject constructor(
             is DetailFoodInformationEvent.OnGetFoodById -> {
                 getFoodByName(event.name)
             }
-
             is DetailFoodInformationEvent.OnDropDownItemClick -> {
-
+                _state.update {
+                    it.copy(
+                        count = 1
+                    )
+                }
+                changePortionSize(event.food, event.count)
+            }
+            is DetailFoodInformationEvent.OnCountChange -> {
+                _state.update {
+                    it.copy(
+                        count = event.count
+                    )
+                }
+                changeFoodCount(event.count)
             }
             is DetailFoodInformationEvent.OnPortionSizeClick -> {
                 _state.update {
                     it.copy(
-                        portionSize = emptyList()
+                        portionSize = emptyList(),
                     )
                 }
-                event.food?.let { getPortionSizes(it) }
-
+                getPortionSizes(event.food)
             }
         }
     }
 
-    private fun getFoodByName(name : String){
+    private fun getFoodByName(name : String) {
         viewModelScope.launch {
             foodUseCase.getFoodByName(name)
                 .collect {food ->
                     _state.update {
                         it.copy(
-                            food = food
+                            food = food,
+                            notEditedFood = food
                         )
                     }
-
                 }
         }
     }
@@ -64,6 +74,44 @@ class DetailFoodInformationViewModel @Inject constructor(
                         )
                     }
                 }
+        }
+    }
+
+    private fun changePortionSize(food: Food, count: Int) {
+        _state.update {
+            val updatedFood = food.copy(
+                count = count,
+                energyKKal = food.energyKKal?.times(count),
+            )
+            it.copy(
+                food = updatedFood
+            )
+        }
+    }
+
+    private fun changeFoodCount(count: Int) {
+        _state.update {
+            val notEditedFood = it.notEditedFood
+            val updatedFood =it.food?.copy(
+                count = count,
+                energyKKal = notEditedFood?.energyKKal?.times(count),
+                energyKj = notEditedFood?.energyKj?.times(count),
+                sugar = notEditedFood?.sugar?.times(count),
+                potassium = notEditedFood?.potassium?.times(count),
+                carbohydrate = notEditedFood?.carbohydrate?.times(count),
+                cholesterol = notEditedFood?.cholesterol?.times(count),
+                fat = notEditedFood?.fat?.times(count),
+                saturatedFat = notEditedFood?.saturatedFat?.times(count),
+                transFat = notEditedFood?.transFat?.times(count),
+                polyunsaturatedFat = notEditedFood?.polyunsaturatedFat?.times(count),
+                monounsaturatedFat = notEditedFood?.monounsaturatedFat?.times(count),
+                protein = notEditedFood?.protein?.times(count),
+                fiber = notEditedFood?.fiber?.times(count),
+                sodium = notEditedFood?.sodium?.times(count),
+            )
+            it.copy(
+                food = updatedFood
+            )
         }
     }
 }

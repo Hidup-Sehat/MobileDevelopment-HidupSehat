@@ -1,7 +1,6 @@
 package com.bangkit23.hidupsehat.presentation.screen.food_history.component
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme

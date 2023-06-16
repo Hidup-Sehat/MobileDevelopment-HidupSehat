@@ -51,9 +51,8 @@ import com.bangkit23.hidupsehat.presentation.screen.exercise_play.ExercisePlaySc
 import com.bangkit23.hidupsehat.presentation.screen.feeds.FeedScreen
 import com.bangkit23.hidupsehat.presentation.screen.feeds.model.Feed
 import com.bangkit23.hidupsehat.presentation.screen.feeds_detail.FeedsDetailScreen
-import com.bangkit23.hidupsehat.presentation.screen.food_information_detail.DetailFoodInformationScreen
 import com.bangkit23.hidupsehat.presentation.screen.food_information.FoodInformationScreen
-import com.bangkit23.hidupsehat.presentation.screen.food_information.model.FoodInformation
+import com.bangkit23.hidupsehat.presentation.screen.food_information_detail.DetailFoodInformationScreen
 import com.bangkit23.hidupsehat.presentation.screen.home.HomeScreen
 import com.bangkit23.hidupsehat.presentation.screen.leaderboard.LeaderboardScreen
 import com.bangkit23.hidupsehat.presentation.screen.manual_foods.ManualFoodsScreen
@@ -143,7 +142,7 @@ fun HidupSehatApp(
                     onFoodInformationClicked = {
                         navController.navigate("food-information-graph")
                     },
-                    onCardEmotionChoosen = {
+                    onEmotionChosen = {
                         navController.navigate("diary-graph")
                     }
                 )
@@ -152,7 +151,7 @@ fun HidupSehatApp(
                 ConsultationScreen()
             }
             composable(Screen.Feeds.route) {
-                val dummyList = listOf<Feed>(
+                val dummyList = listOf(
                     Feed(
                         1,
                         image = "",
@@ -168,7 +167,8 @@ fun HidupSehatApp(
             }
             composable(
                 route = Screen.FeedDetail.route,
-                arguments = listOf(navArgument("id"){type = NavType.StringType})){
+                arguments = listOf(navArgument("id") { type = NavType.StringType })
+            ) {
                 val id = it.arguments?.getString("id") ?: ""
                 FeedsDetailScreen(
                     id = id,
@@ -385,7 +385,8 @@ fun HidupSehatApp(
                 composable("rating", deepLinks = listOf(navDeepLink {
                     uriPattern = "https://play.google.com/store/apps/details?id=com.gojek.app"
                 })) {
-                    val uri = Uri.parse("https://play.google.com/store/apps/details?id=com.gojek.app")
+                    val uri =
+                        Uri.parse("https://play.google.com/store/apps/details?id=com.gojek.app")
                     val intent = Intent(Intent.ACTION_VIEW, uri)
                     context.startActivity(intent)
                 }
@@ -394,7 +395,7 @@ fun HidupSehatApp(
                 startDestination = "reminder",
                 route = "reminder-graph"
             ) {
-                composable( "reminder") {
+                composable("reminder") {
                     ReminderScreen(
                         navigateUp = {
                             navController.navigateUp()
@@ -435,15 +436,12 @@ fun HidupSehatApp(
             navigation(
                 startDestination = Screen.FoodInformation.route,
                 route = "food-information-graph"
-            ){
-                composable(Screen.FoodInformation.route){
-                    val list = listOf<FoodInformation>(
-                        FoodInformation(1,"Nasi Goreng","100g","168kal")
-                    )
-                    FoodInformationScreen(data = listOf(),
-                    navigateToDetail = {
-                        navController.navigate(Screen.FoodInformationDetail.createRoute(it))
-                    },
+            ) {
+                composable(Screen.FoodInformation.route) {
+                    FoodInformationScreen(
+                        navigateToDetail = {
+                            navController.navigate(Screen.FoodInformationDetail.createRoute(it))
+                        },
                         onNavigateUp = {
                             navController.navigateUp()
                         }
@@ -451,8 +449,8 @@ fun HidupSehatApp(
                 }
                 composable(
                     route = Screen.FoodInformationDetail.route,
-                    arguments = listOf(navArgument("name"){type = NavType.StringType})
-                    ){
+                    arguments = listOf(navArgument("name") { type = NavType.StringType })
+                ) {
                     val name = it.arguments?.getString("name") ?: ""
                     DetailFoodInformationScreen(
                         onNavigateUp = {
@@ -465,8 +463,8 @@ fun HidupSehatApp(
             navigation(
                 startDestination = Screen.Diary.route,
                 route = "diary-graph"
-            ){
-                composable(Screen.Diary.route){
+            ) {
+                composable(Screen.Diary.route) {
                     DiaryScreen(
                         onNavigateUp = {
                             navController.navigateUp()
