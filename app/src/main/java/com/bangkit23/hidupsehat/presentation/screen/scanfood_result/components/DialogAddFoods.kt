@@ -90,10 +90,10 @@ fun DialogAddFoods(
             snackbarHost = {
                 SnackbarHost(snackbarHostState)
             }
-        ) {
+        ) { contentPadding ->
             Column(
                 modifier = modifier.fillMaxSize()
-                    .padding(it)
+                    .padding(contentPadding)
                     .background(MaterialTheme.colorScheme.background)
             ) {
                 Spacer(Modifier.height(8.dp))

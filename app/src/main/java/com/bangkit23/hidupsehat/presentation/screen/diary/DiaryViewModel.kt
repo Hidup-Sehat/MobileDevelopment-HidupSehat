@@ -27,7 +27,7 @@ class DiaryViewModel @Inject constructor(
 
     fun onEvent(event: DiaryEvent){
         when(event){
-            is DiaryEvent.onSaveDiary -> {
+            is DiaryEvent.OnSaveDiary -> {
                 _state.update {
                     it.copy(
                         emotionPositive = event.positive,

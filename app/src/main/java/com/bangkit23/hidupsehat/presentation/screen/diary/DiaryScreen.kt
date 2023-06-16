@@ -124,11 +124,11 @@ fun DiaryScreen(
                 title = { Text("Diary Moodku") }
             )
         },
-        content = {
+        content = { contentPadding ->
             Column(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
-                    .padding(it),
+                    .padding(contentPadding),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
@@ -208,7 +208,7 @@ fun DiaryScreen(
                 Button(
                     onClick = {
                         viewModel.onEvent(
-                            DiaryEvent.onSaveDiary(
+                            DiaryEvent.OnSaveDiary(
                                 positive = ListConverter.convertListToString(
                                     selectedPositiveEmotions
                                 ),

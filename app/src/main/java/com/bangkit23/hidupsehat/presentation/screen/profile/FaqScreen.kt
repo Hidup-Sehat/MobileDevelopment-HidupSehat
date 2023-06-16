@@ -48,8 +48,8 @@ fun FaqScreen(
                      }
                  })
         },
-        content = {
-            LazyColumn(contentPadding = it){
+        content = { contentPadding ->
+            LazyColumn(contentPadding = contentPadding){
                 items(faq){
                     ItemFaq(question = it, answer = "LKlkjalkjsd" )
                 }

@@ -96,5 +96,5 @@ fun TextChangePassword(
 @Preview(showBackground = true, device = Devices.PIXEL)
 @Composable
 fun ChangePasswordScreenPrev() {
-    ChangePasswordScreen({})
+    ChangePasswordScreen {}
 }

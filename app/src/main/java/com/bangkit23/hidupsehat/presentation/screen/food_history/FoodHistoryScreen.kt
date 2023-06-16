@@ -34,13 +34,12 @@ import com.bangkit23.hidupsehat.domain.model.food.Food
 import com.bangkit23.hidupsehat.presentation.screen.food_history.component.ItemHistory
 import com.bangkit23.hidupsehat.presentation.screen.food_history.component.ProgressHistory
 import com.bangkit23.hidupsehat.presentation.screen.food_history.component.WidgetHistoryItem
-import com.bangkit23.hidupsehat.presentation.screen.food_information_detail.component.CardFoodContent
 import com.bangkit23.hidupsehat.presentation.screen.food_information_detail.component.DetailItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FoodHistoryScreen() {
-    val list = listOf<Food>(
+    val list = listOf(
         Food(
             id = 2887,
             name = "Nasi Putih",
@@ -144,7 +143,7 @@ fun FoodHistoryContent(
                 fontSize = 16.sp, fontWeight = FontWeight.Medium
             )
         )
-        Column() {
+        Column {
             listFoods.forEach {
                 ItemHistory(
                     foodName = it.name.toString(),

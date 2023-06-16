@@ -42,7 +42,7 @@ fun CardEmotion(
                 width = Dimension.fillToConstraints
             },
             title = "Emosi Positif",
-            data = "$positive",
+            data = positive,
             color = colorResource(id = R.color.blue_tile)
         )
         DetailItem(
@@ -53,7 +53,7 @@ fun CardEmotion(
                 width = Dimension.fillToConstraints
             },
             title = "Asal Emosi",
-            data = "$source",
+            data = source,
             color = colorResource(id = R.color.yellow_tile)
         )
         DetailItem(
@@ -63,7 +63,7 @@ fun CardEmotion(
                 end.linkTo(parent.end)
                 width = Dimension.fillToConstraints
             },
-            title = "Emosi Negatif", data = "$negative", color = colorResource(id = R.color.red_tile)
+            title = "Emosi Negatif", data = negative, color = colorResource(id = R.color.red_tile)
         )
     }
 }

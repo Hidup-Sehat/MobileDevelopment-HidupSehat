@@ -1,8 +1,5 @@
 package com.bangkit23.hidupsehat.presentation.navigation
 
-import com.bangkit23.hidupsehat.domain.model.feed.Feed
-import com.bangkit23.hidupsehat.domain.model.food.Food
-
 sealed class Screen(val route: String) {
     object OnBoarding : Screen("on-boarding")
     object Login : Screen("login")
