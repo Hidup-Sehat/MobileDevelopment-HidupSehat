@@ -21,6 +21,7 @@ class AuthRepositoryImpl @Inject constructor(
             val result = firebaseAuth.signInWithIntent(intent)
             emit(Result.Success(result))
         } catch (e: Exception) {
+            e.printStackTrace()
             emit(Result.Error(e.message))
         }
     }.flowOn(Dispatchers.IO)
@@ -31,6 +32,7 @@ class AuthRepositoryImpl @Inject constructor(
             val result = firebaseAuth.signInWithEmail(email, password)
             emit(Result.Success(result))
         } catch (e: Exception) {
+            e.printStackTrace()
             emit(Result.Error(e.message))
         }
     }.flowOn(Dispatchers.IO)
@@ -41,6 +43,7 @@ class AuthRepositoryImpl @Inject constructor(
             val result = firebaseAuth.registerWithEmail(name, email, password)
             emit(Result.Success(result))
         } catch (e: Exception) {
+            e.printStackTrace()
             emit(Result.Error(e.message))
         }
     }.flowOn(Dispatchers.IO)

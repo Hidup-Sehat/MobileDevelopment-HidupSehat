@@ -65,6 +65,7 @@ import com.bangkit23.hidupsehat.presentation.screen.profile.ChangePasswordScreen
 import com.bangkit23.hidupsehat.presentation.screen.profile.FaqScreen
 import com.bangkit23.hidupsehat.presentation.screen.profile.ProfileScreen
 import com.bangkit23.hidupsehat.presentation.screen.profile.UpdateProfile
+import com.bangkit23.hidupsehat.presentation.screen.profile.model.Faq
 import com.bangkit23.hidupsehat.presentation.screen.reminder.ReminderScreen
 import com.bangkit23.hidupsehat.presentation.screen.scanfood.ScanFoodScreen
 import com.bangkit23.hidupsehat.presentation.screen.scanfood_result.ScanFoodResultScreen
@@ -365,12 +366,21 @@ fun HidupSehatApp(
                     )
                 }
                 composable("faq") {
+                    val dummyList = listOf(
+                        Faq("Apa itu aplikasi HidupSehat","" +
+                                "Aplikasi gaya hidup sehat all-in-one pertama di Indonesia yang dapat membantu & memperkenalkan gaya hidup sehat yang dibutuhkan masyarakat Indonesia"),
+                        Faq("Apakah aplikasi HidupSehat gratis?","Aplikasi HidupSehat sepenuhnya gratis, namun apabila anda ingin fitur yang lebih bisa menggunakan premium"),
+                        Faq("Siapa yang menciptakan aplikasi HidupSehat?","" +
+                                "Aplikasi HidupSehat diciptakan oleh C23-PS301 dari Bangkit Academy 2023 Batch 1. Tim kami terdiri dari 2 Machine Learning Engineer (Al’Ravie Mutiar Mahesa & Fazri Rahmad Nor Gading), 2 Cloud Engineer (Edy Setiawan & I Wayan Natura Adnyana), dan 2 Android Developer (Rijal Muhyidin dan Hafid Ali Mustaqim)."),
+                        Faq("Mengapa beberapa fitur belum tersedia?","" +
+                                "Karena rentang waktu pengerjaan aplikasi ini dibatasi sampai 16 Juni, sehingga beberapa fitur belum tersedia. Setelah masa penilaian selesai, kami akan kembali lanjutkan proyek ini hingga 6 bulan kedepan."),
+                        Faq("Fitur apa saja yang berada dalam pengembangan?","Beberapa fitur yang dalam pengembangan antara lain: Konsultasi, Fitur Olahraga Fisik seperti Berlari, dan Asisten Fokus untuk membantu pengguna dalam fokus bekerja tanpa memegang smartphone.")
+                    )
                     FaqScreen(
                         onNavigateUp = {
                             navController.navigateUp()
                         },
-                        faq = listOf("Pertanyaan 1")
-                    )
+                        faq = dummyList,)
                 }
                 composable("rating", deepLinks = listOf(navDeepLink {
                     uriPattern = "https://play.google.com/store/apps/details?id=com.gojek.app"
@@ -419,6 +429,9 @@ fun HidupSehatApp(
                     MentalHealthScreen(
                         navigateUp = {
                             navController.navigateUp()
+                        },
+                        navigateToFeedDetail = {
+                            navController.navigate(Screen.FeedDetail.createRoute(it))
                         }
                     )
                 }
@@ -460,7 +473,9 @@ fun HidupSehatApp(
                             navController.navigateUp()
                         },
                         onPopBackStak = {
-                            navController.popBackStack()
+                            navController.navigate("mental-health-graph") {
+                                popUpTo("home")
+                            }
                         }
                     )
                 }

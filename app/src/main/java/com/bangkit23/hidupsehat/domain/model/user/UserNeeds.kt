@@ -2,6 +2,7 @@ package com.bangkit23.hidupsehat.domain.model.user
 
 data class UserNeeds(
     val gender: String? = null,
+    val burnedCalorie: Int? = null,
     val sleepNeeds: Int? = null,
     val registeredAt: String? = null,
     val weight: Int? = null,

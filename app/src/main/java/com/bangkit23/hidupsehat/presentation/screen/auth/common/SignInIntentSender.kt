@@ -15,6 +15,7 @@ suspend fun signInIntentSender(context: Context): IntentSender? {
         ).await()
         result?.pendingIntent?.intentSender
     } catch (e: Exception) {
+        e.printStackTrace()
         null
     }
 }

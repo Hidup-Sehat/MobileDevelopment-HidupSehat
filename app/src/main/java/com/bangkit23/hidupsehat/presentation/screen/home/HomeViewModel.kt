@@ -29,6 +29,11 @@ class HomeViewModel @Inject constructor(
     fun onEvent(event: HomeEvent) {
         when (event) {
             is HomeEvent.OnRefresh -> {
+                _state.update {
+                    it.copy(
+                        isLoading = true
+                    )
+                }
                 getUserNeeds()
             }
             is HomeEvent.OnTodayEmotionChosen -> {
@@ -54,13 +59,7 @@ class HomeViewModel @Inject constructor(
     private fun getUserNeeds() = viewModelScope.launch {
         userUseCase.getUserNeeds().collect { result ->
             when (result) {
-                is Result.Loading -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = true
-                        )
-                    }
-                }
+                is Result.Loading -> {}
                 is Result.Error -> {
                     _state.update {
                         it.copy(

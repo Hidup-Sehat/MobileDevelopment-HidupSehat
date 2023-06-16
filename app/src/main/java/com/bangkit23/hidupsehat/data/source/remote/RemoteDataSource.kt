@@ -4,6 +4,7 @@ import com.bangkit23.hidupsehat.data.source.remote.request.AddEmotionRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.AddFoodsRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.AddPointsRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.FeedRequest
+import com.bangkit23.hidupsehat.data.source.remote.request.UpdateBurnedCalorieRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.UpdateStatisticRequest
 import com.bangkit23.hidupsehat.data.source.remote.request.UserDetailRequest
 import com.bangkit23.hidupsehat.data.source.remote.retrofit.ApiService
@@ -62,4 +63,7 @@ class RemoteDataSource @Inject constructor(
         userId: String,
         date: String,
     ) = apiService.getDiaryByDate(id = userId, date = date)
+
+    suspend fun updateBurnedCalories(userId: String, calorie: Int) =
+        apiService.updateBurnedCalories(userId, UpdateBurnedCalorieRequest(calorie))
 }

@@ -30,28 +30,32 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bangkit23.hidupsehat.presentation.screen.profile.model.Faq
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FaqScreen(
-    onNavigateUp : () -> Unit,
-    faq : List<String>) {
+    onNavigateUp: () -> Unit,
+    faq: List<Faq>
+) {
     Scaffold(
         topBar = {
-                 TopAppBar(title = {
-                     Text(text = "FAQ")
-                 }, navigationIcon = {
-                     IconButton(onClick = {
-                         onNavigateUp.invoke()
-                     }) {
-                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null )
-                     }
-                 })
+            TopAppBar(title = {
+                Text(text = "FAQ")
+            }, navigationIcon = {
+                IconButton(onClick = {
+                    onNavigateUp.invoke()
+                }) {
+                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
+                }
+            })
         },
-        content = { contentPadding ->
-            LazyColumn(contentPadding = contentPadding){
-                items(faq){
-                    ItemFaq(question = it, answer = "LKlkjalkjsd" )
+        content = {
+            LazyColumn(
+                modifier = Modifier.padding(it)
+            ) {
+                items(faq) {
+                    ItemFaq(question = it.ask, answer = it.answer)
                 }
             }
         }
@@ -59,7 +63,7 @@ fun FaqScreen(
 }
 
 @Composable
-fun ItemFaq(question : String, answer : String) {
+fun ItemFaq(question: String, answer: String) {
     var isExpanded by remember { mutableStateOf(false) }
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -67,20 +71,29 @@ fun ItemFaq(question : String, answer : String) {
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .padding(vertical = 4.dp)
-            .border(width = 2.dp, color = Color.Black, shape = RoundedCornerShape(2.dp))
+            .border(width = 1.dp, color = Color.LightGray, shape = RoundedCornerShape(8.dp))
+            .padding(start = 8.dp)
     ) {
-        Column(modifier = Modifier
-            .weight(1f)
-            .padding(vertical = 16.dp)) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(vertical = 16.dp)
+                .padding(start = 8.dp)
+        ) {
             Text(text = question, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            if (isExpanded){
-                Text(text = answer)
+            if (isExpanded) {
+                Text(
+                    modifier = Modifier.padding(top = 8.dp),
+                    text = answer)
             }
         }
         IconButton(onClick = {
             isExpanded = !isExpanded
         }) {
-            Icon(imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore, contentDescription = null)
+            Icon(
+                imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                contentDescription = null
+            )
         }
     }
 }
@@ -89,12 +102,14 @@ fun ItemFaq(question : String, answer : String) {
 @Preview(showBackground = true)
 @Composable
 fun FaqScreenPrev() {
-    val list = listOf(
-        "Pertanyaan 1",
-        "Pertanyaan 2",
-        "Pertanyaan 3",
+    val dummyList = listOf(
+        Faq("Apa itu aplikasi HidupSehat", ""),
+        Faq("Apakah aplikasi HidupSehat gratis?", ""),
+        Faq("Siapa yang menciptakan aplikasi HidupSehat?", ""),
+        Faq("Mengapa beberapa fitur belum tersedia", ""),
+        Faq("Fitur apa saja yang berada dalam pengembangan?", "")
     )
-    FaqScreen({},list)
+    FaqScreen({}, dummyList)
 }
 
 @Preview(showBackground = true)

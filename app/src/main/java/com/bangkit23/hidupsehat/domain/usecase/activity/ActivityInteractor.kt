@@ -12,4 +12,6 @@ class ActivityInteractor @Inject constructor(
     override fun getYogaActivities() = activityRepository.getYogaActivities()
 
     override fun getWorkoutActivities() = activityRepository.getWorkoutActivities()
+
+    override fun updateBurnedCalorie(calorie: Int) = activityRepository.updateBurnedCalorie(calorie)
 }

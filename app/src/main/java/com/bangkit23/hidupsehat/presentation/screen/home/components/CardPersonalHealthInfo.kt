@@ -78,7 +78,7 @@ fun CardPersonalHealthInfo(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 TextWithIcon(
-                    text = "$waterDrunkActual/$waterDrunkExpected L",
+                    text = "$waterDrunkActual/8 gelas",
                     icon = ImageVector.vectorResource(R.drawable.ic_glass_water),
                     textStyle = MaterialTheme.typography.bodyMedium
                 )
@@ -88,7 +88,7 @@ fun CardPersonalHealthInfo(
                     textStyle = MaterialTheme.typography.bodyMedium
                 )
                 TextWithIcon(
-                    text = "$caloriesBurnedActual/$caloriesBurnedExpected kal",
+                    text = "$caloriesBurnedActual/200 kal",
                     icon = ImageVector.vectorResource(R.drawable.ic_fire),
                     textStyle = MaterialTheme.typography.bodyMedium
                 )

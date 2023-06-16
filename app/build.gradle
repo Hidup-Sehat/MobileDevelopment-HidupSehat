@@ -153,4 +153,7 @@ dependencies {
 
     //Chart
     implementation("com.himanshoe:charty:1.0.1")
+
+    //Swipe-Refresh
+    implementation "androidx.compose.material:material:1.4.3"
 }
