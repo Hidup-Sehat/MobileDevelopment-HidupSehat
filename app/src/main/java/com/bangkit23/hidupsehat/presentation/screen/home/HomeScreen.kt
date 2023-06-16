@@ -22,8 +22,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -75,7 +79,7 @@ fun HomeScreen(
     onMentalHealthClick: () -> Unit,
     onFoodInformationClicked: () -> Unit,
     onEmotionChosen: (feelName: String) -> Unit,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -87,6 +91,7 @@ fun HomeScreen(
         },
         userNeeds = state.userNeeds,
         userData = state.userData,
+        refreshing = state.isLoading,
         onScanClicked = onScanClicked,
         onPoseMenuClicked = onPoseMenuClicked,
         onProfileClicked = onProfileClicked,
@@ -95,18 +100,22 @@ fun HomeScreen(
         onSeeAllMonitoringClick = onSeeAllMonitoringClick,
         onManualFoodsClick = onManualFoodsClick,
         onMentalHealthClick = onMentalHealthClick,
+        onRefresh = {
+            viewModel.onEvent(HomeEvent.OnRefresh)
+        },
         onUpdateSuccess = {
             viewModel.onEvent(HomeEvent.OnRefresh)
         }
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun HomeContent(
     chosenEmotion: Feel?,
     userNeeds: UserNeeds,
     userData: UserData?,
+    refreshing: Boolean,
     onEmotionChosen: (Feel?) -> Unit,
     onScanClicked: () -> Unit,
     onPoseMenuClicked: () -> Unit,
@@ -117,8 +126,10 @@ fun HomeContent(
     onManualFoodsClick: () -> Unit,
     onMentalHealthClick: () -> Unit,
     onUpdateSuccess: () -> Unit,
-    modifier: Modifier = Modifier
+    onRefresh: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
+    val refreshState = rememberPullRefreshState(refreshing, onRefresh = onRefresh)
     Scaffold(
         topBar = {
             TopAppBarWithProfile(
@@ -131,54 +142,57 @@ fun HomeContent(
             )
         }
     ) {
-        Column(
-            modifier = modifier.padding(it)
-                .verticalScroll(rememberScrollState())
-            ,
-        ) {
-            var openUpdateInfoSheet by rememberSaveable { mutableStateOf(false) }
+        Box(modifier = modifier.padding(it).pullRefresh(refreshState)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+            ) {
+                var openUpdateInfoSheet by rememberSaveable { mutableStateOf(false) }
 
-            CardEmotionFeel(
-                emotions = emotions,
-                onEmotionChosen = onEmotionChosen,
-                chosenEmotion = chosenEmotion,
-            )
-            CardPersonalHealthInfo(
-                caloriesIntakeActual = userNeeds.actualCalorie ?: 0,
-                waterDrunkActual = userNeeds.actualWater ?: 0,
-                sleepTimeActual = userNeeds.actualSleep ?: 0,
-                caloriesBurnedActual = userNeeds.actualCalorie ?: 0,
-                caloriesIntakeExpected = userNeeds.calorieNeeds ?: 2400,
-                waterDrunkExpected = userNeeds.waterNeeds ?: 0.0,
-                sleepTimeExpected = userNeeds.sleepNeeds ?: 0,
-                caloriesBurnedExpected = userNeeds.calorieNeeds ?: 0,
-                onScanClicked = onScanClicked,
-                onWriteManualClicked = onManualFoodsClick,
-                onUpdateClicked = {
-                    openUpdateInfoSheet = true
-                }
-            )
-            FeaturesMenu(
-                onPoseMenuClicked = onPoseMenuClicked,
-                onReminderMenuClicked = onReminderMenuClicked,
-                onMentalHealthClick = onMentalHealthClick,
-                onFoodInformationClicked = onFoodInformationClicked
-            )
-            MonitoringSection(
-                onSeeAllClick = onSeeAllMonitoringClick
-            )
-
-            if (openUpdateInfoSheet) {
-                UpdateUserInfoScreen(
-                    initialSleepNeeds = userNeeds.actualSleep ?: 0,
-                    initialWaterNeeds = userNeeds.actualWater ?: 0,
-                    onDismissRequest = { openUpdateInfoSheet = false },
-                    onUpdateSuccess = {
-                        onUpdateSuccess()
-                        openUpdateInfoSheet = false
+                CardEmotionFeel(
+                    emotions = emotions,
+                    onEmotionChosen = onEmotionChosen,
+                    chosenEmotion = chosenEmotion,
+                )
+                CardPersonalHealthInfo(
+                    caloriesIntakeActual = userNeeds.actualCalorie ?: 0,
+                    waterDrunkActual = userNeeds.actualWater ?: 0,
+                    sleepTimeActual = userNeeds.actualSleep ?: 0,
+                    caloriesBurnedActual = userNeeds.actualCalorie ?: 0,
+                    caloriesIntakeExpected = userNeeds.calorieNeeds ?: 2400,
+                    waterDrunkExpected = userNeeds.waterNeeds ?: 0.0,
+                    sleepTimeExpected = userNeeds.sleepNeeds ?: 0,
+                    caloriesBurnedExpected = userNeeds.calorieNeeds ?: 0,
+                    onScanClicked = onScanClicked,
+                    onWriteManualClicked = onManualFoodsClick,
+                    onUpdateClicked = {
+                        openUpdateInfoSheet = true
                     }
                 )
+                FeaturesMenu(
+                    onPoseMenuClicked = onPoseMenuClicked,
+                    onReminderMenuClicked = onReminderMenuClicked,
+                    onMentalHealthClick = onMentalHealthClick,
+                    onFoodInformationClicked = onFoodInformationClicked
+                )
+                MonitoringSection(
+                    onSeeAllClick = onSeeAllMonitoringClick
+                )
+
+                if (openUpdateInfoSheet) {
+                    UpdateUserInfoScreen(
+                        initialSleepNeeds = userNeeds.actualSleep ?: 0,
+                        initialWaterNeeds = userNeeds.actualWater ?: 0,
+                        onDismissRequest = { openUpdateInfoSheet = false },
+                        onUpdateSuccess = {
+                            onUpdateSuccess()
+                            openUpdateInfoSheet = false
+                        }
+                    )
+                }
             }
+            PullRefreshIndicator(refreshing, refreshState, Modifier.align(Alignment.TopCenter))
         }
     }
 }
@@ -424,6 +438,7 @@ fun HomeContentPreview() {
             userNeeds = UserNeeds(),
             userData = null,
             chosenEmotion = null,
+            refreshing = false,
             onManualFoodsClick = {},
             onEmotionChosen = {},
             onScanClicked = {},
@@ -434,6 +449,7 @@ fun HomeContentPreview() {
             onMentalHealthClick = {},
             onFoodInformationClicked = {},
             onUpdateSuccess = {},
+            onRefresh = {},
         )
     }
 }
