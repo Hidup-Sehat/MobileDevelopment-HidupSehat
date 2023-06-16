@@ -65,6 +65,7 @@ import com.bangkit23.hidupsehat.presentation.screen.profile.ChangePasswordScreen
 import com.bangkit23.hidupsehat.presentation.screen.profile.FaqScreen
 import com.bangkit23.hidupsehat.presentation.screen.profile.ProfileScreen
 import com.bangkit23.hidupsehat.presentation.screen.profile.UpdateProfile
+import com.bangkit23.hidupsehat.presentation.screen.profile.model.Faq
 import com.bangkit23.hidupsehat.presentation.screen.reminder.ReminderScreen
 import com.bangkit23.hidupsehat.presentation.screen.scanfood.ScanFoodScreen
 import com.bangkit23.hidupsehat.presentation.screen.scanfood_result.ScanFoodResultScreen
@@ -365,12 +366,21 @@ fun HidupSehatApp(
                     )
                 }
                 composable("faq") {
+                    val dummyList = listOf<Faq>(
+                        Faq("Apa itu aplikasi HidupSehat","" +
+                                "Aplikasi gaya hidup sehat all-in-one pertama di Indonesia yang dapat membantu & memperkenalkan gaya hidup sehat yang dibutuhkan masyarakat Indonesia"),
+                        Faq("Apakah aplikasi HidupSehat gratis?","Aplikasi HidupSehat sepenuhnya gratis, namun apabila anda ingin fitur yang lebih bisa menggunakan premium"),
+                        Faq("Siapa yang menciptakan aplikasi HidupSehat?","" +
+                                "Aplikasi HidupSehat diciptakan oleh Fazri, Ravie, Natura, Rijal & Hafid"),
+                        Faq("Mengapa beberapa fitur belum tersedia?","" +
+                                "Karena rentang waktu pengerjaan ini dibatasi sampai 16 Juni, sehingga beberapa fitur belum tersedia"),
+                        Faq("Fitur apa saja yang berada dalam pengembangan?","Beberapa fitur yang dalam pengembangan antara lain : konsultasi, widget feature, upgrade pose suggestion")
+                    )
                     FaqScreen(
                         onNavigateUp = {
                             navController.navigateUp()
                         },
-                        faq = listOf("Pertanyaan 1")
-                    )
+                        faq = dummyList,)
                 }
                 composable("rating", deepLinks = listOf(navDeepLink {
                     uriPattern = "https://play.google.com/store/apps/details?id=com.gojek.app"
